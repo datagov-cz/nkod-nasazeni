@@ -6,6 +6,8 @@
   
 	<!-- Core types -->
 	
+  <fieldType name="pint" class="solr.IntPointField" docValues="true"/>
+
 	<fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true"/>
 
 	<fieldType name="strings" class="solr.StrField" sortMissingLast="true" docValues="true" multiValued="true"/>
@@ -50,9 +52,10 @@
   
 	
 	<!-- Fields -->
+  <field name="_version_" type="plong" indexed="false" stored="false"/>
 	<field name="code" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
-	<field name="type" type="string" indexed="true" docValues="false"/>
-	<field name="cs" type="ascii_text" indexed="true" docValues="false"/>
-  <field name="en" type="ascii_text" indexed="true" docValues="false"/>
+	<field name="cs" type="ascii_string" indexed="true" docValues="false"/>
+  <field name="en" type="ascii_string" indexed="true" docValues="false"/>
+  <field name="priority" type="pint" indexed="true" docValues="false"/>
 		
 </schema>

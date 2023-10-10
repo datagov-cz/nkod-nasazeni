@@ -50,9 +50,9 @@
   
 	
 	<!-- Fields -->
-	<field name="code" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
-	<field name="type" type="string" indexed="true" docValues="false"/>
-	<field name="cs" type="ascii_text" indexed="true" docValues="false"/>
-  <field name="en" type="ascii_text" indexed="true" docValues="false"/>
+	<field name="_version_" type="plong" indexed="false" stored="false"/>
+  <field name="code" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
+  <field name="cs" type="ascii_string" indexed="true" docValues="false"/>
+  <field name="en" type="ascii_string" indexed="true" docValues="false"/>
 		
 </schema>
