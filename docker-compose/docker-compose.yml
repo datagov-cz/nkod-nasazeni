@@ -8,8 +8,20 @@ services:
       - 8983:8983
     restart: always
     volumes:
-      - solr-cores:/var/solr
+      - solr-data:/var/solr
+  couchdb:
+    image: ghcr.io/datagov-cz/nkod-couchdb
+    build: 
+      context: ../couchdb
+    ports:
+      - 5984:5984
+    restart: always
+    volumes:
+      - couchdb-data:/opt/couchdb/data
 volumes:
-  solr-cores:
-    name: nkod-solr-cores
+  solr-data:
+    name: nkod-solr-data
+    external: True
+  couchdb-data:
+    name: nkod-couchdb-data
     external: True
