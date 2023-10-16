@@ -13,6 +13,9 @@ services:
     image: ghcr.io/datagov-cz/nkod-couchdb
     build: 
       context: ../couchdb
+    environment:
+      COUCHDB_USER: ${COUCHDB_USER}
+      COUCHDB_PASSWORD: ${COUCHDB_PASSWORD}
     ports:
       - 5984:5984
     restart: always
