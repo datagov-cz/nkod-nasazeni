@@ -61,8 +61,8 @@
   <field name="theme" type="strings"/>
   <field name="type" type="string" indexed="true"/>
   <!-- <field name="logoLink" type="string" indexed="false"/> -->
-  <field name="updated" type="pdate" multiValued="false" indexed="false"/>
-  <field name="modified" type="pdate" multiValued="false" indexed="false"/>	
+  <field name="modified" type="pdate" multiValued="false" indexed="false"/>
+  <field name="published" type="pdate" multiValued="false" indexed="false"/>	
   <field name="dataset" type="strings"/>
   <!-- Author entity -->
   <field name="author" type="string" indexed="false"/>
