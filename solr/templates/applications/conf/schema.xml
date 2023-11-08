@@ -48,32 +48,61 @@
     </analyzer>
   </fieldType>
 
-  <fieldType name="string_icu_cs" class="org.apache.solr.schema.ICUCollationField" strength="primary" locale="cs"/>
+	<fieldType name="string_icu_cs" class="org.apache.solr.schema.ICUCollationField" strength="primary" locale="cs"/>
+  
+	<fieldType name="string_icu_en" class="org.apache.solr.schema.ICUCollationField" strength="primary" locale="en"/>
 
   <!-- Fields -->
-  <field name="iri" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
+  <field name="iri" type="string" required="true" stored="true"/>
   <field name="_version_" type="plong" indexed="false" stored="false"/>
-  <field name="title" type="string" multiValued="false"/>
-  <field name="description" type="string" multiValued="false"/>
-  <field name="state" type="strings" indexed="true"/>
-  <field name="platform" type="strings" indexed="true"/>
+
+	<field name="title_cs" type="string" indexed="false"/>
+  <field name="title_cs_sort" type="string_icu_cs" docValues="true"/>
+  <field name="title_cs_query" type="ascii_string"/>
+  <copyField source="title_cs" dest="title_cs_sort"/>
+  <copyField source="title_cs" dest="title_cs_query"/>
+
+  <field name="title_en" type="string" indexed="false"/>
+  <field name="title_en_query" type="ascii_string"/>
+  <field name="title_en_sort" type="string_icu_en" docValues="true"/>
+  <copyField source="title_en" dest="title_en_query"/>
+  <copyField source="title_en" dest="title_en_sort"/>
+
+  <field name="description_cs" type="string"/>
+  <field name="description_en" type="string"/>
+
+  <field name="state" type="strings"/>
+  <field name="state_cs" type="strings" indexed="false"/>
+  <field name="state_en" type="strings" indexed="false"/>
+
+  <field name="platform" type="strings"/>
+  <field name="platform_cs" type="strings" indexed="false"/>
+  <field name="platform_en" type="strings" indexed="false"/>
+
   <field name="link" type="string" indexed="false"/>
+
   <field name="theme" type="strings"/>
-  <field name="type" type="string" indexed="true"/>
-  <!-- <field name="logoLink" type="string" indexed="false"/> -->
-  <field name="modified" type="pdate" multiValued="false" indexed="false"/>
-  <field name="published" type="pdate" multiValued="false" indexed="false"/>	
+  <field name="theme_cs" type="strings" indexed="false"/>
+  <field name="theme_en" type="strings" indexed="false"/>
+
+  <field name="type" type="string"/>
+  <field name="type_cs" type="string" indexed="false"/>
+  <field name="type_en" type="string" indexed="false"/>
+
+  <field name="modified" type="pdate"  indexed="false"/>
+  <field name="published" type="pdate"  indexed="false"/>
   <field name="dataset" type="strings"/>
+
   <!-- Author entity -->
-  <field name="author" type="string" indexed="false"/>
-  <field name="authorLabel" type="string" indexed="true"/>
+  <field name="author" type="string"/>
+  <field name="author_cs" type="string" indexed="false"/>
+  <field name="author_en" type="string" indexed="false"/>
 
   <!-- ... -->
   <field name="_text_" type="ascii_string" multiValued="true" indexed="true" stored="false"/>
-  <copyField source="title" dest="_text_"/>  
-  <copyField source="description" dest="_text_"/>	
-
-  <field name="title_sort" type="string_icu_cs" multiValued="false" docValues="true"/>
-  <copyField source="title" dest="title_sort"/>  	
+  <copyField source="title_cs" dest="_text_"/>  
+  <copyField source="description_cs" dest="_text_"/>  
+  <copyField source="title_en" dest="_text_"/>  
+  <copyField source="description_en" dest="_text_"/>  
 
 </schema>
