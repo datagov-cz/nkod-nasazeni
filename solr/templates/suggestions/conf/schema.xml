@@ -3,7 +3,7 @@
 <schema name="default-config" version="1.6">
 
   <uniqueKey>iri</uniqueKey>
-  
+
   <!-- Core types -->
 
   <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true"/>
@@ -18,7 +18,7 @@
 
   <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
 
-  <fieldType name="booleans" class="solr.BoolField" sortMissingLast="true" multiValued="true"/>	
+  <fieldType name="booleans" class="solr.BoolField" sortMissingLast="true" multiValued="true"/>
 
   <fieldType name="plongs" class="solr.LongPointField" docValues="true" multiValued="true"/>
 
@@ -48,55 +48,45 @@
     </analyzer>
   </fieldType>
 
-	<fieldType name="string_icu_cs" class="org.apache.solr.schema.ICUCollationField" strength="primary" locale="cs"/>
+  <fieldType name="string_icu_cs" class="org.apache.solr.schema.ICUCollationField" strength="primary" locale="cs"/>
   
-	<fieldType name="string_icu_en" class="org.apache.solr.schema.ICUCollationField" strength="primary" locale="en"/>
+  <fieldType name="string_icu_en" class="org.apache.solr.schema.ICUCollationField" strength="primary" locale="en"/>
 
   <!-- Fields -->
   <field name="iri" type="string" required="true" stored="true"/>
   <field name="_version_" type="plong" indexed="false" stored="false"/>
 
-	<field name="title_cs" type="string" indexed="false"/>
+  <field name="title_cs" type="string" indexed="false"/>
   <field name="title_cs_sort" type="string_icu_cs" docValues="true"/>
   <field name="title_cs_query" type="ascii_string"/>
   <copyField source="title_cs" dest="title_cs_sort"/>
   <copyField source="title_cs" dest="title_cs_query"/>
 
-  <field name="title_en" type="string" indexed="false"/>
-  <field name="title_en_query" type="ascii_string"/>
-  <field name="title_en_sort" type="string_icu_en" docValues="true"/>
-  <copyField source="title_en" dest="title_en_query"/>
-  <copyField source="title_en" dest="title_en_sort"/>
-
   <field name="description_cs" type="string"/>
-  <field name="description_en" type="string"/>
-
-  <field name="state" type="strings"/>
-
-  <field name="platform" type="strings"/>
-
-  <field name="link" type="string" indexed="false"/>
 
   <field name="theme" type="strings"/>
 
-  <field name="type" type="string"/>
+  <field name="created" type="pdate" indexed="false"/>
 
   <field name="modified" type="pdate" indexed="false"/>
 
   <field name="published" type="pdate" indexed="false"/>
 
-  <field name="dataset" type="strings"/>
+  <field name="publisher" type="string"/>
 
-  <!-- Author entity -->
-  <field name="author" type="string"/>
-  <field name="author_cs" type="string" indexed="false"/>
-  <field name="author_en" type="string" indexed="false"/>
+  <field name="mandatory_106" type="boolean" />
+
+  <field name="publisher_cs" type="string" indexed="false"/>
+
+  <field name="obstacle_special_regulation" type="boolean" />
+
+  <field name="open_data_compatible" type="boolean" />
+
+  <field name="obstacle_106" type="boolean" />
 
   <!-- ... -->
   <field name="_text_" type="ascii_string" multiValued="true" indexed="true" stored="false"/>
-  <copyField source="title_cs" dest="_text_"/>  
-  <copyField source="description_cs" dest="_text_"/>  
-  <copyField source="title_en" dest="_text_"/>  
-  <copyField source="description_en" dest="_text_"/>  
+  <copyField source="title_cs" dest="_text_"/>
+  <copyField source="description_cs" dest="_text_"/>
 
 </schema>

@@ -55,3 +55,8 @@ if [ ! -d "/var/solr/data/ruian" ]
 then
     precreate-core ruian /opt/templates/ruian
 fi
+
+if [ ! -d "/var/solr/data/suggestions" ]
+then
+    precreate-core suggestions /opt/templates/suggestions
+fi
