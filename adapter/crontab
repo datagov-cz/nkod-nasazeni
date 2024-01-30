@@ -1,0 +1,4 @@
+# Define jobs to be executed.
+10 */2 * * * nkod /opt/entrypoint/applications-image.sh
+15 */2 * * * nkod /opt/entrypoint/applications-list.sh
+20 */2 * * * nkod /opt/entrypoint/registrations.sh
