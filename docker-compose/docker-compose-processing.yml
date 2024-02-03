@@ -1,0 +1,24 @@
+version: "3"
+services:
+  adapter:
+    image: ghcr.io/datagov-cz/nkod-adapter:main
+    build: 
+      context: ../adapter
+    environment:
+      MS_APPLICATION: ${MS_APPLICATION}
+      MS_TENANT: ${MS_TENANT}
+      MS_SECRET: ${MS_SECRET}
+      MS_SITE: ${MS_SITE}
+      MS_LIST: ${MS_LIST}
+      MS_DRIVE: ${MS_DRIVE}
+      MS_DIRECTORY: ${MS_DIRECTORY}
+      ISDS_LOGIN: ${ISDS_LOGIN}
+      ISDS_PASSWORD: ${ISDS_PASSWORD}
+      ISDS_URL: ${ISDS_URL}
+    restart: always
+    volumes:
+      - adapter-data:/data/
+volumes:
+  adapter-data:
+    name: nkod-adapter-data
+    external: True

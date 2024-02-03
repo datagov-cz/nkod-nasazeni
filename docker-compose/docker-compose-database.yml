@@ -1,7 +1,7 @@
 version: "3"
 services:
   solr:
-    image: ghcr.io/datagov-cz/nkod-solr:latest  
+    image: ghcr.io/datagov-cz/nkod-solr:main
     build: 
       context: ../solr
     ports:
@@ -10,7 +10,7 @@ services:
     volumes:
       - solr-data:/var/solr
   couchdb:
-    image: ghcr.io/datagov-cz/nkod-couchdb
+    image: ghcr.io/datagov-cz/nkod-couchdb:main
     build: 
       context: ../couchdb
     environment:

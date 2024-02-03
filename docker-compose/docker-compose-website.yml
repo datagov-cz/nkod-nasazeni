@@ -1,0 +1,11 @@
+version: "3"
+services:
+  application-catalog:
+    image: ghcr.io/datagov-cz/nkod-application-catalog:main
+    ports:
+      - 8083:3000
+    restart: always
+    environment:
+      SOLR_URL: ${SOLR_URL}
+      COUCHDB_URL: ${COUCHDB_URL}
+      DATASET_CATALOG_URL: ${DATASET_CATALOG_URL}
