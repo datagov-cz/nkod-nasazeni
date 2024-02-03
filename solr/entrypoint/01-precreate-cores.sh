@@ -5,7 +5,6 @@ then
     precreate-core applications /opt/templates/applications
 fi
 
-
 if [ ! -d "/var/solr/data/continents" ]
 then
     precreate-core continents /opt/templates/continents
