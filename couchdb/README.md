@@ -1,4 +1,19 @@
-# National Open Data Catalog : CouchDB Component
-Data and logs are saved to ```/opt/couchdb/data```.
+# CouchDB databáze
 
-Set environment variables ```COUCHDB_USER``` and ```COUCHDB_PASSWORD``` to create admin account.
+## Konfigurace
+Obsah `.env` souboru:
+```
+# Uživatelské jméno pro plný přístup (admin).
+COUCHDB_USER=
+# Heslo
+COUCHDB_PASSWORD=
+```
+
+## Datová úložiště
+Data jsou uložena do adresáře `/opt/couchdb/data`.
+
+## Logování
+Logování do souboru není nastaveno a tak jsou logy zapisovány pouze na standardní výstup. 
+
+## Porty
+- 5984
