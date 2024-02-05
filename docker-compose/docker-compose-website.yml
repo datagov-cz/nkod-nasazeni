@@ -1,7 +1,7 @@
 version: "3"
 services:
   application-catalog:
-    image: ghcr.io/datagov-cz/nkod-application-catalog:main
+    image: ghcr.io/datagov-cz/nkod-application-catalog:${DEPLOYMENT_ENVIRONMENT}
     ports:
       - 8083:3000
     restart: always

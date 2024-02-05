@@ -1,6 +1,8 @@
-FROM ghcr.io/datagov-cz/ms-adapter:latest as ms-adapter
+ARG  DEPLOYMENT_ENVIRONMENT=main
 
-FROM ghcr.io/datagov-cz/isds-adapter:latest as isds-adapter
+FROM ghcr.io/datagov-cz/ms-adapter:${DEPLOYMENT_ENVIRONMENT} as ms-adapter
+
+FROM ghcr.io/datagov-cz/isds-adapter:${DEPLOYMENT_ENVIRONMENT} as isds-adapter
 
 # The final image.
 FROM openjdk:21-bookworm

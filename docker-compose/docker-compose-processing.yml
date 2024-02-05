@@ -1,9 +1,11 @@
 version: "3"
 services:
   adapter:
-    image: ghcr.io/datagov-cz/nkod-adapter:main
+    image: ghcr.io/datagov-cz/nkod-adapter:${DEPLOYMENT_ENVIRONMENT}
     build: 
       context: ../adapter
+      args:
+        - DEPLOYMENT_ENVIRONMENT=${DEPLOYMENT_ENVIRONMENT}
     environment:
       MS_APPLICATION: ${MS_APPLICATION}
       MS_TENANT: ${MS_TENANT}

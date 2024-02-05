@@ -12,6 +12,13 @@ Ve zbytku tohoto dokumentu jsou zkráceně popsány jednotlivé komponenty a pos
 Pro každou komponentu je popsán konfigurační soubor (`.env`), připojení datového úložiště a porty, na kterých je možné se službou komunikovat.
 Detailnější informace je možné najít v adresářích příslušných komponent.
 
+Společný obsah `.env` souboru:
+```
+# "develop" or "main"
+# Vybírá prostředí a určuje tagy pro Docker image.
+DEPLOYMENT_ENVIRONMENT=
+```
+
 ## Komponenta: databáze
 Komponenta obsahuje:
 - CouchDB databázi
