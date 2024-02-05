@@ -36,7 +36,7 @@ MS_APPLICATION_DRIVE=
 MS_APPLICATION_DIRECTORY=
 # Odpovídá argumentu "list" jak je popsán v dokumentaci k ms-adaptéru.
 # Jedná se o list s registracemi aplikací.
-MS_LIST_SUGGESTIONS=
+MS_SUGGESTIONS_LIST=
 
 # Konfigurace isds-adaptéru popsaná v jeho dokumentaci.
 ISDS_LOGIN=
