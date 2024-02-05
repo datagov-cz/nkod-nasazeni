@@ -21,18 +21,22 @@ Obsah `.env` souboru:
 MS_APPLICATION = 
 MS_TENANT=
 MS_SECRET=
+
 # Odpovídá argumentu "site" jak je popsán v dokumentaci k ms-adaptéru.
 # Jedná se o stránku/skupiny s registracemi aplikací.
 MS_SITE=
 # Odpovídá argumentu "list" jak je popsán v dokumentaci k ms-adaptéru.
 # Jedná se o list s registracemi aplikací.
-MS_LIST=
+MS_APPLICATION_LIST=
 # Odpovídá argumentu "drive" jak je popsán v dokumentaci k ms-adaptéru.
 # Jedná so o jméno knihovny se složkou ke stažení.
-MS_DRIVE=
+MS_APPLICATION_DRIVE=
 # Odpovídá argumentu "directory" jak je popsán v dokumentaci k ms-adaptéru.
 # Název adresáře s přílohu k registrovaným aplikacím.
-MS_DIRECTORY=
+MS_APPLICATION_DIRECTORY=
+# Odpovídá argumentu "list" jak je popsán v dokumentaci k ms-adaptéru.
+# Jedná se o list s registracemi aplikací.
+MS_LIST_SUGGESTIONS=
 
 # Konfigurace isds-adaptéru popsaná v jeho dokumentaci.
 ISDS_LOGIN=
@@ -45,6 +49,7 @@ Stažený list registrovaných aplikací je uložen do souboru `/data/applicatio
 Stažený adresář příloh k registrovaným aplikacím  je uložen do adresáře `/data/applications-images/`.
 Stažené datové zprávy jsou uložené do adresáře `/data/registrations` (nastaveno v konfiguraci isds-adaptéru).
 Aplikace běží pod uživatelem 5987:5987 pro kterého je třeba nastavit práva v datovém úložišti.
+Stažený list registrovaných požadavků na zveřejnění datových sad je uložen do souboru `/data/suggestions/content.trig`.
 
 ## Logování
 Adaptéry zapisují logy ve formát JSON do adresáře `/data/log/`.
