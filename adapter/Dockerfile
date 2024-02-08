@@ -27,10 +27,9 @@ WORKDIR /data/certificates
 COPY --chown=nkod:nkod ./certificates ./
 RUN chmod 444 *
 
-# Create data directory.
+# Create data directory and set access.
 WORKDIR /data/
 RUN mkdir log \
-  && mkdir output \
   && chown -R nkod:nkod /data
 
 # Copy entrypoints.
