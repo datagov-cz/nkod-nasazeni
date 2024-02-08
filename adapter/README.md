@@ -49,7 +49,7 @@ Stažený list registrovaných aplikací je uložen do souboru `/data/applicatio
 Stažený adresář příloh k registrovaným aplikacím  je uložen do adresáře `/data/applications-images/`.
 Stažené datové zprávy jsou uložené do adresáře `/data/registrations` (nastaveno v konfiguraci isds-adaptéru).
 Aplikace běží pod uživatelem 5987:5987 pro kterého je třeba nastavit práva v datovém úložišti.
-Stažený list registrovaných požadavků na zveřejnění datových sad je uložen do souboru `/data/suggestions/content.trig`.
+Stažený list registrovaných požadavků na zveřejnění datových sad je uložen do souboru `/data/proposals/content.trig`.
 
 ## Logování
 Adaptéry zapisují logy ve formát JSON do adresáře `/data/log/`.
