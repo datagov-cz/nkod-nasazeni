@@ -79,18 +79,21 @@ Obsah `.env` souboru:
 MS_APPLICATION = 
 MS_TENANT=
 MS_SECRET=
+
 # Odpovídá argumentu "site" jak je popsán v dokumentaci k ms-adaptéru.
 # Jedná se o stránku/skupiny s registracemi aplikací.
 MS_SITE=
 # Odpovídá argumentu "list" jak je popsán v dokumentaci k ms-adaptéru.
 # Jedná se o list s registracemi aplikací.
-MS_LIST=
-# Odpovídá argumentu "drive" jak je popsán v dokumentaci k ms-adaptéru.
-# Jedná so o jméno knihovny se složkou ke stažení.
-MS_DRIVE=
-# Odpovídá argumentu "directory" jak je popsán v dokumentaci k ms-adaptéru.
-# Název adresáře s přílohu k registrovaným aplikacím.
-MS_DIRECTORY=
+MS_APPLICATION_LIST=
+# Odpovídá argumentu "path" jak je popsán v dokumentaci k ms-adaptéru.
+# Jedná se o cestu oddělenou pomocí znaku `/`.
+# První část cesty je jméno knihovny, následují jména adresářů.
+# Cesta vede do adresáře obrázků pro aplikace.
+MS_APPLICATION_PATH=
+# Odpovídá argumentu "list" jak je popsán v dokumentaci k ms-adaptéru.
+# Jedná se o list s registracemi aplikací.
+MS_SUGGESTIONS_LIST=
 
 # Konfigurace isds-adaptéru popsaná v jeho dokumentaci.
 ISDS_LOGIN=
