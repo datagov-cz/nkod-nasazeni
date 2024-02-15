@@ -68,10 +68,6 @@
 
   <field name="created" type="pdate" indexed="false"/>
 
-  <field name="modified" type="pdate" indexed="false"/>
-
-  <field name="published" type="pdate" indexed="false"/>
-
   <field name="publisher" type="string"/>
 
   <field name="state" type="string"/>
