@@ -18,24 +18,30 @@ Ve výchozím nastavení se certifikáty čtou z  adresáře `/data/certificates
 Obsah `.env` souboru:
 ```
 # Konfigurace pro ms-adaptér popsaná v jeho dokumentaci.
-MS_APPLICATION = 
+MS_APPLICATION=
 MS_TENANT=
 MS_SECRET=
 
 # Odpovídá argumentu "site" jak je popsán v dokumentaci k ms-adaptéru.
 # Jedná se o stránku/skupiny s registracemi aplikací.
 MS_SITE=
+
 # Odpovídá argumentu "list" jak je popsán v dokumentaci k ms-adaptéru.
 # Jedná se o list s registracemi aplikací.
-MS_APPLICATION_LIST=
+MS_APPLICATIONS_LIST=
 # Odpovídá argumentu "path" jak je popsán v dokumentaci k ms-adaptéru.
 # Jedná se o cestu oddělenou pomocí znaku `/`.
 # První část cesty je jméno knihovny, následují jména adresářů.
 # Cesta vede do adresáře obrázků pro aplikace.
-MS_APPLICATION_PATH=
+MS_APPLICATIONS_PATH=
+
 # Odpovídá argumentu "list" jak je popsán v dokumentaci k ms-adaptéru.
 # Jedná se o list s registracemi aplikací.
 MS_SUGGESTIONS_LIST=
+
+# Odpovídá argumentu "list" jak je popsán v dokumentaci k ms-adaptéru.
+# Jedná se o list s poskytovateli.
+MS_ALLOWED_PUBLISHERS_LIST=
 
 # Konfigurace isds-adaptéru popsaná v jeho dokumentaci.
 ISDS_LOGIN=
@@ -49,6 +55,7 @@ Stažený adresář příloh k registrovaným aplikacím  je uložen do adresá�
 Stažené datové zprávy jsou uložené do adresáře `/data/registrations` (nastaveno v konfiguraci isds-adaptéru).
 Aplikace běží pod uživatelem 5987:5987 pro kterého je třeba nastavit práva v datovém úložišti.
 Stažený list registrovaných požadavků na zveřejnění datových sad je uložen do souboru `/data/suggestions/content.trig`.
+Stažený list povolených poskytovatelů je uložen do souboru  `/data/suggestions/allowed-publishers.trig`.
 
 ## Logování
 Adaptéry zapisují logy ve formát JSON do adresáře `/data/log/`.

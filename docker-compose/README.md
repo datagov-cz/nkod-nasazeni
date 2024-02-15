@@ -76,24 +76,30 @@ Komponenta obsahuje:
 Obsah `.env` souboru:
 ```
 # Konfigurace pro ms-adaptér popsaná v jeho dokumentaci.
-MS_APPLICATION = 
+MS_APPLICATION=
 MS_TENANT=
 MS_SECRET=
 
 # Odpovídá argumentu "site" jak je popsán v dokumentaci k ms-adaptéru.
 # Jedná se o stránku/skupiny s registracemi aplikací.
 MS_SITE=
+
 # Odpovídá argumentu "list" jak je popsán v dokumentaci k ms-adaptéru.
 # Jedná se o list s registracemi aplikací.
-MS_APPLICATION_LIST=
+MS_APPLICATIONS_LIST=
 # Odpovídá argumentu "path" jak je popsán v dokumentaci k ms-adaptéru.
 # Jedná se o cestu oddělenou pomocí znaku `/`.
 # První část cesty je jméno knihovny, následují jména adresářů.
 # Cesta vede do adresáře obrázků pro aplikace.
-MS_APPLICATION_PATH=
+MS_APPLICATIONS_PATH=
+
 # Odpovídá argumentu "list" jak je popsán v dokumentaci k ms-adaptéru.
 # Jedná se o list s registracemi aplikací.
 MS_SUGGESTIONS_LIST=
+
+# Odpovídá argumentu "list" jak je popsán v dokumentaci k ms-adaptéru.
+# Jedná se o list s poskytovateli.
+MS_ALLOWED_PUBLISHERS_LIST=
 
 # Konfigurace isds-adaptéru popsaná v jeho dokumentaci.
 ISDS_LOGIN=
