@@ -2,7 +2,7 @@ version: "3"
 services:
   solr:
     image: ghcr.io/datagov-cz/nkod-solr:${DEPLOYMENT_ENVIRONMENT}
-    build: 
+    build:
       context: ../solr
     ports:
       - 8983:8983
@@ -11,7 +11,7 @@ services:
       - solr-data:/var/solr
   couchdb:
     image: ghcr.io/datagov-cz/nkod-couchdb:${DEPLOYMENT_ENVIRONMENT}
-    build: 
+    build:
       context: ../couchdb
     environment:
       COUCHDB_USER: ${COUCHDB_USER}

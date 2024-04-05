@@ -23,8 +23,8 @@
 <config>
   <luceneMatchVersion>9.7</luceneMatchVersion>
   <lib path="${solr.install.dir:../../../..}/contrib/analysis-extras/lib/solr-analysis-extras-9.3.0.jar" />
-  <lib path="${solr.install.dir:../../../..}/contrib/analysis-extras/lib/icu4j-70.1.jar" />	
-	<lib path="${solr.install.dir:../../../..}/contrib/analysis-extras/lib/lucene-analysis-icu-9.7.0.jar" />	
+  <lib path="${solr.install.dir:../../../..}/contrib/analysis-extras/lib/icu4j-70.1.jar" />
+  <lib path="${solr.install.dir:../../../..}/contrib/analysis-extras/lib/lucene-analysis-icu-9.7.0.jar" />
   <dataDir>${solr.data.dir:}</dataDir>
   <directoryFactory name="DirectoryFactory"
                     class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}"/>

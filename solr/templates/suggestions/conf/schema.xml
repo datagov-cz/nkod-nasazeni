@@ -49,7 +49,7 @@
   </fieldType>
 
   <fieldType name="string_icu_cs" class="org.apache.solr.schema.ICUCollationField" strength="primary" locale="cs"/>
-  
+
   <fieldType name="string_icu_en" class="org.apache.solr.schema.ICUCollationField" strength="primary" locale="en"/>
 
   <!-- Fields -->
