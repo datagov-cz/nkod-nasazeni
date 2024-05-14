@@ -83,9 +83,13 @@
   <field name="description_en" type="string" multiValued="false"/>
   <field name="keyword_en" type="strings"/>
 
-  <!-- VDF -->
+  <!-- Veřejný Datový Fond -->
   <field name="vdf_codelist" type="boolean" multiValued="false"/>
   <field name="vdf_public_data" type="boolean" multiValued="false"/>
+
+  <!-- High Value Datasets -->
+  <field name="hvd_category" type="strings"/>
+  <field name="applicable_legislation" type="strings"/>
 
   <!-- ... -->
   <field name="_text_" type="ascii_string" multiValued="true" indexed="true" stored="false"/>
