@@ -3,7 +3,7 @@
 <schema name="default-config" version="1.6">
 
   <uniqueKey>iri</uniqueKey>
-  
+
   <!-- Core types -->
 
   <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true"/>
@@ -18,7 +18,7 @@
 
   <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
 
-  <fieldType name="booleans" class="solr.BoolField" sortMissingLast="true" multiValued="true"/>	
+  <fieldType name="booleans" class="solr.BoolField" sortMissingLast="true" multiValued="true"/>
 
   <fieldType name="plongs" class="solr.LongPointField" docValues="true" multiValued="true"/>
 
@@ -48,15 +48,15 @@
     </analyzer>
   </fieldType>
 
-	<fieldType name="string_icu_cs" class="org.apache.solr.schema.ICUCollationField" strength="primary" locale="cs"/>
-  
-	<fieldType name="string_icu_en" class="org.apache.solr.schema.ICUCollationField" strength="primary" locale="en"/>
+  <fieldType name="string_icu_cs" class="org.apache.solr.schema.ICUCollationField" strength="primary" locale="cs"/>
+
+  <fieldType name="string_icu_en" class="org.apache.solr.schema.ICUCollationField" strength="primary" locale="en"/>
 
   <!-- Fields -->
   <field name="iri" type="string" required="true" stored="true"/>
   <field name="_version_" type="plong" indexed="false" stored="false"/>
 
-	<field name="title_cs" type="string" indexed="false"/>
+  <field name="title_cs" type="string" indexed="false"/>
   <field name="title_cs_sort" type="string_icu_cs" docValues="true"/>
   <field name="title_cs_query" type="ascii_string"/>
   <copyField source="title_cs" dest="title_cs_sort"/>
@@ -94,9 +94,9 @@
 
   <!-- ... -->
   <field name="_text_" type="ascii_string" multiValued="true" indexed="true" stored="false"/>
-  <copyField source="title_cs" dest="_text_"/>  
-  <copyField source="description_cs" dest="_text_"/>  
-  <copyField source="title_en" dest="_text_"/>  
-  <copyField source="description_en" dest="_text_"/>  
+  <copyField source="title_cs" dest="_text_"/>
+  <copyField source="description_cs" dest="_text_"/>
+  <copyField source="title_en" dest="_text_"/>
+  <copyField source="description_en" dest="_text_"/>
 
 </schema>

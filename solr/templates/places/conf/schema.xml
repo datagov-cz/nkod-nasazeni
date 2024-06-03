@@ -3,28 +3,28 @@
 <schema name="default-config" version="1.6">
 
   <uniqueKey>code</uniqueKey>
-  
-	<!-- Core types -->
-	
-	<fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true"/>
 
-	<fieldType name="strings" class="solr.StrField" sortMissingLast="true" docValues="true" multiValued="true"/>
+  <!-- Core types -->
 
-	<fieldType name="plong" class="solr.LongPointField" docValues="true"/>
+  <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true"/>
 
-	<fieldType name="pdate" class="solr.DatePointField" docValues="true"/>
+  <fieldType name="strings" class="solr.StrField" sortMissingLast="true" docValues="true" multiValued="true"/>
 
-	<fieldType name="pdates" class="solr.DatePointField" docValues="true" multiValued="true"/>
+  <fieldType name="plong" class="solr.LongPointField" docValues="true"/>
 
-	<fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+  <fieldType name="pdate" class="solr.DatePointField" docValues="true"/>
 
-	<fieldType name="booleans" class="solr.BoolField" sortMissingLast="true" multiValued="true"/>	
-	
-	<fieldType name="plongs" class="solr.LongPointField" docValues="true" multiValued="true"/>
+  <fieldType name="pdates" class="solr.DatePointField" docValues="true" multiValued="true"/>
 
-	<fieldType name="pdoubles" class="solr.DoublePointField" docValues="true" multiValued="true"/>
+  <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
 
-	<fieldType name="text_general" class="solr.TextField" positionIncrementGap="100" multiValued="true">
+  <fieldType name="booleans" class="solr.BoolField" sortMissingLast="true" multiValued="true"/>
+
+  <fieldType name="plongs" class="solr.LongPointField" docValues="true" multiValued="true"/>
+
+  <fieldType name="pdoubles" class="solr.DoublePointField" docValues="true" multiValued="true"/>
+
+  <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100" multiValued="true">
     <analyzer type="index">
       <tokenizer class="solr.StandardTokenizerFactory"/>
       <filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true"/>
@@ -38,21 +38,21 @@
     </analyzer>
   </fieldType>
 
-	<!-- Custom types -->
+  <!-- Custom types -->
 
-	<fieldType name="ascii_string" class="solr.TextField" positionIncrementGap="100">
+  <fieldType name="ascii_string" class="solr.TextField" positionIncrementGap="100">
     <analyzer>
       <tokenizer class="solr.WhitespaceTokenizerFactory"/>
       <filter class="solr.LowerCaseFilterFactory"/>
       <filter class="solr.ASCIIFoldingFilterFactory" preserveOriginal="false"/>
     </analyzer>
   </fieldType>
-  
-	
-	<!-- Fields -->
-	<field name="_version_" type="plong" indexed="false" stored="false"/>
+
+
+  <!-- Fields -->
+  <field name="_version_" type="plong" indexed="false" stored="false"/>
   <field name="code" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
   <field name="cs" type="ascii_string" indexed="true" docValues="false"/>
   <field name="en" type="ascii_string" indexed="true" docValues="false"/>
-		
+
 </schema>

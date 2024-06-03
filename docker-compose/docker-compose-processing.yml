@@ -2,7 +2,7 @@ version: "3"
 services:
   adapter:
     image: ghcr.io/datagov-cz/nkod-adapter:${DEPLOYMENT_ENVIRONMENT}
-    build: 
+    build:
       context: ../adapter
       args:
         - DEPLOYMENT_ENVIRONMENT=${DEPLOYMENT_ENVIRONMENT}

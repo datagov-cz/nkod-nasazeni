@@ -13,7 +13,7 @@ COUCHDB_PASSWORD=
 Data jsou uložena do adresáře `/opt/couchdb/data`.
 
 ## Logování
-Logování do souboru není nastaveno a tak jsou logy zapisovány pouze na standardní výstup. 
+Logování do souboru není nastaveno a tak jsou logy zapisovány pouze na standardní výstup.
 
 ## Porty
 - 5984
