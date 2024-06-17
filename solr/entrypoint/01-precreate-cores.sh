@@ -35,6 +35,11 @@ then
     precreate-core frequencies /opt/templates/frequencies
 fi
 
+if [ ! -d "/var/solr/data/hvd-categories" ]
+then
+    precreate-core hvd-categories /opt/templates/hvd-categories
+fi
+
 if [ ! -d "/var/solr/data/iana-media-types" ]
 then
     precreate-core iana-media-types /opt/templates/iana-media-types
