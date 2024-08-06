@@ -1,8 +1,8 @@
 # Adaptér na externí služby
 Tato komponenta obsahuje adaptéry na externí služby:
-- ms-adaptér - (Adaptér pro přístup ke službám skrze Microsoft Graph API)[https://github.com/datagov-cz/ms-adapter/] je spouštěný ve dvou režimech. První umožňuje stažení seznamu (registrovaných aplikací), druhý pak adresáře (přílohy k registracím),
+- ms-adaptér - [Adaptér pro přístup ke službám skrze Microsoft Graph API](https://github.com/datagov-cz/ms-adapter/) je spouštěný ve dvou režimech. První umožňuje stažení seznamu (registrovaných aplikací), druhý pak adresáře (přílohy k registracím),
   V prvním režimu provádí stáhnutí seznamu registrovaných aplikací, ve druhém pak obrázkových příloh.
-- isds-adapter - (Adaptér pro stažení datových zpráv)[https://github.com/datagov-cz/isds-adapter/].
+- isds-adapter - [Adaptér pro stažení datových zpráv](https://github.com/datagov-cz/isds-adapter/).
 
 V rámci těchto adaptérů jsou definovány následující akce:
 - stažení seznamu registrovaných aplikací - skript `./entrypoint/applications-list.sh`
