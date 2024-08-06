@@ -1,4 +1,4 @@
-version: "3"
+name: nkod-database
 services:
   solr:
     image: ghcr.io/datagov-cz/nkod-solr:${DEPLOYMENT_ENVIRONMENT}
