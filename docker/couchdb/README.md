@@ -1,8 +1,10 @@
 # CouchDB databáze
 
+## Vstupní body
+
 ## Konfigurace
 Obsah `.env` souboru:
-```
+```ini
 # Uživatelské jméno pro plný přístup (admin).
 COUCHDB_USER=
 # Heslo
