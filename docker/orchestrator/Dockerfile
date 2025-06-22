@@ -27,4 +27,4 @@ RUN crontab /etc/cron.d/adapter-cron-file
 WORKDIR /opt/
 
 # Creating entry point for cron.
-ENTRYPOINT ["/opt/entrypoint.sh"]
+CMD ["/opt/entrypoint.sh"]

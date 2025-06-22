@@ -1,6 +1,7 @@
 # Orchestrátor pro spouštění pipeline
 Tato komponenta zajišťuje synchronizace a spouštění pipeline v metadatovém procesoru LinkedPipes:ETL.
 
+## Vstupní body
 Komponenta definuje následující akce:
 - `./entrypoint/execute.sh` - Execute entry pipeline.
 - `./entrypoint/synchronize.sh` - Synchronize pipelines from a remote repository.
