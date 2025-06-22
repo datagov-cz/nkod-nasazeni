@@ -12,7 +12,7 @@ for DIR in "$TEMPLATE_DIR"/*/; do
         # Check for core existence.
         if [ ! -d "$DATA_DIR/$NAME" ]; then
             # Prepare core data
-            cp -nr $TEMPLATE_BASE/* $DIR
+            cp -nr $TEMPLATE_BASE_DIR/* $DIR
             # Create core.
             precreate-core $NAME $DIR
         fi
