@@ -4,7 +4,7 @@
 FROM solr:9.8.1
 
 # Copy core definitions and script to create cores.
-COPY --chown=solr:solr ./templates/ /opt/templates/
+COPY --chown=solr:solr ./template/ /opt/template/
 COPY --chown=solr:solr ./template-base/ /opt/template-base
 
 # Entry point files.
