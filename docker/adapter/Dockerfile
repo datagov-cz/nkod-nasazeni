@@ -1,4 +1,4 @@
-ARG  DEPLOYMENT_ENVIRONMENT=main
+ARG DEPLOYMENT_ENVIRONMENT=main
 
 FROM ghcr.io/datagov-cz/ms-adapter:${DEPLOYMENT_ENVIRONMENT} as ms-adapter
 
@@ -33,7 +33,7 @@ RUN mkdir log \
   && chown -R nkod:nkod /data
 
 # Copy entrypoints.
-WORKDIR /opt/entrypoint
+WORKDIR /opt/entrypoint.d/
 COPY ./entrypoint ./
 RUN chown nkod:nkod *.sh && chmod 0744 *.sh
 
