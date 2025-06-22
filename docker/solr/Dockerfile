@@ -5,7 +5,7 @@ FROM solr:9.8.1
 
 # Copy core definitions and script to create cores.
 COPY --chown=solr:solr ./templates/ /opt/templates/
-COPY --chown=solr:solr ./templates-seed/ /opt/templates-seed/
+COPY --chown=solr:solr ./template-base/ /opt/template-base
 
 # Entry point files.
 COPY --chown=solr:solr ./entrypoint/ /docker-entrypoint-initdb.d/
