@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- https://solr.apache.org/guide/solr/latest/configuration-guide/configuring-solrconfig-xml.html -->
+<config>
+  <luceneMatchVersion>9.8</luceneMatchVersion>
+  <!--
+    https://solr.apache.org/guide/solr/latest/configuration-guide/schema-factory.html
+    Force use of schema.xml and disable any programmatic changes at run time.
+  -->
+  <schemaFactory class="ClassicIndexSchemaFactory"/>
+</config>
