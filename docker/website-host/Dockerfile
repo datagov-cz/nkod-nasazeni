@@ -28,9 +28,5 @@ COPY --chown=www-data:www-data ./api/ /var/www/api/
 
 # Prepare entrypoint.
 WORKDIR /opt
-COPY ./entrypoint.sh ./
+COPY --chmod=755 ./entrypoint.sh ./
 CMD "./entrypoint.sh"
-
-ENV GITHUB_BRANCH="main"
-ENV GITHUB_REPOSITORY="datagov-cz/data.gov.cz"
-ENV JEKYLL_ENABLED="1"
