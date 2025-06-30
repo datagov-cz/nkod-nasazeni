@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Make sure mounting point is owned by www-data.
+chown www-data:www-data /var/www/
+
 # Download content.
 if [ -d "/var/www/html/github/" ]; then
   su - www-data -s /bin/bash -c "cd /var/www/html/github/ && git pull"
@@ -11,7 +14,9 @@ fi
 
 # Optional content compilation.
 if [ "$JEKYLL_ENABLED" = "1" ]; then
-  su - www-data -s /bin/bash -c "cd /var/www/html/github/ && jekyll build"
+  # We set RUBYOPT, to deal with
+  # incompatible character encodings: ASCII-8BIT and UTF-8 (Encoding::CompatibilityError)
+  su - www-data -s /bin/bash -c 'cd /var/www/html/github/ && export RUBYOPT="-E utf-8:utf-8" && jekyll build'
 fi
 
 # Start PHP server.
