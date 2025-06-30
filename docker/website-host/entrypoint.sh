@@ -1,7 +1,11 @@
 #!/bin/sh
 
-# Download content.
+# Set environment variables.
+export GEM_HOME="/opt/jekyll/gems"
+export PATH="/opt/jekyll/gems/bin:$PATH"
+export RUBYOPT="-E utf-8:utf-8"
 
+# Download content.
 if [ -d "github" ]; then
   su - www-data -s /bin/bash -c "cd /var/www/html/github/ && git pull"
 else
