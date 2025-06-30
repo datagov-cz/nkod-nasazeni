@@ -19,6 +19,8 @@ GITHUB_REPOSITORY =
 GITHUB_SECRET=
 # "1" pro kompilaci obsahu pomocí Jekyll.
 JEKYLL_ENABLED=1
+# Port pro Apache server.
+PORT=
 ```
 
 ## Datová úložiště

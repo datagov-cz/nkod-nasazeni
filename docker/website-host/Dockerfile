@@ -14,7 +14,8 @@ COPY ./jekyll/Gemfile ./jekyll/Gemfile.lock ./
 RUN bundle install
 
 # Configure apache.
-COPY ./apache2 /etc/apache2/sites-available
+COPY ./apache2/sites-enabled/ /etc/apache2/sites-enabled/
+COPY ./apache2/ports.conf /etc/apache2/ports.conf
 
 # Install hooks.
 COPY --chown=www-data:www-data ./api/ /var/www/api/
