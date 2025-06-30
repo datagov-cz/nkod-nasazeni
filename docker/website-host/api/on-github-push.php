@@ -9,7 +9,7 @@ $jekyllEnabled = getenv('JEKYLL_ENABLED');
 define('LOGFILE', '/data/log/github.log');
 
 // What command to execute upon retrieval of a valid push event.
-$cmd = 'cd /var/www/html/ && git fetch --all && git checkout --force "origin/' . $branch;
+$cmd = 'cd /var/www/html/github/ && git fetch --all && git checkout --force "origin/' . $branch;
 if ($jekyllEnabled) {
   $cmd .= ' && bundle exec jekyll build';
 }
@@ -41,7 +41,7 @@ error_reporting(0);
 function log_msg($msg)
 {
   if (LOGFILE != '') {
-    file_put_contents(LOGFILE, $msg . "\n", FILE_APPEND);
+    file_put_contents(LOGFILE, $msg . "\n");
   }
 }
 

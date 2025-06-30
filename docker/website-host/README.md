@@ -23,12 +23,13 @@ JEKYLL_ENABLED=1
 
 ## Datová úložiště
 
-Data z GitHubu jsou uložena v adresáři `/var/www/html/`.
-Pro zrychlení spuštění je vhodné tento adresář připojit jako volume.
+Data z GitHubu jsou uložena v adresáři `/var/www/html/github`.
+Pro zrychlení spuštění je vhodné adresář `/var/www/html/` připojit jako volume.
 
 ## Logování
 
-API funkce, pro synchronizaci, zapisují výsledky do adresáře `/data/log/`.
+API funkce, pro synchronizaci, zapisuje výsledek do adresáře `/data/log/github.log`.
+Tento soubor je přepsán s každou synchronizací.
 
 ## Porty
 
