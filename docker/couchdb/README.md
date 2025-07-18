@@ -1,21 +1,27 @@
 # CouchDB databáze
 
-## Vstupní body
-
 ## Konfigurace
+
 Obsah `.env` souboru:
 ```ini
-# Uživatelské jméno pro plný přístup (admin).
+# Uživatelské jméno pro plný/administrátorský přístup.
 COUCHDB_USER=
 # Heslo
 COUCHDB_PASSWORD=
 ```
 
 ## Datová úložiště
-Data jsou uložena do adresáře `/opt/couchdb/data`.
+
+Data jsou uložena do adresáře `/opt/couchdb/data` pro uživatele `5984:5984`.
 
 ## Logování
-Logování do souboru není nastaveno a tak jsou logy zapisovány pouze na standardní výstup.
+
+Logy jsou zapisovány na standardní výstup.
 
 ## Porty
+
 - 5984
+
+## Vstupní body
+
+## Poznámky pro vývoj

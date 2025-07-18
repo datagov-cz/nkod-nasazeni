@@ -1,9 +1,9 @@
-name: docker
+name: adapter
 on:
   push:
     paths:
-      - ".github/workflows/docker-couchdb.yml"
-      - "docker/couchdb/**"
+      - ".github/workflows/adapter.yml"
+      - "docker/adapter/**"
     branches:
       - "main"
       - "develop"
@@ -26,8 +26,8 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v3
         with:
-          context: ./docker/couchdb/
+          context: ./docker/adapter/
           push: true
-          tags: ghcr.io/datagov-cz/nkod-couchdb:${{ github.ref_name }}
+          tags: ghcr.io/datagov-cz/nkod-adapter:${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

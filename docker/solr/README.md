@@ -1,25 +1,28 @@
 # Solr databáze
 
-## Vstupní body
-
 ## Konfigurace
+
 Tato komponenta nevyžaduje žádnou konfiguraci.
 
 ## Datová úložiště
-Data jsou uložena do adresáře `/var/solr/data`.
-Obsah adresáře je inicializován automaticky při spuštění.
-Adresář musí být zapisovatelný uživatelem 8983:8983.
+
+Data jsou uložena do adresáře `/var/solr/data` pro uživatele `8983:8983`.
 
 ## Logování
+
 Logy jsou uloženy do adresáře `/var/solr/logs`.
 [Logování je konfigurováno](https://solr.apache.org/guide/solr/latest/deployment-guide/configuring-logging.html) rotací po 10 souborech o maximální velikosti souboru 32MB.
 
 ## Porty
+
 - 8983
 
+## Vstupní body
+
 ## Poznámky pro vývoj
+
 - [Solr’s Configuration Files](https://solr.apache.org/guide/solr/latest/configuration-guide/configuration-files.html#solrs-configuration-files).
-- Pokud bychom potřebovali synonima nebo stop slova tak lze konfigurovat pomocí:
+- Pokud bychom potřebovali synonyma nebo stop slova tak lze konfigurovat pomocí:
   ```xml
   <analyzer type="index">
     <filter class="solr.StopFilterFactory" words="/stopwords.txt" ignoreCase="true"/>

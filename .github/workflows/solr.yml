@@ -1,9 +1,9 @@
-name: docker
+name: solr
 on:
   push:
     paths:
-      - ".github/workflows/docker-adapter.yml"
-      - "docker/adapter/**"
+      - ".github/workflows/solr.yml"
+      - "docker/solr/**"
     branches:
       - "main"
       - "develop"
@@ -26,8 +26,8 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v3
         with:
-          context: ./docker/adapter/
+          context: ./docker/solr/
           push: true
-          tags: ghcr.io/datagov-cz/nkod-adapter:${{ github.ref_name }}
+          tags: ghcr.io/datagov-cz/nkod-solr:${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
