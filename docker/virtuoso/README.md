@@ -26,3 +26,5 @@ Logy jsou zapisovány do `/database/`
 ## Vstupní body
 
 ## Poznámky pro vývoj
+
+- Adresář `initdb.d` obsahuje inicializační skripty ke spuštění.

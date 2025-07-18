@@ -1,11 +1,5 @@
 FROM openlink/virtuoso-opensource-7:7.2.15
 
-# Copy database configuration file.
-WORKDIR /opt/nkod/
-COPY --owner virtuoso:virtuoso ./virtuoso.ini ./
-
-# Copy runtime script.
-COPY --owner virtuoso:virtuoso ./initdb.d/* /initdb.d/
-
-# Go back to the original working directory.
-WORKDIR /opt/virtuoso-opensource/database
+# Copy and set new database init file.
+COPY --chmod=544 ./virtuoso.ini /opt/nkod/
+ENV VIRTUOSO_INI_FILE=/opt/nkod/virtuoso.ini
