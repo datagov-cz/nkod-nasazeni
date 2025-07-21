@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- https://solr.apache.org/guide/solr/latest/configuration-guide/configuring-solrconfig-xml.html -->
+<!--
+  https://solr.apache.org/guide/solr/latest/configuration-guide/configuring-solrconfig-xml.html
+  https://cwiki.apache.org/confluence/display/solr/SolrConfigXml
+-->
 <config>
   <luceneMatchVersion>9.8</luceneMatchVersion>
   <!--
@@ -7,4 +10,16 @@
     Force use of schema.xml and disable any programmatic changes at run time.
   -->
   <schemaFactory class="ClassicIndexSchemaFactory"/>
+  <!-- Request handlers. -->
+  <requestHandler name="/select" class="solr.SearchHandler">
+  </requestHandler>
+  <requestHandler name="/query" class="solr.SearchHandler">
+    <!-- Return JSON by default. -->
+    <lst name="defaults">
+      <str name="echoParams">explicit</str>
+      <str name="wt">json</str>
+      <str name="indent">true</str>
+    </lst>
+  </requestHandler>
+  <!-- requestHandler for /update/json is added implicitly. -->
 </config>
