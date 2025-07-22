@@ -20,8 +20,8 @@ Logy jsou zapisovány do `/database/`
 
 ## Porty
 
-- 1111
-- 8890
+- 1111 - ODBC 2 / JDBC / ADO.Net / OLE-DB / ISQL data server
+- 8890 - HTTP
 
 ## Vstupní body
 

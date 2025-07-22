@@ -25,3 +25,5 @@ Logy jsou zapisovány na standardní výstup.
 ## Vstupní body
 
 ## Poznámky pro vývoj
+
+- Fauxton je dostupný na `http://localhost:5984/_utils/`.
