@@ -1,4 +1,5 @@
 # Adaptér na externí služby
+
 Tato komponenta obsahuje následující adaptéry na externí služby:
 - ms-adaptér -
   [Adaptér pro přístup ke službám skrze Microsoft Graph API](https://github.com/datagov-cz/ms-adapter/) je spouštěný ve dvou režimech.
@@ -7,21 +8,8 @@ Tato komponenta obsahuje následující adaptéry na externí služby:
 - isds-adapter -
   [Adaptér pro stažení datových zpráv](https://github.com/datagov-cz/isds-adapter/).
 
-## Vstupní body
-- `/opt/entrypoint.sh`
-  Výchozí vstupní bod pro spuštění Cronu.
-- `/opt/entrypoint.d/applications-list.sh`
-  Stáhne seznam aplikací.
-- `/opt/entrypoint.d/applications-image.sh`
-  Stáhne obrázky pro aplikace.
-- `/opt/entrypoint.d/suggestions-list.sh`
-  Stáhne seznam navržených datových sad pro zveřejnění.
-- `/opt/entrypoint.d/allowed-publishers-list.sh`
-  Stáhne seznam povolených poskytovatelů.
-- `/opt/entrypoint.d/isds.sh`
-  Stáhne zprávy z ISDS.
-
 ## Konfigurace
+
 Spouštění adaptérů je zajištěné pomocí Cronu jehož konfigurace je v souboru `./crontab`.
 
 Konfigurace předaná isds-adaptéru je uložena v `/isds-adapter/configuration.properties`.
@@ -63,6 +51,7 @@ ISDS_URL=
 ```
 
 ## Datová úložiště
+
 Veškerá stažená data jsou uložena v adresáři `/data/adapter/` následujícím způsobem:
 - `/data/adapter/applications/content.trig` -
   List registrovaných aplikací.
@@ -78,8 +67,27 @@ Veškerá stažená data jsou uložena v adresáři `/data/adapter/` následují
 Aplikace běží pod uživatelem 5987:5987 pro kterého je třeba nastavit práva v datovém úložišti.
 
 ## Logování
+
 Adaptéry zapisují logy ve formát JSON do adresáře `/data/log/`.
 Jedná se o přesměrování výstupu z adaptérů a je tedy třeba zajistit jeho pravidelné mazání, či rotaci.
 
 ## Porty
+
 Tento image nevystavuje žádné porty.
+
+## Vstupní body
+
+- `/opt/entrypoint.sh`
+  Výchozí vstupní bod pro spuštění Cronu.
+- `/opt/entrypoint.d/applications-list.sh`
+  Stáhne seznam aplikací.
+- `/opt/entrypoint.d/applications-image.sh`
+  Stáhne obrázky pro aplikace.
+- `/opt/entrypoint.d/suggestions-list.sh`
+  Stáhne seznam navržených datových sad pro zveřejnění.
+- `/opt/entrypoint.d/allowed-publishers-list.sh`
+  Stáhne seznam povolených poskytovatelů.
+- `/opt/entrypoint.d/isds.sh`
+  Stáhne zprávy z ISDS.
+
+## Poznámky pro vývoj
