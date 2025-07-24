@@ -7,6 +7,8 @@ Pro spuštění níže uvedených příkazů je třeba mít nainstalováno:
   [Postup instalace](https://kubernetes.io/docs/tasks/tools/).
 - `az`, Azure CLI
   [Postup instalace](https://learn.microsoft.com/cs-cz/cli/azure/install-azure-cli?view=azure-cli-latest).
+- `kubelogin`, Kubelogni
+  [Postup instalace](https://azure.github.io/kubelogin/install.html)
 - `powershell`
 
 ## Příprava prostředí powershell
