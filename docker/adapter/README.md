@@ -30,6 +30,7 @@ MS_SITE=
 # Odpovídá argumentu "list" jak je popsán v dokumentaci k ms-adaptéru.
 # Jedná se o list s registracemi aplikací.
 MS_APPLICATIONS_LIST=
+
 # Odpovídá argumentu "path" jak je popsán v dokumentaci k ms-adaptéru.
 # Jedná se o cestu oddělenou pomocí znaku `/`.
 # První část cesty je jméno knihovny, následují jména adresářů.
