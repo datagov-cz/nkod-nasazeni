@@ -18,7 +18,7 @@ STORAGE_URL=
 # Pipeline ke spuštění.
 PIPELINE_URL=
 
-# Repozitář jako zdroj pipelines a templates.
+# Repositář jako zdroj pipelines a templates.
 STORAGE_REPOSITORY_BRANCH=
 STORAGE_REPOSITORY=
 ```

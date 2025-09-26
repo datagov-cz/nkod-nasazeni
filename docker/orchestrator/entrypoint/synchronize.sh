@@ -11,7 +11,6 @@ git clone --branch $STORAGE_REPOSITORY_BRANCH $STORAGE_REPOSITORY ./
 
 echo "Move data to storage directory"
 cp -r ./pipelines /data/lp-etl/storage/
-cp -r ./templates /data/lp-etl/storage/
 
 echo "Remove temporary data"
 rm -rf /tmp/storage/
