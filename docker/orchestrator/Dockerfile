@@ -8,14 +8,14 @@ ARG USER=5987
 RUN addgroup --gid $USER "nkod" \
     && useradd --gid "nkod" --uid $USER "nkod" --create-home
 
-# Copy entrypoints.
-WORKDIR /opt/entrypoint
-COPY ./entrypoint ./
+# Copy entrypoint.
+WORKDIR /opt/
+COPY ./entrypoint.sh ./
 RUN chown nkod:nkod *.sh && chmod 0744 *.sh
 
-# Copy entrypoints.
+# Copy cron jobs.
 WORKDIR /opt/entrypoint
-COPY ./entrypoint ./
+COPY ./entrypoint/* ./
 RUN chown nkod:nkod *.sh && chmod 0744 *.sh
 
 # Setup cron.
