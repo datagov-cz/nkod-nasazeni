@@ -52,8 +52,6 @@
 
     <field name="modified" type="pdate" multiValued="false"/>
 
-    <field name="issued" type="pdate" multiValued="false"/>
-
     <field name="accrual_periodicity" type="string" multiValued="false"/>
 
     <field name="publisher" type="string" multiValued="false" indexed="true"/>
