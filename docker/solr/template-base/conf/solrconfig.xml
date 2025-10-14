@@ -27,11 +27,33 @@
   <!-- requestHandler for /update/json is added implicitly. -->
 
   <!-- Configure update processors. -->
-  <updateProcessor class="solr.UUIDUpdateProcessorFactory" name="uuid"/>
-  <updateProcessor class="solr.RemoveBlankFieldUpdateProcessorFactory" name="remove-blank"/>
-  <updateProcessor class="solr.ParseBooleanFieldUpdateProcessorFactory" name="parse-boolean"/>
+  <updateProcessor
+    class="solr.UUIDUpdateProcessorFactory"
+    name="uuid"/>
+  <updateProcessor
+    class="solr.RemoveBlankFieldUpdateProcessorFactory"
+    name="remove-blank"/>
+  <updateProcessor
+    class="solr.ParseBooleanFieldUpdateProcessorFactory"
+    name="parse-boolean"/>
+  <updateProcessor
+    class="solr.ParseDateFieldUpdateProcessorFactory"
+    name="parse-date"
+  >
+    <arr name="format">
+      <str>yyyy-MM-dd['T'[HH:mm[:ss[.SSS]][z</str>
+      <str>yyyy-MM-dd['T'[HH:mm[:ss[,SSS]][z</str>
+      <str>yyyy-MM-dd HH:mm[:ss[.SSS]][z</str>
+      <str>yyyy-MM-dd HH:mm[:ss[,SSS]][z</str>
+      <str>[EEE, ]dd MMM yyyy HH:mm[:ss] z</str>
+    </arr>
+  </updateProcessor>
 
-  <updateRequestProcessorChain name="nkod-request-professor-chai" default="true" processor="uuid,remove-blank,parse-boolean">
+  <updateRequestProcessorChain
+    name="nkod-request-professor-chai"
+    default="true"
+    processor="uuid,remove-blank,parse-boolean,parse-date"
+  >
     <processor class="solr.LogUpdateProcessorFactory"/>
     <processor class="solr.DistributedUpdateProcessorFactory"/>
     <processor class="solr.RunUpdateProcessorFactory"/>
