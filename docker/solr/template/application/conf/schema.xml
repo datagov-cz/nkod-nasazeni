@@ -64,13 +64,29 @@
 
     <field name="state" type="strings"/>
 
+    <field name="state_cs" type="string" indexed="false"/>
+
+    <field name="state_en" type="string" indexed="false"/>
+
     <field name="platform" type="strings"/>
+
+    <field name="platform_cs" type="strings" indexed="false"/>
+
+    <field name="platform_en" type="strings" indexed="false"/>
 
     <field name="link" type="string" indexed="false"/>
 
     <field name="theme" type="strings"/>
 
+    <field name="theme_cs" type="strings" indexed="false"/>
+
+    <field name="theme_en" type="strings" indexed="false"/>
+
     <field name="type" type="string"/>
+
+    <field name="type_cs" type="string" indexed="false"/>
+
+    <field name="type_en" type="string" indexed="false"/>
 
     <field name="modified" type="pdate" indexed="false"/>
 
