@@ -36,7 +36,7 @@
 
     <fieldType name="plong" class="solr.LongPointField" docValues="true"/>
 
-    <fieldType name="pdate" class="solr.DatePointField" docValues="true"/>
+    <fieldType name="pdate" class="solr.DatePointField" multiValued="false"/>
 
     <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
 
@@ -50,7 +50,7 @@
 
     <field name="_version_" type="plong" indexed="false" stored="false"/>
 
-    <field name="modified" type="pdate" multiValued="false"/>
+    <field name="modified" type="pdate"/>
 
     <field name="accrual_periodicity" type="string" multiValued="false"/>
 
@@ -62,9 +62,9 @@
 
     <field name="theme" type="strings"/>
 
-    <field name="temporal_start" type="pdate" multiValued="false" docValues="true"/>
+    <field name="temporal_start" type="pdate" docValues="true"/>
 
-    <field name="temporal_end" type="pdate" multiValued="false" docValues="true"/>
+    <field name="temporal_end" type="pdate" docValues="true"/>
 
     <field name="spatial" type="strings"/>
 
