@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkod-adapter-deployment
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: adapter
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: adapter
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: adapter
+    spec:
+      volumes:
+        - name: adapter-volume
+          persistentVolumeClaim:
+            claimName: nkod-adapter-pvc
+      securityContext:
+          fsGroup: 5987
+          fsGroupChangePolicy: "OnRootMismatch"
+      containers:
+        - name: nkod-adapter
+          image: ghcr.io/datagov-cz/nkod-adapter:develop
+          imagePullPolicy: Always
+          env:
+            - name: MS_APPLICATION
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-adapter-secret
+                  key: ms_application
+            - name: MS_TENANT
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-adapter-secret
+                  key: ms_tenant
+            - name: MS_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-adapter-secret
+                  key: ms_secret
+            - name: MS_SITE
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-adapter-secret
+                  key: ms_site
+            - name: MS_APPLICATIONS_LIST
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-adapter-secret
+                  key: ms_applications_list
+            - name: MS_APPLICATIONS_PATH
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-adapter-secret
+                  key: ms_applications_path
+            - name: MS_SUGGESTIONS_LIST
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-adapter-secret
+                  key: ms_suggestions_list
+            - name: MS_ALLOWED_PUBLISHERS_LIST
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-adapter-secret
+                  key: ms_allowed_publishers_list
+            - name: ISDS_LOGIN
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-adapter-secret
+                  key: isds_login
+            - name: ISDS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-adapter-secret
+                  key: isds_password
+            - name: ISDS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-adapter-secret
+                  key: isds_url
+          volumeMounts:
+            - mountPath: "/data/adapter/"
+              name: adapter-volume

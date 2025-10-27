@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkod-public-data-deployment
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: public-data
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: public-data
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: public-data
+    spec:
+      volumes:
+        - name: public-volume
+          persistentVolumeClaim:
+            claimName: nkod-public-pvc
+      containers:
+        - name: nkod-public-data
+          image: nginx:1.29.2
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: NGINX_HOST
+              value: "172.205.23.154"
+            - name: NGINX_PORT
+              value: "80"
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: "/usr/share/nginx/html"
+              name: public-volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nkod-public-data
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: public-data
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: public-data
+  ports:
+  - protocol: TCP
+    targetPort: 80
+    port: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nkod-public-data-ingress
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: public-data
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /soubor/
+        pathType: Prefix
+        backend:
+          service:
+            name: nkod-public-data
+            port:
+              number: 80
+      - path: /dokuwiki/
+        pathType: Prefix
+        backend:
+          service:
+            name: nkod-public-data
+            port:
+              number: 80
+      - path: /sitemaps/
+        pathType: Prefix
+        backend:
+          service:
+            name: nkod-public-data
+            port:
+              number: 80

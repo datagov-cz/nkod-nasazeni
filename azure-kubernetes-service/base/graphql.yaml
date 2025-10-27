@@ -1,0 +1,124 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkod-graphql-deployment
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: graphql
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: graphql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: graphql
+    spec:
+      volumes:
+        - name: graphql-volume
+          persistentVolumeClaim:
+            claimName: nkod-graphql-pvc
+      securityContext:
+          fsGroup: 1000
+          fsGroupChangePolicy: "OnRootMismatch"
+      containers:
+        - name: nkod-graphql
+          image: ghcr.io/datagov-cz/nkod-graphql:develop
+          imagePullPolicy: Always
+          env:
+            - name: NKOD_GRAPHQL_PORT
+              value: "8080"
+            - name: NKOD_GRAPHQL_FILE
+              value: "/database/upload/nkod.json"
+            - name: NKOD_GRAPHQL_QUERY_LIMIT
+              value: "10000"
+            - name: NKOD_GRAPHQL_LOG_LEVEL
+              value: info
+            - name: NKOD_GRAPHQL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-graphql-secret
+                  key: graphql_reload_token
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: "/database"
+              name: graphql-volume
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+        - name: ssh-server
+          image: ghcr.io/datagov-cz/nkod-ssh-server:develop
+          imagePullPolicy: Always
+          env:
+            - name: USER
+              value: "1000"
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-graphql-secret
+                  key: graphql_ssh_password
+          ports:
+            - containerPort: 22
+          volumeMounts:
+            - mountPath: "/database"
+              name: graphql-volume
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nkod-graphql-pvc
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: graphql
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: managed-csi
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nkod-graphql
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: graphql
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: graphql
+  ports:
+  - protocol: TCP
+    targetPort: 8080
+    port: 8080
+    name: http
+  - protocol: TCP
+    targetPort: 22
+    port: 22
+    name: ssh
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nkod-graphql-ingress
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: graphql
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /graphql
+        pathType: Prefix
+        backend:
+          service:
+            name: nkod-graphql
+            port:
+              number: 8080

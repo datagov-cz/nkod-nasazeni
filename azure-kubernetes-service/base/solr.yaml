@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkod-solr-deployment
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: solr
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: solr
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: solr
+    spec:
+      volumes:
+        - name: solr-volume
+          persistentVolumeClaim:
+            claimName: nkod-solr-pvc
+      securityContext:
+          fsGroup: 8983
+          fsGroupChangePolicy: "OnRootMismatch"
+      containers:
+        - name: nkod-solr
+          image: ghcr.io/datagov-cz/nkod-solr:develop
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8983
+          volumeMounts:
+            - mountPath: "/var/solr/data"
+              name: solr-volume
+          securityContext:
+            runAsUser: 8983
+            runAsGroup: 8983
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nkod-solr-pvc
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: solr
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: managed-csi
+  resources:
+    requests:
+      storage: 8Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nkod-solr
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: solr
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: solr
+  ports:
+  - protocol: TCP
+    targetPort: 8983
+    port: 8983

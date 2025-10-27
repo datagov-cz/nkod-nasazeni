@@ -1,0 +1,213 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkod-linkedpipes-etl-deployment
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: linkedpipes-etl
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: linkedpipes-etl
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: linkedpipes-etl
+    spec:
+      volumes:
+        - name: linkedpipes-etl-volume
+          persistentVolumeClaim:
+            claimName: nkod-linkedpipes-etl-pvc
+        - name: public-volume
+          persistentVolumeClaim:
+            claimName: nkod-public-pvc
+        - name: adapter-volume
+          persistentVolumeClaim:
+            claimName: nkod-adapter-pvc
+      securityContext:
+          fsGroup: 5987
+          fsGroupChangePolicy: "OnRootMismatch"
+      containers:
+        - name: nkod-linkedpipes-etl-storage
+          image: ghcr.io/linkedpipes/etl-storage:2023-04-03
+          imagePullPolicy: Always
+          env:
+            - name: LP_ETL_DOMAIN
+              value: "http://localhost:8080"
+            - name: LP_ETL_MONITOR_URL
+              value: "http://localhost:8081"
+          ports:
+            - containerPort: 8083
+          volumeMounts:
+            - mountPath: "/data/lp-etl/"
+              name: linkedpipes-etl-volume
+          securityContext:
+            runAsUser: 5987
+            runAsGroup: 5987
+            runAsNonRoot: true
+        - name: nkod-linkedpipes-etl-frontend
+          image: ghcr.io/linkedpipes/etl-frontend:2024-01-08
+          imagePullPolicy: Always
+          env:
+            - name: LP_ETL_DOMAIN
+              value: "http://localhost:8080"
+            - name: LP_ETL_MONITOR_URL
+              value: "http://localhost:8081"
+            - name: LP_ETL_STORAGE_URL
+              value: "http://localhost:8083"
+            - name: LP_ETL_FRONTEND_LOG
+              value: ""
+          ports:
+            - containerPort: 8080
+          securityContext:
+            runAsUser: 5987
+            runAsGroup: 5987
+            runAsNonRoot: true
+        - name: nkod-linkedpipes-etl-executor
+          image: ghcr.io/linkedpipes/etl-executor:2023-04-03
+          imagePullPolicy: Always
+          # We need to keep limits synch with -Xmx command.
+          command: ["java", "-DconfigFileLocation=/opt/lp-etl/configuration/configuration.properties", "-Xmx12g", "-jar" ,"./executor/executor.jar"]
+          resources:
+            requests:
+              memory: "8Gi"
+            limits:
+              memory: "12Gi"
+          env:
+            - name: LP_ETL_DOMAIN
+              value: "http://localhost:8080"
+            - name: LP_ETL_STORAGE_URL
+              value: "http://localhost:8083"
+            - name: LP_ETL_INSTANCE_URL
+              value: "http://localhost:8080"
+            # Virtuoso
+            - name: LP_ETL_NKOD_VIRTUOSO_URL
+              value: nkod-virtuoso
+            - name: LP_ETL_NKOD_VIRTUOSO_SSH_USER
+              value: sshuser
+            - name: LP_ETL_NKOD_VIRTUOSO_SSH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-virtuoso-secret
+                  key: virtuoso_ssh_password
+            - name: LP_ETL_NKOD_VIRTUOSO_JDBC_USER
+              value: dba
+            - name: LP_ETL_NKOD_VIRTUOSO_JDBC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-virtuoso-secret
+                  key: virtuoso_dba_password
+            # CouchDB
+            - name: LP_ETL_NKOD_COUCHDB_URL
+              value: http://nkod-couchdb:5984/
+            - name: LP_ETL_NKOD_COUCHDB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-couchdb-secret
+                  key: couchdb_user
+            - name: LP_ETL_NKOD_COUCHDB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-couchdb-secret
+                  key: couchdb_password
+            # Solr
+            - name: LP_ETL_NKOD_SOLR_URL
+              value: http://localhost:8983/solr
+            # Adapter
+            - name: LP_ETL_ADAPTER_PATH
+              value: /data/adapter/
+            # GraphQL
+            - name: LP_ETL_GRAPHQL_SSH_URL
+              value: nkod-graphql
+            - name: LP_ETL_GRAPHQL_SSH_USER
+              value: sshuser
+            - name: LP_ETL_GRAPHQL_SSH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-graphql-secret
+                  key: graphql_ssh_password
+            - name: NKOD_GRAPHQL_FILE
+              value: "/data/nkod-graphql.json"
+          ports:
+            - containerPort: 8085
+          volumeMounts:
+            - mountPath: "/data/lp-etl/"
+              name: linkedpipes-etl-volume
+            - mountPath: "/data/adapter/"
+              name: adapter-volume
+            - mountPath: "/data/public/"
+              name: public-volume
+          securityContext:
+            runAsUser: 5987
+            runAsGroup: 5987
+            runAsNonRoot: true
+        - name: nkod-linkedpipes-etl-executor-monitor
+          image: ghcr.io/linkedpipes/etl-executor-monitor:2023-04-03
+          imagePullPolicy: Always
+          env:
+            - name: LP_ETL_DOMAIN
+              value: "http://localhost:8080"
+            - name: LP_ETL_EXECUTOR_URL
+              value: "http://localhost:8085"
+            - name: LP_ETL_EXECUTION_HISTORY_COUNT_LIMIT
+              value: "3"
+            - name: LP_ETL_EXECUTION_RETRY_LIMIT
+              value: "3"
+          ports:
+            - containerPort: 8081
+          volumeMounts:
+            - mountPath: "/data/lp-etl/"
+              name: linkedpipes-etl-volume
+          securityContext:
+            runAsUser: 5987
+            runAsGroup: 5987
+            runAsNonRoot: true
+        - name: nkod-orchestrator
+          image: ghcr.io/datagov-cz/nkod-orchestrator:develop
+          imagePullPolicy: Always
+          env:
+            - name: FRONTEND_URL
+              value: localhost:8080
+            - name: STORAGE_URL
+              value: localhost:8083
+            - name: PIPELINE_URL
+              value: https://oha02.dia.gov.cz/etl/resources/components/1700141340878-0004
+            - name: STORAGE_REPOSITORY_BRANCH
+              value: k8s-develop
+            - name: STORAGE_REPOSITORY
+              value: https://github.com/datagov-cz/nkod.git
+          volumeMounts:
+            - mountPath: "/data/lp-etl/"
+              name: linkedpipes-etl-volume
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nkod-linkedpipes-etl-pvc
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: linkedpipes-etl
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: managed-csi
+  resources:
+    requests:
+      storage: 256Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nkod-linkedpipes-etl
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: linkedpipes-etl
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: linkedpipes-etl
+  ports:
+  - protocol: TCP
+    targetPort: 8080
+    port: 8080

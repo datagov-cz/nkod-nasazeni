@@ -1,0 +1,126 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkod-virtuoso-deployment
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: virtuoso
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: virtuoso
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: virtuoso
+    spec:
+      volumes:
+        - name: virtuoso-volume
+          persistentVolumeClaim:
+            claimName: nkod-virtuoso-pvc
+      securityContext:
+          fsGroup: 1001
+          fsGroupChangePolicy: "OnRootMismatch"
+      containers:
+        - name: nkod-virtuoso
+          image: ghcr.io/datagov-cz/nkod-virtuoso:develop
+          imagePullPolicy: Always
+          env:
+            - name: DBA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-virtuoso-secret
+                  key: virtuoso_dba_password
+            - name: DAV_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-virtuoso-secret
+                  key: virtuoso_dva_password
+          ports:
+            - containerPort: 1111
+            - containerPort: 8890
+          volumeMounts:
+            - mountPath: "/database"
+              name: virtuoso-volume
+          securityContext:
+            runAsUser: 1001
+            runAsGroup: 1001
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+        - name: ssh-server
+          image: ghcr.io/datagov-cz/nkod-ssh-server:develop
+          imagePullPolicy: Always
+          env:
+            - name: USER
+              value: "1001"
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-virtuoso-secret
+                  key: virtuoso_ssh_password
+          ports:
+            - containerPort: 22
+          volumeMounts:
+            - mountPath: "/database"
+              name: virtuoso-volume
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nkod-virtuoso-pvc
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: virtuoso
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: managed-csi
+  resources:
+    requests:
+      storage: 64Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nkod-virtuoso
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: virtuoso
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: virtuoso
+  ports:
+  - protocol: TCP
+    targetPort: 1111
+    port: 1111
+    name: sql
+  - protocol: TCP
+    targetPort: 8890
+    port: 8890
+    name: http
+  - protocol: TCP
+    targetPort: 22
+    port: 22
+    name: ssh
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nkod-virtuoso-ingress
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: virtuoso
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /sparql
+        pathType: Prefix
+        backend:
+          service:
+            name: nkod-virtuoso
+            port:
+              number: 8890

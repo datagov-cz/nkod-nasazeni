@@ -1,15 +1,22 @@
 # Nasazení do prostředí Azure Kubernetes Service (AKS)
 
+## Konfigurace
+
+### LinkedPipes:ETL
+
+Podle nasazení je třeba upravit následující:
+- Šablona `Frontend prefix pro kvalitu` obsahuje prefix k souborům s kvalitou.
+
 ## Požadavky
 
 Pro spuštění níže uvedených příkazů je třeba mít nainstalováno:
+- `powershell`
 - `kubectl`, verze by měla odpovídat AKS.
   [Postup instalace](https://kubernetes.io/docs/tasks/tools/).
 - `az`, Azure CLI
   [Postup instalace](https://learn.microsoft.com/cs-cz/cli/azure/install-azure-cli?view=azure-cli-latest).
 - `kubelogin`, Kubelogin
   [Postup instalace](https://azure.github.io/kubelogin/install.html).
-- `powershell`
 
 ## Příprava prostředí powershell
 
@@ -19,17 +26,19 @@ Všechny níže uvedené příkazy předpokládají:
   ```shell
   $env:SUBSCRIPTION=
   $env:RESOURCE_GROUP=
-  $env:AKS_CLUSTER=
-  $env:CONTAINER_REGISTRY=
+  $env:AKS_CLUSTER="nkod-kubernetes"
+  $env:CONTAINER_REGISTRY="nkodcontainerregistry"
   ```
 
-## Nastavení az
+## Nastavení Azure CLI (az)
 
 ```shell
 # Přihlásíme se do Azure, je třeba vybrat správnou "subscription".
 az login
 # "subscription" je možné změnit pomocí následujícího příkazu.
 az account set --subscription $env:SUBSCRIPTION
+# Pro kontrolu aktuální "subscription" lze použít následující příkaz.
+az account show -o table
 ```
 
 ## Příprava prostředí Azure
@@ -47,11 +56,21 @@ az acr config authentication-as-arm show --registry $env:CONTAINER_REGISTRY
 
 # Vytvoření Azure Kubernetes Service (AKS), více informací na:
 # https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/overview
-# Toto je třeba upravit: "node-count" "node-vm-size" a "location".
-az aks create --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --node-count 2 --attach-acr $env:CONTAINER_REGISTRY --node-vm-size Standard_A4_v2 --location northeurope
+# Přehled pro A - Entry-level economical, je na:
+# https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/general-purpose/av2-series
+# Standard_A4_v2 - 4 CPU, 8GB
+# WARNING: Toto je třeba upravit: "node-count" "node-vm-size" a "location".
+az aks create --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool1  --node-count 2 --attach-acr $env:CONTAINER_REGISTRY --node-vm-size Standard_A4_v2 --location northeurope
+
+# Přidání node s větší pamětí pro zpracování dat.
+# Standard_A8_v2 - 8 CPU, 16GB
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool2 --node-count 1 --node-vm-size Standard_A8_v2
 
 # Umožni AKS přístup k ACR.
-az aks update --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --attach-acr $env:CONTAINER_REGISTRY
+az aks update --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --attach-acr $env:CONTAINER_REGISTRY
+
+# Výpis nodes a získání node pool name.
+az aks nodepool list --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER -o table
 ```
 
 ## Nastavení kubeclt
@@ -87,6 +106,34 @@ Zdroje:
 - [Managed NGINX ingress with the application routing add-on](https://learn.microsoft.com/en-us/azure/aks/app-routing).
 - [Application routing add-on for AKS training](https://github.com/sabbour/app-routing-tutorial)
 
+## Sestavení a publikace Docker obrazů
+
+Pomocí Azure portálu se můžeme podívat na obsah repositáře.
+Z detailu Container registry otevřeme skupinu "Service" a dále vybereme "Repositories".
+
+```shell
+# Začneme přihlášením se do ACR.
+az acr login --name $env:CONTAINER_REGISTRY
+# Solr
+docker build -t "$env:CONTAINER_REGISTRY.azurecr.io/solr:develop" ./docker/solr/
+docker push "$env:CONTAINER_REGISTRY.azurecr.io/solr:develop"
+# ...
+```
+
+## Nasazení komponent národního katalogu
+Pro nasazení do různých prostředí využijeme [Kustomize](https://kustomize.io/), jenž je součástí kubectl.
+
+```shell
+# Namespace potřebujeme pro secrets
+kubectl apply -f ./azure-kubernetes-service/base/namespace.yaml
+# Secrets a konfigurace
+kubectl apply -f ./azure-kubernetes-service/secret/
+# Komponenty
+
+kubectl apply -k ./azure-kubernetes-service/overlays/develop
+
+```
+
 ## Konvence
 
 ...
@@ -113,6 +160,11 @@ Pro přístup je nutné mít nastavené příkazy [az](#nastavení-az) a [kubecl
 Připojení k běžícímu podu pomocí příkazové řádky:
 ```shell
 kubectl exec -it pod/{pod-name} -- /bin/bash
+```
+
+V případě více kontejnerů je možné si vybrat následovně:
+```shell
+kubectl exec -it pod/{pod-name} -c {container} -- /bin/bash
 ```
 
 Přístup na porty:

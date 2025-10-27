@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkod-couchdb-deployment
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: couchdb
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: couchdb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: couchdb
+    spec:
+      volumes:
+        - name: couchdb-volume
+          persistentVolumeClaim:
+            claimName: nkod-couchdb-pvc
+      securityContext:
+          fsGroup: 5984
+          fsGroupChangePolicy: "OnRootMismatch"
+      containers:
+        - name: nkod-couchdb
+          image: ghcr.io/datagov-cz/nkod-couchdb:develop
+          imagePullPolicy: Always
+          env:
+            - name: COUCHDB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-couchdb-secret
+                  key: couchdb_user
+            - name: COUCHDB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkod-couchdb-secret
+                  key: couchdb_password
+          ports:
+            - containerPort: 5984
+          volumeMounts:
+            - mountPath: "/opt/couchdb/data"
+              name: couchdb-volume
+          securityContext:
+            runAsUser: 5984
+            runAsGroup: 5984
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nkod-couchdb-pvc
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: couchdb
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: managed-csi
+  resources:
+    requests:
+      storage: 32Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nkod-couchdb
+  namespace: nkod
+  labels:
+    app.kubernetes.io/name: couchdb
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: couchdb
+  ports:
+  - protocol: TCP
+    targetPort: 5984
+    port: 5984
