@@ -23,7 +23,7 @@ PORT=80
 
 ## Datová úložiště
 
-Data stažená z externích zdrojů jsou uložena do adresáře `/mnt/website`.
+Data stažená z externích zdrojů jsou uložena do adresáře `/data/website`.
 Pro urychlení spuštění je vhodné ho připojit jako volume.
 
 ## Logování

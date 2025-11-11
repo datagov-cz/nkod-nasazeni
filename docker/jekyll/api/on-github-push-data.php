@@ -8,7 +8,7 @@ $secret = getenv('GITHUB_SECRET');
 define('LOGFILE', '/data/log/github.log');
 
 // What command to execute upon retrieval of a valid push event.
-$cmd = 'cd /var/www/html/github/ && git fetch --all && git checkout --force "origin/' . $branch;
+$cmd = 'cd /data/website/ && git fetch --all && git checkout --force "origin/' . $branch . '"';
 // Append command to compile the jekyll.
 $cmd .= ' && bundle exec jekyll build';
 
@@ -74,9 +74,6 @@ $data = json_decode($post_data, true);
 // First do all checks and then report back in order to avoid timing attacks
 $headers_ok = array_matches($_SERVER, $required_headers, '$_SERVER');
 $data_ok = array_matches($data, $required_data, '$data');
-
-passthru($cmd);
-exit();
 
 if ($headers_ok && $data_ok) {
   passthru($cmd);

@@ -17,7 +17,7 @@ RUN bundle install
 COPY ./apache2/sites-enabled/ /etc/apache2/sites-enabled/
 COPY ./apache2/ports.conf /etc/apache2/ports.conf
 
-# Install hooks.
+# Copy API.
 COPY --chown=www-data:www-data ./api/ /var/www/api/
 
 # Prepare entrypoint.
