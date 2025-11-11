@@ -17,15 +17,15 @@ else
   mkdir /data/website/
   chown www-data:www-data /data/website/
   su - www-data -s /bin/bash -c "cd /data/website/ &&
-    git clone https://github.com/$GITHUB_REPOSITORY.git . && git checkout --force origin/$GITHUB_BRANCH"
+    git clone https://github.com/$GITHUB_REPOSITORY.git . "
 fi
 
 # Jekyll compilation.
 # This is our home directory, it must be writable for Jekyll.
 chown www-data:www-data /var/www/
-# We set RUBYOPT, to deal with
-# incompatible character encodings: ASCII-8BIT and UTF-8 (Encoding::CompatibilityError)
-su - www-data -s /bin/bash -c 'cd /data/website/ && export RUBYOPT="-E utf-8:utf-8" && jekyll build'
+
+# Rebuild repository.
+su - www-data -s /bin/bash -c '/opt/update-content.sh'
 
 # Start PHP server.
 apache2-foreground

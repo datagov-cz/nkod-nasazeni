@@ -20,7 +20,9 @@ COPY ./apache2/ports.conf /etc/apache2/ports.conf
 # Copy API.
 COPY --chown=www-data:www-data ./api/ /var/www/api/
 
-# Prepare entrypoint.
+# Prepare scripts.
 WORKDIR /opt
 COPY --chmod=755 ./entrypoint.sh ./
+COPY --chmod=557 ./update-content.sh ./
+
 CMD "./entrypoint.sh"

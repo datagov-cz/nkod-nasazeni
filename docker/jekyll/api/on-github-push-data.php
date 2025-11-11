@@ -5,12 +5,11 @@ $repository = getenv('GITHUB_REPOSITORY');
 $secret = getenv('GITHUB_SECRET');
 
 // Where to log errors and successful requests.
-define('LOGFILE', '/data/log/github.log');
+// By default we do not log.
+$log_file = '';
 
-// What command to execute upon retrieval of a valid push event.
-$cmd = 'cd /data/website/ && git fetch --all && git checkout --force "origin/' . $branch . '"';
-// Append command to compile the jekyll.
-$cmd .= ' && bundle exec jekyll build';
+// Command to execute.
+$cmd = '/opt/update-content.sh';
 
 // Receive POST data for signature calculation, don't change!
 $post_data = file_get_contents('php://input');
@@ -20,7 +19,7 @@ $signature = hash_hmac('sha1', $post_data, $secret);
 $required_data = array(
   'ref' => 'refs/heads/' . $branch,
   'repository' => array(
-    'full_name' => $repository . '.github.io',
+    'full_name' => $repository,
   ),
 );
 
@@ -36,10 +35,11 @@ $required_headers = array(
 
 error_reporting(0);
 
-function log_msg($msg)
+function log_msg($message)
 {
-  if (LOGFILE != '') {
-    file_put_contents(LOGFILE, $msg . "\n");
+  global $log_file;
+  if ($log_file != '') {
+    file_put_contents($log_file, $message . "\n");
   }
 }
 
@@ -71,6 +71,7 @@ function array_matches($have, $should, $name = 'array')
 log_msg("=== Received request from {$_SERVER['REMOTE_ADDR']} ===");
 header("Content-Type: text/plain");
 $data = json_decode($post_data, true);
+
 // First do all checks and then report back in order to avoid timing attacks
 $headers_ok = array_matches($_SERVER, $required_headers, '$_SERVER');
 $data_ok = array_matches($data, $required_data, '$data');
