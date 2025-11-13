@@ -4,6 +4,9 @@ FROM openlink/virtuoso-opensource-7:7.2.15
 COPY --chmod=544 --chown=virtuoso:virtuoso ./virtuoso.ini /opt/
 ENV VIRTUOSO_INI_FILE=/opt/virtuoso.ini
 
+# Copy init scripts
+COPY --chmod=544 --chown=virtuoso:virtuoso ./initdb.d/ /initdb.d/
+
 # Update ownership of /database.
 RUN chown virtuoso:virtuoso /database
 
