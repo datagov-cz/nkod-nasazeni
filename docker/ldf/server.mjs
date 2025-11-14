@@ -114,7 +114,7 @@ function startHttpServer(ldfProcess) {
   const app = express();
 
   // We need to use GET as LP:ETL does not work well with POST.
-  app.get("/reload", (req, res) => {
+  app.get("/api/reload", (req, res) => {
     const token = req.query.token ?? "";
     if (token !== configuration.host.token) {
       const unauthorized_code = 401;
