@@ -113,7 +113,8 @@ function startLinkedDataFragmentServer(
 function startHttpServer(ldfProcess) {
   const app = express();
 
-  app.post("/reload", (req, res) => {
+  // We need to use GET as LP:ETL does not work well with POST.
+  app.get("/reload", (req, res) => {
     const token = req.query.token ?? "";
     if (token !== configuration.host.token) {
       const unauthorized_code = 401;
