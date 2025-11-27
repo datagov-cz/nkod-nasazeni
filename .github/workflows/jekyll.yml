@@ -28,6 +28,6 @@ jobs:
         with:
           context: ./docker/jekyll/
           push: true
-          tags: ghcr.io/datagov-cz/nkod-jekyll:${{ github.ref_name }}
+          tags: ghcr.io/datagov-cz/nkd-jekyll:${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

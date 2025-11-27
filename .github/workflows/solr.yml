@@ -28,6 +28,6 @@ jobs:
         with:
           context: ./docker/solr/
           push: true
-          tags: ghcr.io/datagov-cz/nkod-solr:${{ github.ref_name }}
+          tags: ghcr.io/datagov-cz/nkd-solr:${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

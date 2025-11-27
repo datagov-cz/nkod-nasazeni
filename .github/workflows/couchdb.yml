@@ -28,6 +28,6 @@ jobs:
         with:
           context: ./docker/couchdb/
           push: true
-          tags: ghcr.io/datagov-cz/nkod-couchdb:${{ github.ref_name }}
+          tags: ghcr.io/datagov-cz/nkd-couchdb:${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

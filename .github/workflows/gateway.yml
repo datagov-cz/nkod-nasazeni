@@ -28,6 +28,6 @@ jobs:
         with:
           context: ./docker/gateway/
           push: true
-          tags: ghcr.io/datagov-cz/nkod-gateway:${{ github.ref_name }}
+          tags: ghcr.io/datagov-cz/nkd-gateway:${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

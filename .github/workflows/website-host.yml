@@ -28,6 +28,6 @@ jobs:
         with:
           context: ./docker/website-host/
           push: true
-          tags: ghcr.io/datagov-cz/nkod-website-host:${{ github.ref_name }}
+          tags: ghcr.io/datagov-cz/nkd-website-host:${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

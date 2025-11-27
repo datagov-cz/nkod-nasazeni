@@ -28,6 +28,6 @@ jobs:
         with:
           context: ./docker/orchestrator/
           push: true
-          tags: ghcr.io/datagov-cz/nkod-orchestrator:${{ github.ref_name }}
+          tags: ghcr.io/datagov-cz/nkd-orchestrator:${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

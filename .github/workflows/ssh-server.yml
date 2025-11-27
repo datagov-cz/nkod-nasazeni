@@ -28,6 +28,6 @@ jobs:
         with:
           context: ./docker/ssh-server/
           push: true
-          tags: ghcr.io/datagov-cz/nkod-ssh-server:${{ github.ref_name }}
+          tags: ghcr.io/datagov-cz/nkd-ssh-server:${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
