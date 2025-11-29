@@ -10,7 +10,7 @@ RUN addgroup --gid $USER "nkod" \
 
 # Copy entrypoint.
 WORKDIR /opt/
-COPY ./entrypoint.sh ./
+COPY ./entrypoint/ ./
 RUN chown nkod:nkod *.sh && chmod 0744 *.sh
 
 # Copy cron jobs.
