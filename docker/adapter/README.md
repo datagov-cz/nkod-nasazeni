@@ -12,7 +12,7 @@ Tato komponenta obsahuje následující adaptéry na externí služby:
 
 Spouštění adaptérů je zajištěné pomocí Cronu jehož konfigurace je v souboru `./crontab`.
 
-Konfigurace předaná isds-adaptéru je uložena v `/isds-adapter/configuration.properties`.
+Konfigurace předaná isds-adaptéru je uložena v `/opt/isds-adapter/configuration.properties`.
 V tomto souboru jsou definovány i cestu k načtení certifikátů a uložení stažených zpráv.
 Ve výchozím nastavení se certifikáty čtou z adresáře `/data/certificates`, který je naplněný certifikáty z `./certificates` v tomto repositáři.
 
