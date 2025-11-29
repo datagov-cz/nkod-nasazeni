@@ -1,3 +1,2 @@
-# Define jobs to be executed.
-# 05 2 * * * nkod /opt/entrypoint/synchronize.sh
-# 25 2 * * * nkod /opt/entrypoint/execute.sh
+# 05 2 * * * nkod /opt/orchestrator/synchronize.sh
+# 25 2 * * * nkod /opt/orchestrator/execute.sh

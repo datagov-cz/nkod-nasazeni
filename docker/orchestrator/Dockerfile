@@ -14,7 +14,7 @@ COPY ./entrypoint.sh ./
 RUN chown nkod:nkod *.sh && chmod 0744 *.sh
 
 # Copy cron jobs.
-WORKDIR /opt/entrypoint
+WORKDIR /opt/orchestrator
 COPY ./entrypoint/* ./
 RUN chown nkod:nkod *.sh && chmod 0744 *.sh
 
@@ -27,4 +27,4 @@ RUN crontab /etc/cron.d/adapter-cron-file
 WORKDIR /opt/
 
 # Creating entry point for cron.
-CMD ["/opt/entrypoint.sh"]
+CMD ["/opt/orchestrator/entrypoint.sh"]
