@@ -1,0 +1,117 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nkd
+  labels:
+    app.kubernetes.io/name: nkd
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nkd-adapter-secret
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: adapter
+type: Opaque
+data:
+  #
+  ms_application:
+  #
+  ms_tenant:
+  #
+  ms_secret:
+  #
+  ms_site:
+  #
+  ms_applications_list:
+  #
+  ms_applications_path:
+  #
+  ms_suggestions_list:
+  #
+  ms_allowed_publishers_list:
+  # Uživatelské jméno pro přihlášení do ISDS.
+  isds_login:
+  # Helso pro přihlášení k ISDS.
+  isds_password:
+  # URL rozhraní datových schránek, e.g. https://ws1.czebox.cz/DS/ .
+  isds_url:
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nkd-couchdb-secret
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: couchdb
+type: Opaque
+data:
+  # Uživatelské jméno pro připojení k databáze s admin přístupem.
+  couchdb_user:
+  # Heslo pro výše uvedeného uživatele.
+  couchdb_password:
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nkd-graphql-secret
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: graphql
+type: Opaque
+data:
+  # Token pro reload data.
+  graphql_reload_token:
+  # Heslo pro SSH přístup.
+  graphql_ssh_password:
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nkd-ldf-secret
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: graphql
+type: Opaque
+data:
+  # Token pro reload data.
+  ldf_reload_token:
+  # Heslo pro SSH přístup.
+  ldf_ssh_password:
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nkd-virtuoso-ndc-secret
+  namespace: nkd
+data:
+  # Heslo pro uživatele `dba`.
+  virtuoso_dba_password:
+  # Heslo pro uživatele `dva`.
+  virtuoso_dva_password:
+  # Heslo pro SSH přístup.
+  virtuoso_ssh_password:
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nkd-virtuoso-vocabulary-secret
+  namespace: nkd
+data:
+  # Heslo pro uživatele `dba`.
+  virtuoso_dba_password:
+  # Heslo pro uživatele `dva`.
+  virtuoso_dva_password:
+  # Heslo pro SSH přístup.
+  virtuoso_ssh_password:
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nkd-configuration
+  namespace: nkd
+data:
+  # ofn.data.gov.cz
+  ofn_portal_domain_name:
+  # data.gov.cz
+  data_portal_domain_name:

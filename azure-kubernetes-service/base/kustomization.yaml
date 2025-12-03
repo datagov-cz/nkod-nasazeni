@@ -6,6 +6,7 @@ resources:
   - couchdb.yaml
   - design-system.yaml
   - forms.yaml
+  - gateway-ingress.yaml
   - gateway.yaml
   - graphql.yaml
   - ldf.yaml

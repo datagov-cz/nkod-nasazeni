@@ -21,16 +21,14 @@ Pro spuštění níže uvedených příkazů je třeba mít nainstalováno:
 
 ## Příprava prostředí powershell
 
-Všechny níže uvedené příkazy předpokládají:
-- Spuštění v kořeni tohoto adresáře.
-- Nastavení následujících proměnných prostředí:
-  ```shell
-  $env:SUBSCRIPTION=
-  $env:RESOURCE_GROUP=
-  $env:AKS_CLUSTER="nkd-kubernetes"
-  $env:CONTAINER_REGISTRY="nkdcontainerregistry"
-  $env:LOCATION="northeurope"
-  ```
+Všechny níže uvedené příkazy předpokládají nastavení následujících proměnných prostředí:
+```shell
+$env:SUBSCRIPTION=
+$env:RESOURCE_GROUP=
+$env:AKS_CLUSTER="nkd-kubernetes"
+$env:CONTAINER_REGISTRY="nkdcontainerregistry"
+$env:LOCATION="northeurope"
+```
 
 ## Nastavení Azure CLI (az)
 
@@ -45,8 +43,10 @@ az account show -o table
 
 ## Příprava prostředí Azure
 
-Toto je třeba provést pouze jednou!
-Alternativu je tvorba skrze portál Azure.
+Než budeme v nasazování pokračovat je třeba vytvořit odpovídají Azure prostředí.
+To zahrnuje zejména Azure Kubernetes Service (AKS).
+V rámci této tvorby se definují z jakých strojů bude cluster sestaven a tedy jaké výpočetní kapacity budou k dispozici.
+
 ```shell
 # Založení Azure Container Registry (ACR).
 # Můžeme získávat images také z jiného místa, ale tady bude lepší dostupnost.
@@ -78,143 +78,26 @@ az aks nodepool list --resource-group $env:RESOURCE_GROUP --cluster-name $env:AK
 
 ## Nastavení kubeclt
 
+Nastavení kubectl je možné provést až po vytvoření AKS klasteru.
+Dále je třeba být přihlášený do Azure CLI.
+
 ```shell
 # Konfigurace kubectl.
 az aks get-credentials --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER
 # Nastavení výchozího jmenného prostoru.
 kubectl config set-context --current --namespace=nkd
-# Následují příkaz by měl projít a vypsat uzly které tvoří do AKS.
+# Následují příkaz by měl projít a vypsat uzly které tvoří AKS.
 kubectl get nodes
 ```
 
-## Příprava konfigurace
+## Naklonování repositáře
 
-Začneme vytvořením souboru `configuration.yaml` s obsahem dle následujícího předpisu.
-Do předpisu je třeba doplnit Base64 zakódované hodnoty.
+Pro další kroky předpokládají, že jsme v kořeni lokální kopie tohoto repositáře.
+Toho je možné dosáhnout následujícími příkazy:
 
-```yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: nkd
-  labels:
-    app.kubernetes.io/name: nkd
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: nkd-adapter-secret
-  namespace: nkd
-  labels:
-    app.kubernetes.io/name: adapter
-type: Opaque
-data:
-  #
-  ms_application:
-  #
-  ms_tenant:
-  #
-  ms_secret:
-  #
-  ms_site:
-  #
-  ms_applications_list:
-  #
-  ms_applications_path:
-  #
-  ms_suggestions_list:
-  #
-  ms_allowed_publishers_list:
-  # Uživatelské jméno pro přihlášení do ISDS.
-  isds_login:
-  # Helso pro přihlášení k ISDS.
-  isds_password:
-  # URL rozhraní datových schránek, e.g. https://ws1.czebox.cz/DS/ .
-  isds_url:
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: nkd-couchdb-secret
-  namespace: nkd
-  labels:
-    app.kubernetes.io/name: couchdb
-type: Opaque
-data:
-  # Uživatelské jméno pro připojení k databáze s admin přístupem.
-  couchdb_user:
-  # Heslo pro výše uvedeného uživatele.
-  couchdb_password:
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: nkd-graphql-secret
-  namespace: nkd
-  labels:
-    app.kubernetes.io/name: graphql
-type: Opaque
-data:
-  # Token pro reload data.
-  graphql_reload_token:
-  # Heslo pro SSH přístup.
-  graphql_ssh_password:
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: nkd-ldf-secret
-  namespace: nkd
-  labels:
-    app.kubernetes.io/name: graphql
-type: Opaque
-data:
-  # Token pro reload data.
-  ldf_reload_token:
-  # Heslo pro SSH přístup.
-  ldf_ssh_password:
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: nkd-virtuoso-ndc-secret
-  namespace: nkd
-data:
-  # Heslo pro uživatele `dba`.
-  virtuoso_dba_password:
-  # Heslo pro uživatele `dva`.
-  virtuoso_dva_password:
-  # Heslo pro SSH přístup.
-  virtuoso_ssh_password:
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: nkd-virtuoso-vocabulary-secret
-  namespace: nkd
-data:
-  # Heslo pro uživatele `dba`.
-  virtuoso_dba_password:
-  # Heslo pro uživatele `dva`.
-  virtuoso_dva_password:
-  # Heslo pro SSH přístup.
-  virtuoso_ssh_password:
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: nkd-configuration
-  namespace: nkd
-data:
-  # ofn.data.gov.cz
-  ofn_portal_domain_name:
-  # data.gov.cz
-  data_portal_domain_name:
-```
-
-Následně nahrajeme soubor do AKS clusteru pomocí následujícího příkazu spuštěného v adresáři se souborem.
-```bash
-kubectl apply -f configuration.yaml
+```shell
+git clone https://github.com/datagov-cz/nkod-nasazeni.git
+cd nkod-nasazeni
 ```
 
 ## Sestavení a publikace Docker obrazů
@@ -233,20 +116,43 @@ Alternativní je publikace to Azure Container Registry (ACR).
 Pomocí Azure portálu se můžeme podívat na obsah repositáře.
 Z detailu `Container registry` otevřeme skupinu `Service` a dále vybereme `Repositories`.
 
-Publikace je manuální pomocí vhodného otagování a následné publikace.
+Publikace je manuální pomocí vhodného tagování a následné publikace do ACR.
 Příklad je uvedený v následujícím kusu kódu.
 ```shell
 # Začneme přihlášením se do ACR.
 az acr login --name $env:CONTAINER_REGISTRY}
-# Solr
+# Příklad přetagování a publikace komponenty obrazu nkd-solr.
 docker build -t "$env:CONTAINER_REGISTRY.azurecr.io/nkd-solr:develop" ./docker/solr/
 docker push "$env:CONTAINER_REGISTRY.azurecr.io/nkd-solr:develop"
 # ...
 ```
 
 Výhodou použití ACR by mohla být lepší dostupnost a spolehlivost.
+V případě přechodu na ACR, je třeba upravit názvy Docker obrazů v YAML definicích pro AKS.
+
+## Příprava konfigurace
+
+Než provedeme nasazení do AKS je třeba připravit konfiguraci.
+Šablona potřebné konfigurace je umístěna v adresáři `./azure-kubernetes-service/configuration/`.
+
+Začneme zkopírováním celého adresáře a navigací do něj.
+```shell
+cp -r ./azure-kubernetes-service/configuration/ ./azure-kubernetes-service/.develop/
+cd ./azure-kubernetes-service/.develop/
+```
+
+Následně je nutné upravit YAML soubor `configuration.yaml`.
+Doplněná konfigurace musí být base64 zakódovaná.
+
+Jakmile je konfigurace připravena můžeme jí nahrát do AKS.
+Následně se můžeme vrátit do kořene repository.
+```bash
+kubectl apply -f ./configuration.yaml
+cd ../..
+```
 
 ## Nasazení komponent národního katalogu
+
 Pro nasazení do různých prostředí využijeme [Kustomize](https://kustomize.io/), jenž je součástí kubectl.
 
 ```shell
@@ -258,7 +164,7 @@ kubectl apply -f ./azure-kubernetes-service/secret/
 kubectl apply -k ./azure-kubernetes-service/overlays/develop
 ```
 
-## Řešení ingress
+## Řešení ingress a přístup k národnímu katalogu
 
 Síťování je možné řešit různými způsoby.
 Například:
@@ -269,47 +175,18 @@ Například:
 Další možností je využití Kubernetes service typu `LoadBalancer`, která může poskytnout externí přístup k vybrané službě.
 Směrování je pak prováděno pomocí komponenty `gateway`.
 To nám dává plnou a přenositelnou kontrolu.
+Toto řešení je zvoleno jako výchozí, pro nasazení do AKS a je nasazeno spolu s ostatními komponentami.
 
-### Pomocí Kubernetes service
-
-Nejsnazší je přímé zpřístupnění komponenty vstupní brány pomocí služby.
-
-```yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: nkd-gateway
-  namespace: nkd
-  labels:
-    app.kubernetes.io/name: gateway
-spec:
-  type: LoadBalancer
-  selector:
-    app.kubernetes.io/name: gateway
-  externalTrafficPolicy: Cluster
-  ipFamilyPolicy: PreferDualStack
-  ipFamilies:
-  - IPv4
-  - IPv6
-  ports:
-  - name: http
-    port: 80
-    protocol: TCP
-    targetPort: 80
-  - name: https
-    port: 443
-    protocol: TCP
-    targetPort: 443
-```
-
-Následně nahrajeme soubor do AKS clusteru pomocí následujícího příkazu spuštěného v adresáři se souborem.
-```bash
-kubectl apply -f configuration.yaml
+Následující příkaz ukazuje, jak je možné získat externí IP, na kterých služba poslouchá a je možné na ně směrovat DNS.
+```shell
+# Zobrazení informací o službě.
+# Ve sloupci EXTERNAL-IP je uvedena veřejná IPv4 a IPv6 adresa.
+kubectl get service/nkd-gateway
 ```
 
 ## Konfigurace po nasazení
 
-Tato sekce popisuje jaké kroky je třeba provést po nasazení všech komponent.
+Tato sekce popisuje jaké kroky je třeba provést po nasazení komponent do AKS.
 
 ### Úprava konfigurace úložiště
 
@@ -339,7 +216,7 @@ kubectl patch pv {NAME} -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
 
 TODO
 
-Kopírování souborů z a do clusteru:
+Kopírování souborů z a do AKS klasteru:
 ```shell
 # Příklad zkopírování lokálního souboru do POD.
 kubectl cp 2025-11-12.zip {pod-name}:/{directory-path} -c {container-name}
