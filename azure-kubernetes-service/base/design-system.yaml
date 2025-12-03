@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nkod-design-system-deployment
-  namespace: nkod
+  name: nkd-design-system-deployment
+  namespace: nkd
   labels:
     app.kubernetes.io/name: design-system
 spec:
@@ -18,10 +18,10 @@ spec:
       volumes:
         - name: design-system-volume
           persistentVolumeClaim:
-            claimName: nkod-design-system-pvc
+            claimName: nkd-design-system-pvc
       containers:
-        - name: nkod-design-system
-          image: ghcr.io/datagov-cz/nkod-design-system:develop
+        - name: nkd-design-system
+          image: ghcr.io/datagov-cz/nkd-design-system:develop
           imagePullPolicy: Always
           ports:
             - containerPort: 80
@@ -32,14 +32,14 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: nkod-design-system-pvc
-  namespace: nkod
+  name: nkd-design-system-pvc
+  namespace: nkd
   labels:
     app.kubernetes.io/name: public
 spec:
   accessModes:
-    - ReadWriteMany
-  storageClassName: azurefile
+    - ReadWriteOnce
+  storageClassName: managed-csi
   resources:
     requests:
       storage: 64M
@@ -47,8 +47,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nkod-design-system
-  namespace: nkod
+  name: nkd-design-system
+  namespace: nkd
   labels:
     app.kubernetes.io/name: design-system
 spec:
@@ -59,23 +59,3 @@ spec:
   - protocol: TCP
     targetPort: 80
     port: 80
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: nkod-design-system-ingress
-  namespace: nkod
-  labels:
-    app.kubernetes.io/name: design-system
-spec:
-  ingressClassName: nginx
-  rules:
-  - http:
-      paths:
-      - path: /assets/design-system/
-        pathType: Prefix
-        backend:
-          service:
-            name: nkod-design-system
-            port:
-              number: 80

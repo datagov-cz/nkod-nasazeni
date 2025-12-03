@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nkod-public-data-deployment
-  namespace: nkod
+  name: nkd-public-data-deployment
+  namespace: nkd
   labels:
     app.kubernetes.io/name: public-data
 spec:
@@ -18,9 +18,9 @@ spec:
       volumes:
         - name: public-volume
           persistentVolumeClaim:
-            claimName: nkod-public-pvc
+            claimName: nkd-public-pvc
       containers:
-        - name: nkod-public-data
+        - name: nkd-public-data
           image: nginx:1.29.2
           imagePullPolicy: IfNotPresent
           env:
@@ -35,10 +35,25 @@ spec:
               name: public-volume
 ---
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nkd-public-pvc
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: public-data
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: azurefile
+  resources:
+    requests:
+      storage: 16Gi
+---
+apiVersion: v1
 kind: Service
 metadata:
-  name: nkod-public-data
-  namespace: nkod
+  name: nkd-public-data
+  namespace: nkd
   labels:
     app.kubernetes.io/name: public-data
 spec:
@@ -49,37 +64,3 @@ spec:
   - protocol: TCP
     targetPort: 80
     port: 80
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: nkod-public-data-ingress
-  namespace: nkod
-  labels:
-    app.kubernetes.io/name: public-data
-spec:
-  ingressClassName: nginx
-  rules:
-  - http:
-      paths:
-      - path: /soubor/
-        pathType: Prefix
-        backend:
-          service:
-            name: nkod-public-data
-            port:
-              number: 80
-      - path: /dokuwiki/
-        pathType: Prefix
-        backend:
-          service:
-            name: nkod-public-data
-            port:
-              number: 80
-      - path: /sitemaps/
-        pathType: Prefix
-        backend:
-          service:
-            name: nkod-public-data
-            port:
-              number: 80

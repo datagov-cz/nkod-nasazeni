@@ -1,15 +1,19 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - adapter-pvc.yaml
   - adapter.yaml
   - catalog.yaml
   - couchdb.yaml
   - design-system.yaml
+  - forms.yaml
+  - gateway.yaml
   - graphql.yaml
+  - ldf.yaml
   - linkedpipes-etl.yaml
   - namespace.yaml
-  - public-pvc.yaml
+  - portal-data.gov.cz.yaml
+  - portal-ofn.gov.cz.yaml
   - public.yaml
   - solr.yaml
-  - virtuoso.yaml
+  - virtuoso-ndc.yaml
+  - virtuoso-vocabulary.yaml

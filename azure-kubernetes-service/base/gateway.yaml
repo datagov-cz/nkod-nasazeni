@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkd-gateway-deployment
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: gateway
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gateway
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gateway
+    spec:
+      containers:
+        - name: nkd-gateway
+          image: ghcr.io/datagov-cz/nkd-gateway:develop
+          imagePullPolicy: Always
+          env:
+            - name: OFN_PORTAL_DOMAIN_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: nkd-configuration
+                  key: ofn_portal_domain_name
+            - name: DATA_PORTAL_DOMAIN_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: nkd-configuration
+                  key: data_portal_domain_name
+          ports:
+            - containerPort: 80
+            - containerPort: 443

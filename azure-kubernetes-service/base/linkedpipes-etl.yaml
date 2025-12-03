@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nkod-linkedpipes-etl-deployment
-  namespace: nkod
+  name: nkd-linkedpipes-etl-deployment
+  namespace: nkd
   labels:
     app.kubernetes.io/name: linkedpipes-etl
 spec:
@@ -18,18 +18,18 @@ spec:
       volumes:
         - name: linkedpipes-etl-volume
           persistentVolumeClaim:
-            claimName: nkod-linkedpipes-etl-pvc
+            claimName: nkd-linkedpipes-etl-pvc
         - name: public-volume
           persistentVolumeClaim:
-            claimName: nkod-public-pvc
+            claimName: nkd-public-pvc
         - name: adapter-volume
           persistentVolumeClaim:
-            claimName: nkod-adapter-pvc
+            claimName: nkd-adapter-pvc
       securityContext:
           fsGroup: 5987
           fsGroupChangePolicy: "OnRootMismatch"
       containers:
-        - name: nkod-linkedpipes-etl-storage
+        - name: nkd-linkedpipes-etl-storage
           image: ghcr.io/linkedpipes/etl-storage:2023-04-03
           imagePullPolicy: Always
           env:
@@ -46,7 +46,7 @@ spec:
             runAsUser: 5987
             runAsGroup: 5987
             runAsNonRoot: true
-        - name: nkod-linkedpipes-etl-frontend
+        - name: nkd-linkedpipes-etl-frontend
           image: ghcr.io/linkedpipes/etl-frontend:2024-01-08
           imagePullPolicy: Always
           env:
@@ -59,12 +59,12 @@ spec:
             - name: LP_ETL_FRONTEND_LOG
               value: ""
           ports:
-            - containerPort: 8080
+            - containerPort: 80
           securityContext:
             runAsUser: 5987
             runAsGroup: 5987
             runAsNonRoot: true
-        - name: nkod-linkedpipes-etl-executor
+        - name: nkd-linkedpipes-etl-executor
           image: ghcr.io/linkedpipes/etl-executor:2023-04-03
           imagePullPolicy: Always
           # We need to keep limits synch with -Xmx command.
@@ -81,54 +81,89 @@ spec:
               value: "http://localhost:8083"
             - name: LP_ETL_INSTANCE_URL
               value: "http://localhost:8080"
-            # Virtuoso
-            - name: LP_ETL_NKOD_VIRTUOSO_URL
-              value: nkod-virtuoso
-            - name: LP_ETL_NKOD_VIRTUOSO_SSH_USER
-              value: sshuser
-            - name: LP_ETL_NKOD_VIRTUOSO_SSH_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: nkod-virtuoso-secret
-                  key: virtuoso_ssh_password
-            - name: LP_ETL_NKOD_VIRTUOSO_JDBC_USER
+            # Virtuoso National Open Data Catalog
+            - name: LP_ETL_NKOD_VIRTUOSO_NDC_URL
+              value: nkd-virtuoso-ndc
+            - name: LP_ETL_NKOD_VIRTUOSO_NDC_USER
               value: dba
-            - name: LP_ETL_NKOD_VIRTUOSO_JDBC_PASSWORD
+            - name: LP_ETL_NKOD_VIRTUOSO_NDC_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: nkod-virtuoso-secret
+                  name: nkd-virtuoso-ndc-secret
                   key: virtuoso_dba_password
+            - name: LP_ETL_NKOD_VIRTUOSO_NDC_SSH_USER
+              value: sshuser
+            - name: LP_ETL_NKOD_VIRTUOSO_NDC_SSH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-virtuoso-ndc-secret
+                  key: virtuoso_ssh_password
+            # Virtuoso Vocabulary
+            - name: LP_ETL_NKOD_VIRTUOSO_VOCABULARY_URL
+              value: nkd-virtuoso-vocabulary
+            - name: LP_ETL_NKOD_VIRTUOSO_VOCABULARY_USER
+              value: dba
+            - name: LP_ETL_NKOD_VIRTUOSO_VOCABULARY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-virtuoso-vocabulary-secret
+                  key: virtuoso_dba_password
+            - name: LP_ETL_NKOD_VIRTUOSO_VOCABULARY_SSH_USER
+              value: sshuser
+            - name: LP_ETL_NKOD_VIRTUOSO_VOCABULARY_SSH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-virtuoso-vocabulary-secret
+                  key: virtuoso_ssh_password
             # CouchDB
             - name: LP_ETL_NKOD_COUCHDB_URL
-              value: http://nkod-couchdb:5984/
+              value: http://nkd-couchdb:5984/
             - name: LP_ETL_NKOD_COUCHDB_USER
               valueFrom:
                 secretKeyRef:
-                  name: nkod-couchdb-secret
+                  name: nkd-couchdb-secret
                   key: couchdb_user
             - name: LP_ETL_NKOD_COUCHDB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: nkod-couchdb-secret
+                  name: nkd-couchdb-secret
                   key: couchdb_password
             # Solr
             - name: LP_ETL_NKOD_SOLR_URL
-              value: http://localhost:8983/solr
+              value: http://nkd-solr:8983/solr
             # Adapter
             - name: LP_ETL_ADAPTER_PATH
               value: /data/adapter/
             # GraphQL
-            - name: LP_ETL_GRAPHQL_SSH_URL
-              value: nkod-graphql
-            - name: LP_ETL_GRAPHQL_SSH_USER
-              value: sshuser
-            - name: LP_ETL_GRAPHQL_SSH_PASSWORD
+            - name: LP_ETL_NKOD_GRAPHQL_URL
+              value: nkd-graphql
+            - name: LP_ETL_NKOD_GRAPHQL_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: nkod-graphql-secret
+                  name: nkd-graphql-secret
+                  key: graphql_reload_token
+            - name: LP_ETL_NKOD_GRAPHQL_SSH_USER
+              value: sshuser
+            - name: LP_ETL_NKOD_GRAPHQL_SSH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-graphql-secret
                   key: graphql_ssh_password
-            - name: NKOD_GRAPHQL_FILE
-              value: "/data/nkod-graphql.json"
+            # LDF - Linked Data Fragment
+            - name: LP_ETL_NKOD_LDF_URL
+              value: nkd-ldf
+            - name: LP_ETL_NKOD_LDF_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-ldf-secret
+                  key: ldf_reload_token
+            - name: LP_ETL_NKOD_LDF_SSH_USER
+              value: sshuser
+            - name: LP_ETL_NKOD_LDF_SSH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-ldf-secret
+                  key: ldf_ssh_password
           ports:
             - containerPort: 8085
           volumeMounts:
@@ -142,7 +177,7 @@ spec:
             runAsUser: 5987
             runAsGroup: 5987
             runAsNonRoot: true
-        - name: nkod-linkedpipes-etl-executor-monitor
+        - name: nkd-linkedpipes-etl-executor-monitor
           image: ghcr.io/linkedpipes/etl-executor-monitor:2023-04-03
           imagePullPolicy: Always
           env:
@@ -163,8 +198,8 @@ spec:
             runAsUser: 5987
             runAsGroup: 5987
             runAsNonRoot: true
-        - name: nkod-orchestrator
-          image: ghcr.io/datagov-cz/nkod-orchestrator:develop
+        - name: nkd-orchestrator
+          image: ghcr.io/datagov-cz/nkd-orchestrator:develop
           imagePullPolicy: Always
           env:
             - name: FRONTEND_URL
@@ -174,9 +209,9 @@ spec:
             - name: PIPELINE_URL
               value: https://oha02.dia.gov.cz/etl/resources/components/1700141340878-0004
             - name: STORAGE_REPOSITORY_BRANCH
-              value: k8s-develop
+              value: develop
             - name: STORAGE_REPOSITORY
-              value: https://github.com/datagov-cz/nkod.git
+              value: https://github.com/datagov-cz/nkd.git
           volumeMounts:
             - mountPath: "/data/lp-etl/"
               name: linkedpipes-etl-volume
@@ -184,8 +219,8 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: nkod-linkedpipes-etl-pvc
-  namespace: nkod
+  name: nkd-linkedpipes-etl-pvc
+  namespace: nkd
   labels:
     app.kubernetes.io/name: linkedpipes-etl
 spec:
@@ -199,8 +234,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nkod-linkedpipes-etl
-  namespace: nkod
+  name: nkd-linkedpipes-etl
+  namespace: nkd
   labels:
     app.kubernetes.io/name: linkedpipes-etl
 spec:

@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nkod-catalog-deployment
-  namespace: nkod
+  name: nkd-catalog-deployment
+  namespace: nkd
   labels:
     app.kubernetes.io/name: catalog
 spec:
@@ -16,8 +16,8 @@ spec:
         app.kubernetes.io/name: catalog
     spec:
       containers:
-        - name: nkod-catalog
-          image: ghcr.io/datagov-cz/nkod-catalog:develop
+        - name: nkd-catalog
+          image: ghcr.io/datagov-cz/nkd-catalog:develop
           imagePullPolicy: Always
           env:
             - name: NODE_ENV
@@ -27,9 +27,9 @@ spec:
             - name: PORT
               value: "80"
             - name: SOLR_URL
-              value: "http://nkod-solr:8983/solr/"
+              value: "http://nkd-solr:8983/solr/"
             - name: COUCHDB_URL
-              value: "http://nkod-couchdb:5984"
+              value: "http://nkd-couchdb:5984"
             - name: HTTP_SERVE_STATIC
               value: "1"
             - name: DESIGN_SYSTEM_FOLDER
@@ -37,13 +37,13 @@ spec:
             - name: LABEL_CACHE_RELOAD_CRON
               value: "0/15 * * * *"
             - name: QUALITY_SPARQL_URL
-              value: "http://nkod-virtuoso:8890/sparql"
+              value: "http://nkd-virtuoso:8890/sparql"
             - name: CLIENT_CATALOG_FORM_URL
-              value: "http://http://172.205.23.154/formulář/"
+              value: "http://172.205.23.154/formulář/"
             - name: CLIENT_APPLICATION_FORM_URL
-              value: "http://http://172.205.23.154/aplikace-registrace"
+              value: "https://forms.office.com/e/mK4wLvrww4"
             - name: CLIENT_SUGGESTION_FORM_URL
-              value: "http://http://172.205.23.154/návrhy-registrace"
+              value: "https://forms.office.com/e/UuwD7UBnRG"
             - name: CLIENT_DEREFERENCE
               value: ""
             - name: CLIENT_DASHBOARD_PUBLISHER_DAILY
@@ -72,15 +72,15 @@ spec:
             - name: CLIENT_CATALOG_VALIDATOR_RUN_VALIDATION
               value: "https://datagov-cz.github.io/lkod-validator?catalog={}"
             - name: DESIGN_SYSTEM_URL
-              value: "http://172.205.23.154/assets/design-system/"
+              value: "/assets/design-system/"
           ports:
             - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: nkod-catalog
-  namespace: nkod
+  name: nkd-catalog
+  namespace: nkd
   labels:
     app.kubernetes.io/name: catalog
 spec:
@@ -91,42 +91,3 @@ spec:
   - protocol: TCP
     targetPort: 80
     port: 80
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: nkod-catalog-ingress
-  namespace: nkod
-  labels:
-    app.kubernetes.io/name: virtuoso
-spec:
-  ingressClassName: nginx
-  rules:
-  - http:
-      paths:
-      # datové-sady, datová-sada, datasets, dataset
-      # aplikace, detail-aplikace, applications, application
-      # poskytovatelé, publishers
-      # lokální-katalogy, local-catalogs
-      # návrhy-na-datové-sady-k-otevření, návrh-na-datovou-sadu-k-otevření, suggestions-for-datasets-to-be-opened, suggestion-for-dataset-to-be-opened
-      - path: /assets/catalog
-        pathType: Prefix
-        backend:
-          service:
-            name: nkod-catalog
-            port:
-              number: 80
-      - path: /datasets
-        pathType: Prefix
-        backend:
-          service:
-            name: nkod-catalog
-            port:
-              number: 80
-      - path: /dataset
-        pathType: Prefix
-        backend:
-          service:
-            name: nkod-catalog
-            port:
-              number: 80

@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nkod-couchdb-deployment
-  namespace: nkod
+  name: nkd-couchdb-deployment
+  namespace: nkd
   labels:
     app.kubernetes.io/name: couchdb
 spec:
@@ -18,24 +18,24 @@ spec:
       volumes:
         - name: couchdb-volume
           persistentVolumeClaim:
-            claimName: nkod-couchdb-pvc
+            claimName: nkd-couchdb-pvc
       securityContext:
           fsGroup: 5984
           fsGroupChangePolicy: "OnRootMismatch"
       containers:
-        - name: nkod-couchdb
-          image: ghcr.io/datagov-cz/nkod-couchdb:develop
+        - name: nkd-couchdb
+          image: ghcr.io/datagov-cz/nkd-couchdb:develop
           imagePullPolicy: Always
           env:
             - name: COUCHDB_USER
               valueFrom:
                 secretKeyRef:
-                  name: nkod-couchdb-secret
+                  name: nkd-couchdb-secret
                   key: couchdb_user
             - name: COUCHDB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: nkod-couchdb-secret
+                  name: nkd-couchdb-secret
                   key: couchdb_password
           ports:
             - containerPort: 5984
@@ -51,8 +51,8 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: nkod-couchdb-pvc
-  namespace: nkod
+  name: nkd-couchdb-pvc
+  namespace: nkd
   labels:
     app.kubernetes.io/name: couchdb
 spec:
@@ -66,8 +66,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nkod-couchdb
-  namespace: nkod
+  name: nkd-couchdb
+  namespace: nkd
   labels:
     app.kubernetes.io/name: couchdb
 spec:

@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nkod-solr-deployment
-  namespace: nkod
+  name: nkd-solr-deployment
+  namespace: nkd
   labels:
     app.kubernetes.io/name: solr
 spec:
@@ -18,13 +18,13 @@ spec:
       volumes:
         - name: solr-volume
           persistentVolumeClaim:
-            claimName: nkod-solr-pvc
+            claimName: nkd-solr-pvc
       securityContext:
           fsGroup: 8983
           fsGroupChangePolicy: "OnRootMismatch"
       containers:
-        - name: nkod-solr
-          image: ghcr.io/datagov-cz/nkod-solr:develop
+        - name: nkd-solr
+          image: ghcr.io/datagov-cz/nkd-solr:develop
           imagePullPolicy: Always
           ports:
             - containerPort: 8983
@@ -40,8 +40,8 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: nkod-solr-pvc
-  namespace: nkod
+  name: nkd-solr-pvc
+  namespace: nkd
   labels:
     app.kubernetes.io/name: solr
 spec:
@@ -55,8 +55,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nkod-solr
-  namespace: nkod
+  name: nkd-solr
+  namespace: nkd
   labels:
     app.kubernetes.io/name: solr
 spec:

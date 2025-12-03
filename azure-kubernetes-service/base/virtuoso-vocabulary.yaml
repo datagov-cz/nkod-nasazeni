@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkd-virtuoso-vocabulary-deployment
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: virtuoso-vocabulary
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: virtuoso-vocabulary
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: virtuoso-vocabulary
+    spec:
+      volumes:
+        - name: virtuoso-vocabulary-volume
+          persistentVolumeClaim:
+            claimName: nkd-virtuoso-vocabulary-pvc
+      securityContext:
+          fsGroup: 1001
+          fsGroupChangePolicy: "OnRootMismatch"
+      containers:
+        - name: nkd-virtuoso
+          image: ghcr.io/datagov-cz/nkd-virtuoso:develop
+          imagePullPolicy: Always
+          env:
+            - name: DBA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-virtuoso-vocabulary-secret
+                  key: virtuoso_dba_password
+            - name: DAV_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-virtuoso-vocabulary-secret
+                  key: virtuoso_dva_password
+          ports:
+            - containerPort: 1111
+            - containerPort: 8890
+          volumeMounts:
+            - mountPath: "/database"
+              name: virtuoso-vocabulary-volume
+          securityContext:
+            runAsUser: 1001
+            runAsGroup: 1001
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+        - name: ssh-server
+          image: ghcr.io/datagov-cz/nkd-ssh-server:develop
+          imagePullPolicy: Always
+          env:
+            - name: USER
+              value: "1001"
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-virtuoso-vocabulary-secret
+                  key: virtuoso_ssh_password
+          ports:
+            - containerPort: 22
+          volumeMounts:
+            - mountPath: "/database"
+              name: virtuoso-vocabulary-volume
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nkd-virtuoso-vocabulary-pvc
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: virtuoso-vocabulary
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: managed-csi
+  resources:
+    requests:
+      storage: 16Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nkd-virtuoso-vocabulary
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: virtuoso-vocabulary
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: virtuoso-vocabulary
+  ports:
+  - protocol: TCP
+    targetPort: 1111
+    port: 1111
+    name: sql
+  - protocol: TCP
+    targetPort: 8890
+    port: 8890
+    name: http
+  - protocol: TCP
+    targetPort: 22
+    port: 22
+    name: ssh

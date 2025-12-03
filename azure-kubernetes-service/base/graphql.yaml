@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nkod-graphql-deployment
-  namespace: nkod
+  name: nkd-graphql-deployment
+  namespace: nkd
   labels:
     app.kubernetes.io/name: graphql
 spec:
@@ -18,13 +18,13 @@ spec:
       volumes:
         - name: graphql-volume
           persistentVolumeClaim:
-            claimName: nkod-graphql-pvc
+            claimName: nkd-graphql-pvc
       securityContext:
           fsGroup: 1000
           fsGroupChangePolicy: "OnRootMismatch"
       containers:
-        - name: nkod-graphql
-          image: ghcr.io/datagov-cz/nkod-graphql:develop
+        - name: nkd-graphql
+          image: ghcr.io/datagov-cz/nkd-graphql:develop
           imagePullPolicy: Always
           env:
             - name: NKOD_GRAPHQL_PORT
@@ -38,7 +38,7 @@ spec:
             - name: NKOD_GRAPHQL_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: nkod-graphql-secret
+                  name: nkd-graphql-secret
                   key: graphql_reload_token
           ports:
             - containerPort: 8080
@@ -51,7 +51,7 @@ spec:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
         - name: ssh-server
-          image: ghcr.io/datagov-cz/nkod-ssh-server:develop
+          image: ghcr.io/datagov-cz/nkd-ssh-server:develop
           imagePullPolicy: Always
           env:
             - name: USER
@@ -59,7 +59,7 @@ spec:
             - name: PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: nkod-graphql-secret
+                  name: nkd-graphql-secret
                   key: graphql_ssh_password
           ports:
             - containerPort: 22
@@ -70,8 +70,8 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: nkod-graphql-pvc
-  namespace: nkod
+  name: nkd-graphql-pvc
+  namespace: nkd
   labels:
     app.kubernetes.io/name: graphql
 spec:
@@ -85,8 +85,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nkod-graphql
-  namespace: nkod
+  name: nkd-graphql
+  namespace: nkd
   labels:
     app.kubernetes.io/name: graphql
 spec:
@@ -102,23 +102,3 @@ spec:
     targetPort: 22
     port: 22
     name: ssh
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: nkod-graphql-ingress
-  namespace: nkod
-  labels:
-    app.kubernetes.io/name: graphql
-spec:
-  ingressClassName: nginx
-  rules:
-  - http:
-      paths:
-      - path: /graphql
-        pathType: Prefix
-        backend:
-          service:
-            name: nkod-graphql
-            port:
-              number: 8080

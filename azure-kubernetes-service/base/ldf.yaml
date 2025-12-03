@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkd-ldf-deployment
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: ldf
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ldf
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ldf
+    spec:
+      volumes:
+        - name: ldf-volume
+          persistentVolumeClaim:
+            claimName: nkd-ldf-pvc
+      securityContext:
+          fsGroup: 1000
+          fsGroupChangePolicy: "OnRootMismatch"
+      containers:
+        - name: nkd-ldf
+          image: ghcr.io/datagov-cz/nkd-ldf:develop
+          imagePullPolicy: Always
+          env:
+            - name: LDF_PORT
+              value: "3000"
+            - name: LDF_WORKERS
+              value: "4"
+            - name: LDF_BASE_URL
+              # See https://www.npmjs.com/package/@ldf/server#optional-set-up-a-reverse-proxy
+              value: "http://skodapetr.eu/ldf"
+            - name: LDF_SPARQL
+              value: "http://nkd-virtuoso-ndc:8890/sparql"
+            - name: PORT
+              value: "5000"
+            - name: RELOAD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-ldf-secret
+                  key: ldf_reload_token
+          ports:
+            - containerPort: 3000
+            - containerPort: 5000
+          volumeMounts:
+            - mountPath: "/data"
+              name: ldf-volume
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+        - name: ssh-server
+          image: ghcr.io/datagov-cz/nkd-ssh-server:develop
+          imagePullPolicy: Always
+          env:
+            - name: USER
+              value: "1000"
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-ldf-secret
+                  key: ldf_ssh_password
+          ports:
+            - containerPort: 22
+          volumeMounts:
+            - mountPath: "/data"
+              name: ldf-volume
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nkd-ldf-pvc
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: ldf
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: managed-csi
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nkd-ldf
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: ldf
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: ldf
+  ports:
+  - protocol: TCP
+    targetPort: 3000
+    port: 3000
+    name: http-ldf
+  - protocol: TCP
+    targetPort: 5000
+    port: 5000
+    name: http-control
+  - protocol: TCP
+    targetPort: 22
+    port: 22
+    name: ssh
