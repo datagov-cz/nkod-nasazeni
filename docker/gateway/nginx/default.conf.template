@@ -1,26 +1,294 @@
 server {
-  listen       80;
-  server_name  $SERVER_NAME;
+  listen [::]:80;
+  listen 80;
+  server_name  $OFN_PORTAL_DOMAIN_NAME;
 
-  # https://github.com/datagov-cz/nkod/tree/main/skripty/nkod-frontend/nginx
-
-  # NKOD Katalog - https://github.com/datagov-cz/katalog
-
-  location ~ ^/((aplikace|application|detail-aplikace|api/aplikace|dataset|datová-sada|datasets|datové-sady|poskytovatelé|publishers|api|assets|public|keywords|klíčová-slova|local-catalogs|lokální-katalogy).*) {
-    proxy_pass $URL_CATALOG;
-    proxy_pass_request_headers      on;
-    proxy_set_header   X-Real-IP        $remote_addr;
-    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
-    proxy_intercept_errors on;
+  # Redirect root access to the data portal.
+  location =/ {
+    return 302 https://$DATA_PORTAL_DOMAIN_NAME;
   }
 
-  # NKOD Forms - https://github.com/linkedpipes/dcat-ap-forms
+  location /api/v2/portal-ofn-data-gov-cz/reload {
+    proxy_pass http://nkd-portal-ofn-gov-cz/api/on-github-push-data.php;
+    proxy_pass_request_headers          on;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_intercept_errors              on;
+  }
 
-  # location /formulář/ {
-  #   proxy_pass $URL_FORMS;
-  #   proxy_pass_request_headers      on;
-  #   proxy_set_header   X-Real-IP        $remote_addr;
-  #   proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
-  # }
+  location / {
+    proxy_pass http://nkd-portal-ofn-gov-cz/;
+    proxy_pass_request_headers          on;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_intercept_errors              on;
+  }
+}
+
+server {
+  listen [::]:80;
+  listen 80;
+  server_name  $DATA_PORTAL_DOMAIN_NAME;
+
+  # Set custom DNS server resolver to use the one provided by K8S.
+  resolver     kube-dns.kube-system.svc.cluster.local valid=10s;
+
+  # https://github.com/datagov-cz/nkd/tree/main/skripty/nkd-frontend/nginx
+
+  # nkd-design-system
+
+  location /assets/design-system {
+    proxy_pass http://nkd-design-system/;
+    proxy_pass_request_headers          on;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_intercept_errors              on;
+  }
+
+  # nkd-graphql
+
+  location /graphql {
+    proxy_pass http://nkd-graphql:8080;
+    proxy_pass_request_headers          on;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_intercept_errors              on;
+  }
+
+  # nkd-virtuoso-ndc
+
+  location /sparql {
+    proxy_pass http://nkd-virtuoso-ndc:8890;
+    proxy_set_header   Host             $host;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    add_header X-Robots-Tag noindex always;
+    proxy_intercept_errors              on;
+    proxy_pass_request_headers          on;
+    proxy_connect_timeout               2400;
+    proxy_send_timeout                  2400;
+    proxy_read_timeout                  2400;
+    send_timeout                        2400;
+  }
+
+  location /sparql-graph-crud {
+    proxy_pass http://nkd-virtuoso-ndc:8890;
+    proxy_set_header   Host             $host;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    add_header X-Robots-Tag noindex always;
+    proxy_intercept_errors              on;
+    proxy_pass_request_headers          on;
+    proxy_connect_timeout               2400;
+    proxy_send_timeout                  2400;
+    proxy_read_timeout                  2400;
+    send_timeout                        2400;
+  }
+
+  location /sparql-graph-crud-auth {
+    return 404;
+  }
+
+  location /sparql-auth {
+    return 404;
+  }
+
+  location ~ ^/((fct|describe).*) {
+    proxy_pass http://nkd-virtuoso-ndc:8890$uri$is_args$args;
+    proxy_set_header   Host             $host;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_pass_request_headers      on;
+    proxy_intercept_errors on;
+    add_header X-Robots-Tag noindex always;
+
+    sub_filter_once off;
+    sub_filter 'href="http://data.gov.cz' 'href="https://data.gov.cz';
+    sub_filter 'src="http://data.gov.cz' 'src="https://data.gov.cz';
+  }
+
+  # nkd-virtuoso-vocabulary
+
+  location /slovníky/sparql {
+    proxy_pass http://nkd-virtuoso-vocabulary:8890/sparql;
+    proxy_set_header   Host             $host;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    add_header X-Robots-Tag noindex always;
+    proxy_intercept_errors              on;
+    proxy_pass_request_headers          on;
+    proxy_connect_timeout               2400;
+    proxy_send_timeout                  2400;
+    proxy_read_timeout                  2400;
+    send_timeout                        2400;
+  }
+
+  location /slovníky/sparql-graph-crud {
+    proxy_pass http://nkd-virtuoso-vocabulary:8890/sparql-graph-crud;
+    proxy_set_header   Host             $host;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    add_header X-Robots-Tag noindex always;
+    proxy_intercept_errors              on;
+    proxy_pass_request_headers          on;
+    proxy_connect_timeout               2400;
+    proxy_send_timeout                  2400;
+    proxy_read_timeout                  2400;
+    send_timeout                        2400;
+  }
+
+  location /slovníky/sparql-graph-crud-auth {
+    return 404;
+  }
+
+  location /slovníky/sparql-auth {
+    return 404;
+  }
+
+  # linked data fragments
+
+  location =/ldf {
+    # Access to /ldf produces: Resource not found No resource with URL /ldf was found.
+    return 302 /ldf/;
+  }
+
+  location /ldf/ {
+    proxy_pass http://nkd-ldf:3000;
+    proxy_pass_request_headers          on;
+    proxy_set_header   Host             $http_host;
+    proxy_intercept_errors              on;
+  }
+
+  # nkd-catalog
+
+  location /assets/catalog {
+    proxy_pass http://nkd-catalog;
+    proxy_pass_request_headers          on;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_intercept_errors              on;
+  }
+
+  location /api/v2/catalog/ {
+    proxy_pass http://nkd-catalog;
+    proxy_pass_request_headers          on;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_intercept_errors              on;
+  }
+
+  location ~ ^/((aplikace|application|detail-aplikace|application-detail).*) {
+    proxy_pass http://nkd-catalog;
+    proxy_pass_request_headers          on;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_intercept_errors              on;
+  }
+
+  location ~ ^/((dataset|datová-sada|datasets|datové-sady).*) {
+    proxy_pass http://nkd-catalog;
+    proxy_pass_request_headers          on;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_intercept_errors              on;
+  }
+
+  location ~ ^/((poskytovatelé|publishers).*) {
+    proxy_pass http://nkd-catalog;
+    proxy_pass_request_headers          on;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_intercept_errors              on;
+  }
+
+  location ~ ^/((klíčová-slova|keywords).*) {
+    proxy_pass http://nkd-catalog;
+    proxy_pass_request_headers          on;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_intercept_errors              on;
+  }
+
+  location ~ ^/((lokální-katalogy|local-catalogs).*) {
+    proxy_pass http://nkd-catalog;
+    proxy_pass_request_headers          on;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_intercept_errors              on;
+  }
+
+  location ~ ^/((návrhy-na-datové-sady-k-otevření|suggestions-for-datasets-to-be-opened|návrh-na-datovou-sadu-k-otevření|suggestion-for-dataset-to-be-opened).*) {
+    proxy_pass http://nkd-catalog;
+    proxy_pass_request_headers          on;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_intercept_errors              on;
+  }
+
+  # nkd-forms
+
+  location /api/v2/forms/ {
+    proxy_pass http://nkd-forms;
+    proxy_pass_request_headers          on;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_intercept_errors              on;
+  }
+
+  location /formulář/ {
+    proxy_pass http://nkd-forms;
+    proxy_pass_request_headers          on;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_intercept_errors              on;
+  }
+
+  # nkd-public-data
+
+  location /soubor {
+    proxy_pass http://nkd-public-data/;
+    proxy_pass_request_headers          on;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_intercept_errors              on;
+  }
+
+  location /sitemaps {
+    proxy_pass http://nkd-public-data/;
+    proxy_pass_request_headers          on;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_intercept_errors              on;
+  }
+
+  # nkd-portal-data-gov-cz
+
+  location /api/v2/portal-data-gov-cz/reload {
+    proxy_pass http://nkd-portal-data-gov-cz/api/on-github-push-data.php;
+    proxy_pass_request_headers          on;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_intercept_errors              on;
+  }
+
+  location / {
+    proxy_pass http://nkd-portal-data-gov-cz;
+    proxy_pass_request_headers          on;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_intercept_errors              on;
+  }
+
+  # redirects
+
+  location ~ ^/otevřené-formální-normy/(.*)$ {
+    return 301 https://$OFN_PORTAL_DOMAIN_NAME/$1 ;
+  }
+
+  # security and others
+
+  location ~ ^.*/etc/passwd.* {
+    return 403;
+  }
 
 }

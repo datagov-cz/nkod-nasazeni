@@ -4,10 +4,8 @@
 
 Obsah `.env` souboru:
 ```ini
-# Uživatelské jméno pro plný/administrátorský přístup.
-COUCHDB_USER=
-# Heslo
-COUCHDB_PASSWORD=
+OFN_PORTAL_DOMAIN_NAME=ofn.gov.cz
+DATA_PORTAL_DOMAIN_NAME=data.gov.cz
 ```
 
 ## Datová úložiště
