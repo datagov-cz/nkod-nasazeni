@@ -199,6 +199,17 @@ data:
   virtuoso_dva_password:
   # Heslo pro SSH přístup.
   virtuoso_ssh_password:
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nkd-configuration
+  namespace: nkd
+data:
+  # ofn.data.gov.cz
+  ofn_portal_domain_name:
+  # data.gov.cz
+  data_portal_domain_name:
 ```
 
 Následně nahrajeme soubor do AKS clusteru pomocí následujícího příkazu spuštěného v adresáři se souborem.
