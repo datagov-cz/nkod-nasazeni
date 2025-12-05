@@ -156,10 +156,6 @@ cd ../..
 Pro nasazení do různých prostředí využijeme [Kustomize](https://kustomize.io/), jenž je součástí kubectl.
 
 ```shell
-# Namespace potřebujeme pro secrets
-kubectl apply -f ./azure-kubernetes-service/base/namespace.yaml
-# Secrets a konfigurace
-kubectl apply -f ./azure-kubernetes-service/secret/
 # Nasazení z develop, pro produkční prostředí třeba změnit develop na production.
 kubectl apply -k ./azure-kubernetes-service/overlays/develop
 ```
@@ -207,8 +203,8 @@ Toho je možné dosáhnout následujícími kroky:
 kubectl get pv
 # Změnu je možné provést následujícím příkazem, po nahrazení {NAME} za příslušné jméno.
 # PowerShell vyžaduji jiné escapování pro JSON, příklad níže v komentáři.
-kubectl patch pv {NAME} -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
-#  kubectl patch pv {NAME} -p '{\"spec\":{\"persistentVolumeReclaimPolicy\":\"Retain\"}}'
+kubectl patch pv <NAME> -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
+#  kubectl patch pv <NAME> -p '{\"spec\":{\"persistentVolumeReclaimPolicy\":\"Retain\"}}'
 # Následně ověříme změnu ve sloupci "RECLAIM POLICY" z "Delete" na "Retain".
 ```
 
@@ -222,6 +218,25 @@ Kopírování souborů z a do AKS klasteru:
 kubectl cp 2025-11-12.zip {pod-name}:/{directory-path} -c {container-name}
 ```
 Dokumentace k příkazu [kubectl cp](https://kubernetes.io/docs/reference/kubectl/generated/kubectl_cp/).
+
+### Vytvoření historických dat
+
+Pipeline 07.1 předpokládá existenci souboru `/data/public/soubor/nkod.trig`.
+Tento soubor je třeba vytvořit před prvním spuštěním běhu pipeliny.
+
+Soubor je možné vytvořit po připojení se do Docker containeru.
+Připojení je možné pomocí následujícího příkazu:
+```shell
+# Vrátí seznam všech podů.
+# Je třeba najít název podu začínající na nkd-linkedpipes-etl-*
+kubectl get pods
+# Spuštění procesu v podu a připojení k němu.
+kubectl exec -it {nkd-linkedpipes-etl-NAME} -c nkd-linkedpipes-etl-executor -- /bin/bash
+# Vytvoření prázdného souboru.
+touch /data/public/soubor/nkod.trig
+# Opuštění podu
+exit
+```
 
 ### LinkedPipes:ETL
 
@@ -286,3 +301,9 @@ V kontejneru jsou následující skripty, které můžeme spustit:
 - `/opt/entrypoint/synchronize.sh`
   Synchronizuje lokální instanci LinkedPipes:ETL s Git repositářem.
   Tato operace přepíše lokální změny.
+
+### Promazání K8S podů
+
+```shell
+kubectl delete pod --field-selector="status.phase==Failed"
+```
