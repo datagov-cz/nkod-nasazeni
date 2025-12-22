@@ -37,6 +37,10 @@ spec:
                 secretKeyRef:
                   name: nkd-virtuoso-vocabulary-secret
                   key: virtuoso_dva_password
+            - name: VIRT_PARAMETERS_NUMBEROFBUFFERS
+              value: "340000"
+            - name: VIRT_PARAMETERS_MAXDIRTYBUFFERS
+              value: "500000"
           ports:
             - containerPort: 1111
             - containerPort: 8890
@@ -48,6 +52,11 @@ spec:
             runAsGroup: 1001
             runAsNonRoot: true
             allowPrivilegeEscalation: false
+          resources:
+            requests:
+              memory: "4Gi"
+            limits:
+              memory: "4Gi"
         - name: ssh-server
           image: ghcr.io/datagov-cz/nkd-ssh-server:develop
           imagePullPolicy: Always

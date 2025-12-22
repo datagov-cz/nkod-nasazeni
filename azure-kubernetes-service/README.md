@@ -65,9 +65,9 @@ az acr config authentication-as-arm show --registry $env:CONTAINER_REGISTRY
 # WARNING: Toto je třeba upravit: "node-count" "node-vm-size" a "location".
 az aks create --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --node-count 2 --attach-acr $env:CONTAINER_REGISTRY --node-vm-size Standard_A4_v2 --location $env:LOCATION --ip-families ipv4,ipv6
 
-# Přidání node s větší pamětí pro zpracování dat.
+# Přidání node s větší pamětí.
 # Standard_A8_v2 - 8 CPU, 16GB
-az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool2 --node-count 1 --node-vm-size Standard_A8_v2
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool2 --node-count 2 --node-vm-size Standard_A8_v2
 
 # Umožni AKS přístup k ACR.
 az aks update --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --attach-acr $env:CONTAINER_REGISTRY
@@ -106,7 +106,7 @@ Nasazení vyžaduje existenci Docker obrazů jednotlivých komponent.
 
 ### GitHub
 
-Aktuálně jsou obrazy automaticky sestaveny a publikovány do GitHub repository pomocí GitHub Action.
+Aktuálně jsou obrazy automaticky sestaveny a publikovány na GitHub pomocí GitHub Action.
 Není tedy třeba provádět žádnou speciální akci.
 
 ### Azure Container Registry
@@ -142,12 +142,14 @@ cd ./azure-kubernetes-service/.develop/
 ```
 
 Následně je nutné upravit YAML soubor `configuration.yaml`.
-Doplněná konfigurace musí být base64 zakódovaná.
-
+Položky označené jako `[ENCODED]` být base64 zakódovaná.
 Jakmile je konfigurace připravena můžeme jí nahrát do AKS.
-Následně se můžeme vrátit do kořene repository.
 ```bash
 kubectl apply -f ./configuration.yaml
+```
+
+Následně se můžeme vrátit do kořene repositáře.
+```bash
 cd ../..
 ```
 
@@ -155,8 +157,13 @@ cd ../..
 
 Pro nasazení do různých prostředí využijeme [Kustomize](https://kustomize.io/), jenž je součástí kubectl.
 
+Pro nastavené do testovacího a produkčního prostředí použijeme příkaz:
 ```shell
-# Nasazení z develop, pro produkční prostředí třeba změnit develop na production.
+kubectl apply -k ./azure-kubernetes-service/overlays/production
+```
+
+Pro nasazení na vývojové prostředí použijeme příkaz:
+```shell
 kubectl apply -k ./azure-kubernetes-service/overlays/develop
 ```
 
@@ -306,4 +313,13 @@ V kontejneru jsou následující skripty, které můžeme spustit:
 
 ```shell
 kubectl delete pod --field-selector="status.phase==Failed"
+```
+
+### Změna velikosti nodepool
+
+Příklad změny počtů strojů v nodepool.
+Pokud by bylo třeba více prostředků, než může jeden node nabídnout, je třeba vytvořit novou skupinu s většími stroji.
+
+```bash
+az aks nodepool scale --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool2 --node-count 2
 ```
