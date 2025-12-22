@@ -4,7 +4,7 @@
   "import": "preset-qpf:config-defaults.json",
   "title": "Národní katalog otevřených dat - Triple Pattern Fragments Server",
   "protocol": "http",
-  "baseURL": "{LDF_BASE_URL}/ldf",
+  "baseURL": "{LDF_BASE_URL}",
   "datasources": [
     {
       "@id": "{LDF_BASE_URL}/datový-zdroj/HdtNKOD",
