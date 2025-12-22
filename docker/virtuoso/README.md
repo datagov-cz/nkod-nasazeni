@@ -11,6 +11,10 @@ Obsah `.env` souboru:
 DBA_PASSWORD=
 # Heslo pro "dva" uživatele.
 DAV_PASSWORD=
+# Přenastavení hodnot z konfigurace.
+# https://hub.docker.com/r/openlink/virtuoso-opensource-7/#updating-virtuosoini-via-environment-settings
+VIRT_PARAMETERS_NUMBEROFBUFFERS=
+VIRT_PARAMETERS_MAXDIRTYBUFFERS=
 ```
 
 ## Datová úložiště
