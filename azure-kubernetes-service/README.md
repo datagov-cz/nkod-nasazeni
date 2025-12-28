@@ -7,7 +7,6 @@ Tuto sekci je nutné si přečíst, jinak to nemusí dopadnout dobře!
   Tento návod využívá Locally redundant storage (LRS), nicméně pro produkci by byla vhodná volba dražšího řešení.
 - Pro produkčního nasazení bude vhodné uvážit změnu `node-vm-size`.
 
-
 ## Požadavky
 
 Pro spuštění níže uvedených příkazů je třeba mít nainstalováno:
@@ -120,7 +119,7 @@ Publikace je manuální pomocí vhodného tagování a následné publikace do A
 Příklad je uvedený v následujícím kusu kódu.
 ```shell
 # Začneme přihlášením se do ACR.
-az acr login --name $env:CONTAINER_REGISTRY}
+az acr login --name $env:CONTAINER_REGISTRY
 # Příklad přetagování a publikace komponenty obrazu nkd-solr.
 docker build -t "$env:CONTAINER_REGISTRY.azurecr.io/nkd-solr:develop" ./docker/solr/
 docker push "$env:CONTAINER_REGISTRY.azurecr.io/nkd-solr:develop"
@@ -137,8 +136,8 @@ Než provedeme nasazení do AKS je třeba připravit konfiguraci.
 
 Začneme zkopírováním celého adresáře a navigací do něj.
 ```shell
-cp -r ./azure-kubernetes-service/configuration/ ./azure-kubernetes-service/.develop/
-cd ./azure-kubernetes-service/.develop/
+cp -r ./azure-kubernetes-service/configuration/ ../.develop/
+cd ../.develop/
 ```
 
 Následně je nutné upravit YAML soubor `configuration.yaml`.
@@ -148,9 +147,22 @@ Jakmile je konfigurace připravena můžeme jí nahrát do AKS.
 kubectl apply -f ./configuration.yaml
 ```
 
+Další krok předpokládá existenci následujících souborů certifikátů pro přístup skrze HTTPS v současném adresáři.
+- `./ofn.portal.chain.pem`
+- `./ofn.portal.key.pem`
+- `./data.portal.chain.pem`
+- `./data.portal.key.pem`
+
+```bash
+kubectl create secret tls nkd-ofn-tls --namespace=nkd --cert=./ofn.portal.chain.pem --key=./ofn.portal.key.pem
+kubectl create secret tls nkd-data-tls --namespace=nkd --cert=./data.portal.chain.pem --key=./data.portal.key.pem
+
+kubectl create configmap nkd-https --namespace=nkd --from-file=ofn_portal_domain_chain=./ofn.portal.chain.pem --from-file=ofn_portal_domain_key=./ofn.portal.key.pem --from-file=data_portal_domain_chain=./data.portal.chain.pem --from-file=data_portal_domain_key=./data.portal.key.pem
+```
+
 Následně se můžeme vrátit do kořene repositáře.
 ```bash
-cd ../..
+cd ../azure-kubernetes-service/
 ```
 
 ## Nasazení komponent národního katalogu
@@ -190,6 +202,7 @@ kubectl get service/nkd-gateway
 ## Konfigurace po nasazení
 
 Tato sekce popisuje jaké kroky je třeba provést po nasazení komponent do AKS.
+Tyto úpravy je nutné provést před první harvestací.
 
 ### Úprava konfigurace úložiště
 
@@ -215,16 +228,12 @@ kubectl patch pv <NAME> -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
 # Následně ověříme změnu ve sloupci "RECLAIM POLICY" z "Delete" na "Retain".
 ```
 
-### Migrace dat
+### LinkedPipes:ETL
 
-TODO
+Po nasazení je třeba provést úpravy v LinkedPipes:ETL.
 
-Kopírování souborů z a do AKS klasteru:
-```shell
-# Příklad zkopírování lokálního souboru do POD.
-kubectl cp 2025-11-12.zip {pod-name}:/{directory-path} -c {container-name}
-```
-Dokumentace k příkazu [kubectl cp](https://kubernetes.io/docs/reference/kubectl/generated/kubectl_cp/).
+Podle nasazení je třeba upravit následující v LinkedPipes:ETL:
+- Šablona `Frontend prefix pro kvalitu` obsahuje prefix k souborům s kvalitou.
 
 ### Vytvoření historických dat
 
@@ -245,16 +254,32 @@ touch /data/public/soubor/nkod.trig
 exit
 ```
 
-### LinkedPipes:ETL
+### Migrace registračních záznamů
 
-Po nasazení je třeba provést úpravy v LinkedPipes:ETL.
+Po nasazení je třeba do clusteru dodat vstupní data.
+Jedná se zejména o statické soubory a dále pak registrační záznamy.
+Pro kopírování souborů lze využít příkazu [kubectl cp](https://kubernetes.io/docs/reference/kubectl/generated/kubectl_cp/).
 
-Podle nasazení je třeba upravit následující v LinkedPipes:ETL:
-- Šablona `Frontend prefix pro kvalitu` obsahuje prefix k souborům s kvalitou.
+Začneme zkopírováním registračních záznamů.
 
-## Konvence
+```shell
+# Nejprve je třeba získat název PODu do kterého budeme chtít záznamy kopírovat.
+kubectl get pods --selector=app.kubernetes.io/name=adapter
 
-TODO
+# Příklad zkopírování lokálního souboru do POD.
+# Příkaz je možné použít i pro kopírování obsahu celého adresář.
+kubectl cp {archiv-s-registračními-záznamy} {pod-name}:/tmp
+
+# Připojení k docker image.
+kubectl exec -it {pod-name} -- bash
+```
+
+Následně je třeba souboru přesunout do adresářů
+- `/data/adapter/registrations/messages`
+- `/data/adapter/registrations/attachments`
+
+Relaci k kontejneru je pak možné ukončit pomocí příkazu `exit`.
+
 
 ## Řešení problémů při nasazení
 

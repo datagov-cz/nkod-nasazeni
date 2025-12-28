@@ -30,6 +30,22 @@ spec:
                 configMapKeyRef:
                   name: nkd-configuration
                   key: data_portal_domain_name
+            - name: RESOLVER
+              value: kube-dns.kube-system.svc.cluster.local
           ports:
             - containerPort: 80
             - containerPort: 443
+          volumeMounts:
+            - name: ofn-tls-volume
+              mountPath: /opt/ssl/ofn
+              readOnly: true
+            - name: data-tls-volume
+              mountPath: /opt/ssl/data
+              readOnly: true
+      volumes:
+        - name: ofn-tls-volume
+          secret:
+            secretName: nkd-ofn-tls
+        - name: data-tls-volume
+          secret:
+            secretName: nkd-data-tls
