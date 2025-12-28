@@ -1,43 +1,32 @@
 server {
-  listen [::]:80;
-  listen 80;
-  server_name  $OFN_PORTAL_DOMAIN_NAME;
 
-  # Redirect root access to the data portal.
-  location =/ {
-    return 302 https://$DATA_PORTAL_DOMAIN_NAME;
-  }
+  listen 443 ssl ;
+  listen [::]:443 ssl ;
+  listen 443 quic ;
+  listen [::]:443 quic ;
 
-  location /api/v2/portal-ofn-data-gov-cz/reload {
-    proxy_pass http://nkd-portal-ofn-gov-cz/api/on-github-push-data.php;
-    proxy_pass_request_headers          on;
-    proxy_set_header   X-Real-IP        $remote_addr;
-    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
-    proxy_intercept_errors              on;
-  }
+  http2 on;
+  keepalive_requests 1000;
 
-  location / {
-    proxy_pass http://nkd-portal-ofn-gov-cz/;
-    proxy_pass_request_headers          on;
-    proxy_set_header   X-Real-IP        $remote_addr;
-    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
-    proxy_intercept_errors              on;
-  }
-}
+  proxy_buffer_size         128k;
+  proxy_buffers             4 256k;
+  proxy_busy_buffers_size   256k;
 
-server {
-  listen [::]:80;
-  listen 80;
   server_name  $DATA_PORTAL_DOMAIN_NAME;
 
-  # Set custom DNS server resolver to use the one provided by K8S.
-  resolver     kube-dns.kube-system.svc.cluster.local valid=10s;
+  ssl_certificate         /opt/ssl/data/tls.crt;
+  ssl_certificate_key     /opt/ssl/data/tls.key;
+
+  # Set custom DNS server resolver.
+  resolver     $RESOLVER valid=10s;
 
   # https://github.com/datagov-cz/nkd/tree/main/skripty/nkd-frontend/nginx
 
   # nkd-design-system
 
   location /assets/design-system {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-design-system/design-system/;
     proxy_pass_request_headers          on;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -48,6 +37,8 @@ server {
   # nkd-graphql
 
   location /graphql {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-graphql:8080;
     proxy_pass_request_headers          on;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -58,6 +49,8 @@ server {
   # nkd-virtuoso-ndc
 
   location /sparql {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-virtuoso-ndc:8890;
     proxy_set_header   Host             $host;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -72,6 +65,8 @@ server {
   }
 
   location /sparql-graph-crud {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-virtuoso-ndc:8890;
     proxy_set_header   Host             $host;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -94,6 +89,8 @@ server {
   }
 
   location ~ ^/((fct|describe).*) {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-virtuoso-ndc:8890$uri$is_args$args;
     proxy_set_header   Host             $host;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -110,6 +107,8 @@ server {
   # nkd-virtuoso-vocabulary
 
   location /slovníky/sparql {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-virtuoso-vocabulary:8890/sparql;
     proxy_set_header   Host             $host;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -124,6 +123,8 @@ server {
   }
 
   location /slovníky/sparql-graph-crud {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-virtuoso-vocabulary:8890/sparql-graph-crud;
     proxy_set_header   Host             $host;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -148,11 +149,15 @@ server {
   # linked data fragments
 
   location =/ldf {
+    include hsts-cors.conf;
+
     # Access to /ldf produces: Resource not found No resource with URL /ldf was found.
     return 302 /ldf/;
   }
 
   location /ldf/ {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-ldf:3000;
     proxy_pass_request_headers          on;
     proxy_set_header   Host             $http_host;
@@ -162,6 +167,8 @@ server {
   # nkd-catalog
 
   location /assets/catalog {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-catalog;
     proxy_pass_request_headers          on;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -170,6 +177,8 @@ server {
   }
 
   location /api/v2/catalog/ {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-catalog;
     proxy_pass_request_headers          on;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -178,6 +187,8 @@ server {
   }
 
   location ~ ^/((aplikace|application|detail-aplikace|application-detail).*) {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-catalog;
     proxy_pass_request_headers          on;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -186,6 +197,8 @@ server {
   }
 
   location ~ ^/((dataset|datová-sada|datasets|datové-sady).*) {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-catalog;
     proxy_pass_request_headers          on;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -194,6 +207,8 @@ server {
   }
 
   location ~ ^/((poskytovatelé|publishers).*) {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-catalog;
     proxy_pass_request_headers          on;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -202,6 +217,8 @@ server {
   }
 
   location ~ ^/((klíčová-slova|keywords).*) {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-catalog;
     proxy_pass_request_headers          on;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -210,6 +227,8 @@ server {
   }
 
   location ~ ^/((lokální-katalogy|local-catalogs).*) {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-catalog;
     proxy_pass_request_headers          on;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -218,6 +237,8 @@ server {
   }
 
   location ~ ^/((návrhy-na-datové-sady-k-otevření|suggestions-for-datasets-to-be-opened|návrh-na-datovou-sadu-k-otevření|suggestion-for-dataset-to-be-opened).*) {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-catalog;
     proxy_pass_request_headers          on;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -228,6 +249,8 @@ server {
   # nkd-forms
 
   location /api/v2/forms/ {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-forms;
     proxy_pass_request_headers          on;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -236,6 +259,8 @@ server {
   }
 
   location /formulář/ {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-forms;
     proxy_pass_request_headers          on;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -246,6 +271,8 @@ server {
   # nkd-public-data
 
   location /soubor {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-public-data/;
     proxy_pass_request_headers          on;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -254,6 +281,8 @@ server {
   }
 
   location /sitemaps {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-public-data/;
     proxy_pass_request_headers          on;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -264,6 +293,8 @@ server {
   # nkd-portal-data-gov-cz
 
   location /api/v2/portal-data-gov-cz/reload {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-portal-data-gov-cz/api/on-github-push-data.php;
     proxy_pass_request_headers          on;
     proxy_set_header   X-Real-IP        $remote_addr;
@@ -272,6 +303,8 @@ server {
   }
 
   location / {
+    include hsts-cors.conf;
+
     proxy_pass http://nkd-portal-data-gov-cz;
     proxy_pass_request_headers          on;
     proxy_set_header   X-Real-IP        $remote_addr;

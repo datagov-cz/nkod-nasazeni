@@ -1,5 +1,5 @@
 FROM nginx:1.29.2
 
-COPY ./nginx/default.conf.template /etc/nginx/templates/
+COPY ./nginx/ /etc/nginx/
 
 EXPOSE 80
