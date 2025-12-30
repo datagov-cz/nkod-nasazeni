@@ -1,2 +1,2 @@
-# 05 2 * * * nkod /opt/orchestrator/synchronize.sh
-# 25 2 * * * nkod /opt/orchestrator/execute.sh
+# 05 2 * * * nkod /opt/orchestrator/synchronize-pipelines-and-templates.sh
+# 25 2 * * * nkod /opt/orchestrator/execute-harvesting.sh

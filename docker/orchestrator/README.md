@@ -3,8 +3,8 @@ Tato komponenta zajišťuje synchronizace a spouštění pipeline v metadatovém
 
 ## Vstupní body
 Komponenta definuje následující akce:
-- `./entrypoint/execute.sh` - Execute entry pipeline.
-- `./entrypoint/synchronize.sh` - Synchronize pipelines from a remote repository.
+- `/opt/orchestrator/synchronize-pipelines-and-templates.sh` - Execute entry pipeline.
+- `/opt/orchestrator/execute-harvesting.sh` - Synchronize pipelines from a remote repository.
 
 ## Konfigurace
 Spouštění adaptérů je zajištěné Cronu jehož konfigurace je v souboru `./crontab`.
@@ -25,6 +25,7 @@ STORAGE_REPOSITORY=
 
 ## Datová úložiště
 Stažená definice jsou uloženy do `/data/lp-etl/storage/`.
+Komponenta dále předpokládá přístup do `/data/public/`.
 
 ## Logování
 
