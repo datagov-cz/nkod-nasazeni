@@ -242,7 +242,7 @@ kubectl get pv -o custom-columns=CLAIM:.spec.claimRef.name,NAME:.metadata.name
 
 # Z každého řádku následně odečteme hodnotu sloupce NAME.
 # Tuto hodnotu dosadíme za {NAME} do následujícího příkazu:
-# PowerShell vyžaduji jiné escapování pro JSON, příklad níže v komentáři.
+# PowerShell vyžaduje narozdíl od bashe jiné escapování pro JSON, příklad níže v komentáři.
 kubectl patch pv {NAME} -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
 #  kubectl patch pv {NAME} -p '{\"spec\":{\"persistentVolumeReclaimPolicy\":\"Retain\"}}'
 
