@@ -21,7 +21,7 @@ server {
   location =/ {
     include hsts-cors.conf;
 
-    return 302 https://$DATA_PORTAL_DOMAIN_NAME;
+    return 302 https://$DATA_PORTAL_DOMAIN_NAME/ofn/;
   }
 
   location /api/v2/portal-ofn-data-gov-cz/reload {
