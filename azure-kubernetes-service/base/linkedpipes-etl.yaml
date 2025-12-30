@@ -36,7 +36,7 @@ spec:
           fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: nkd-linkedpipes-etl-storage
-          image: ghcr.io/linkedpipes/etl-storage:2023-04-03
+          image: ghcr.io/datagov-cz/etl-storage:develop
           imagePullPolicy: Always
           env:
             - name: LP_ETL_DOMAIN
@@ -53,7 +53,7 @@ spec:
             runAsGroup: 5987
             runAsNonRoot: true
         - name: nkd-linkedpipes-etl-frontend
-          image: ghcr.io/linkedpipes/etl-frontend:2024-01-08
+          image: ghcr.io/datagov-cz/etl-frontend:develop
           imagePullPolicy: Always
           env:
             - name: LP_ETL_DOMAIN
@@ -71,7 +71,7 @@ spec:
             runAsGroup: 5987
             runAsNonRoot: true
         - name: nkd-linkedpipes-etl-executor
-          image: ghcr.io/linkedpipes/etl-executor:2023-04-03
+          image: ghcr.io/datagov-cz/etl-executor:develop
           imagePullPolicy: Always
           # We need to keep limits synch with -Xmx command.
           command: ["java", "-DconfigFileLocation=/opt/lp-etl/configuration/configuration.properties", "-Xmx12g", "-jar" ,"./executor/executor.jar"]
@@ -189,7 +189,7 @@ spec:
             runAsGroup: 5987
             runAsNonRoot: true
         - name: nkd-linkedpipes-etl-executor-monitor
-          image: ghcr.io/linkedpipes/etl-executor-monitor:2023-04-03
+          image: ghcr.io/datagov-cz/etl-executor-monitor:develop
           imagePullPolicy: Always
           env:
             - name: LP_ETL_DOMAIN
