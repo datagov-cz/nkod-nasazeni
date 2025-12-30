@@ -25,6 +25,12 @@ spec:
         - name: adapter-volume
           persistentVolumeClaim:
             claimName: nkd-adapter-pvc
+        - name: linkedpipes-etl-configuration
+          configMap:
+            name: nkd-linkedpipes-elt
+            items:
+              - key: lp-etl-configuration.ttl
+                path: lp-etl-configuration.ttl
       securityContext:
           fsGroup: 5987
           fsGroupChangePolicy: "OnRootMismatch"
@@ -164,6 +170,9 @@ spec:
                 secretKeyRef:
                   name: nkd-ldf-secret
                   key: ldf_ssh_password
+            # Path to the configuration.
+            - name: LP_ETL_NKOD_CONFIGURATION
+              value: /opt/nkd/lp-etl-configuration.ttl
           ports:
             - containerPort: 8085
           volumeMounts:
@@ -173,6 +182,8 @@ spec:
               name: adapter-volume
             - mountPath: "/data/public/"
               name: public-volume
+            - mountPath: "/opt/nkd/"
+              name: linkedpipes-etl-configuration
           securityContext:
             runAsUser: 5987
             runAsGroup: 5987
@@ -215,6 +226,8 @@ spec:
           volumeMounts:
             - mountPath: "/data/lp-etl/"
               name: linkedpipes-etl-volume
+            - mountPath: "/data/public/"
+              name: public-volume
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

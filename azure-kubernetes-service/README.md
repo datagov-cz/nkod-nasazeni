@@ -125,7 +125,7 @@ Nasazení vyžaduje existenci Docker obrazů jednotlivých komponent.
 Aktuálně jsou obrazy automaticky sestaveny a publikovány na GitHub pomocí GitHub Action.
 Není tedy třeba provádět žádnou speciální akci.
 
-### Azure Container Registry
+### Volitelný krok: Azure Container Registry
 
 Alternativní je publikace to Azure Container Registry (ACR).
 
@@ -174,6 +174,14 @@ Další krok předpokládá existenci následujících souborů certifikátů pr
 ```bash
 kubectl create secret tls nkd-ofn-tls --namespace=nkd --cert=./ofn.portal.chain.pem --key=./ofn.portal.key.pem
 kubectl create secret tls nkd-data-tls --namespace=nkd --cert=./data.portal.chain.pem --key=./data.portal.key.pem
+```
+
+Dále je třeba připravit konfiguraci pro LinkedPipes:ETL.
+Ta se nachází v souboru `lp-etl-configuration.ttl`.
+Po její úpravě je třeba z ní vytvořit Kubernetes resource následujícím příkazem:
+
+```bash
+kubectl create configmap nkd-linkedpipes-elt --from-file=lp-etl-configuration.ttl=./lp-etl-configuration.ttl
 ```
 
 Následně se můžeme vrátit do kořene repositáře.
@@ -250,33 +258,6 @@ kubectl patch pv {NAME} -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
 kubectl get pv
 ```
 
-### LinkedPipes:ETL
-
-Po nasazení je třeba provést úpravy v LinkedPipes:ETL.
-Začneme [zpřístupněním instance](#linkedpipes-etl-access).
-
-Podle nasazení je třeba upravit následující v LinkedPipes:ETL:
-- Šablona `Frontend prefix pro kvalitu` obsahuje prefix k souborům s kvalitou.
-
-### Vytvoření historických dat
-
-Pipeline 07.1 předpokládá existenci souboru `/data/public/soubor/nkod.trig`.
-Tento soubor je třeba vytvořit před prvním spuštěním běhu pipeliny.
-
-Soubor je možné vytvořit po připojení se do Docker containeru.
-Připojení je možné pomocí následujícího příkazu:
-```shell
-# Vrátí seznam všech podů.
-# Je třeba najít název podu začínající na nkd-linkedpipes-etl-*
-kubectl get pods
-# Spuštění procesu v podu a připojení k němu.
-kubectl exec -it {nkd-linkedpipes-etl-NAME} -c nkd-linkedpipes-etl-executor -- /bin/bash
-# Vytvoření prázdného souboru.
-touch /data/public/soubor/nkod.trig
-# Opuštění podu
-exit
-```
-
 ### Migrace registračních záznamů
 
 Po nasazení je třeba do clusteru dodat vstupní data.
@@ -351,9 +332,9 @@ kubectl exec -it pod/{pod-name} -c nkd-orchestrator -- /bin/bash
 ```
 
 V kontejneru jsou následující skripty, které můžeme spustit:
-- `/opt/entrypoint/execute.sh`
+- `su nkod /opt/orchestrator/execute-harvesting.sh`
   Spustí vstupní pipeline pro harvestaci.
-- `/opt/entrypoint/synchronize.sh`
+- `su nkod /opt/orchestrator/synchronize-pipelines-and-templates.sh`
   Synchronizuje lokální instanci LinkedPipes:ETL s Git repositářem.
   Tato operace přepíše lokální změny.
 
