@@ -18,6 +18,9 @@ Pro spuštění níže uvedených příkazů je třeba mít nainstalováno:
 - `kubelogin`, Kubelogin
   [Postup instalace](https://azure.github.io/kubelogin/install.html).
 
+Pro úspěšné nasazení je dále třeba mít připravené:
+- Certifikáty pro domény
+
 ## Příprava prostředí powershell
 
 Všechny níže uvedené příkazy předpokládají nastavení následujících proměnných prostředí:
@@ -46,6 +49,12 @@ Než budeme v nasazování pokračovat je třeba vytvořit odpovídají Azure pr
 To zahrnuje zejména Azure Kubernetes Service (AKS).
 V rámci této tvorby se definují z jakých strojů bude cluster sestaven a tedy jaké výpočetní kapacity budou k dispozici.
 
+### Volitelný krok: [Vytvoření Azure Container Registry (ACR)](#vytvoření-acr)
+
+Tento krok je volitelný.
+Azure Container Registry (ACR) lze použít pro uložení Docker images v rámci prostředí azure.
+Název je použitý pro určení DNS jako `{name}.azurecr.io` a musí být unikátní pro celý Azure.
+
 ```shell
 # Založení Azure Container Registry (ACR).
 # Můžeme získávat images také z jiného místa, ale tady bude lepší dostupnost.
@@ -54,25 +63,33 @@ az acr create --resource-group $env:RESOURCE_GROUP --name $env:CONTAINER_REGISTR
 # Povolení přístupu k ACR skrze ARM token.
 # https://learn.microsoft.com/en-us/azure/container-apps/tutorial-code-to-cloud
 az acr config authentication-as-arm show --registry $env:CONTAINER_REGISTRY
+```
 
+### Vytvoření Kubernetes clusteru
+
+```shell
 # Vytvoření Azure Kubernetes Service (AKS), více informací na:
 # https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/overview
 # https://learn.microsoft.com/en-us/azure/aks/configure-dual-stack - pro ipv4 a ipv6 dual stack
 # Přehled pro A - Entry-level economical, je na:
 # https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/general-purpose/av2-series
-# Standard_A4_v2 - 4 CPU, 8GB
+# Standard_A2_v2 - 2 CPU, 4GB (3.5GB usable)
 # WARNING: Toto je třeba upravit: "node-count" "node-vm-size" a "location".
-az aks create --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --node-count 2 --attach-acr $env:CONTAINER_REGISTRY --node-vm-size Standard_A4_v2 --location $env:LOCATION --ip-families ipv4,ipv6
+az aks create --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --node-count 2 --node-vm-size Standard_A2_v2 --location $env:LOCATION --ip-families ipv4,ipv6
 
 # Přidání node s větší pamětí.
-# Standard_A8_v2 - 8 CPU, 16GB
-az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool2 --node-count 2 --node-vm-size Standard_A8_v2
-
-# Umožni AKS přístup k ACR.
-az aks update --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --attach-acr $env:CONTAINER_REGISTRY
+# Standard_A8_v2 - 8 CPU, 16GB, 4GB (14GB usable)
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool2 --node-count 3 --node-vm-size Standard_A8_v2
 
 # Výpis nodes a získání node pool name.
 az aks nodepool list --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER -o table
+```
+
+Pokud existuje [ACR](#vytvoření-acr), je možná poskytnout AKS přístup pomocí následujícího příkazu.
+Tento krok je potřeba pouze, pokud je v plánu použít ACR jako úložiště pro Docker images.
+```shell
+# Umožni AKS přístup k ACR.
+az aks update --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --attach-acr $env:CONTAINER_REGISTRY
 ```
 
 ## Nastavení kubeclt
@@ -134,10 +151,11 @@ V případě přechodu na ACR, je třeba upravit názvy Docker obrazů v YAML de
 Než provedeme nasazení do AKS je třeba připravit konfiguraci.
 Šablona potřebné konfigurace je umístěna v adresáři `./azure-kubernetes-service/configuration/`.
 
-Začneme zkopírováním celého adresáře a navigací do něj.
+Začneme zkopírováním celého adresáře s konfigurací a navigací do něj.
 ```shell
-cp -r ./azure-kubernetes-service/configuration/ ../.develop/
-cd ../.develop/
+# V případě nasazení pro jiné prostředí je vhodné použít odpovídající jméno místo `.develop`.
+cp -r ./azure-kubernetes-service/configuration/ ./azure-kubernetes-service/.develop/
+cd ./azure-kubernetes-service/.develop/
 ```
 
 Následně je nutné upravit YAML soubor `configuration.yaml`.
@@ -156,13 +174,11 @@ Další krok předpokládá existenci následujících souborů certifikátů pr
 ```bash
 kubectl create secret tls nkd-ofn-tls --namespace=nkd --cert=./ofn.portal.chain.pem --key=./ofn.portal.key.pem
 kubectl create secret tls nkd-data-tls --namespace=nkd --cert=./data.portal.chain.pem --key=./data.portal.key.pem
-
-kubectl create configmap nkd-https --namespace=nkd --from-file=ofn_portal_domain_chain=./ofn.portal.chain.pem --from-file=ofn_portal_domain_key=./ofn.portal.key.pem --from-file=data_portal_domain_chain=./data.portal.chain.pem --from-file=data_portal_domain_key=./data.portal.key.pem
 ```
 
 Následně se můžeme vrátit do kořene repositáře.
 ```bash
-cd ../azure-kubernetes-service/
+cd ../../
 ```
 
 ## Nasazení komponent národního katalogu
@@ -206,31 +222,38 @@ Tyto úpravy je nutné provést před první harvestací.
 
 ### Úprava konfigurace úložiště
 
-Použitá datová úložiště jsou poskytnuta automaticky.
-Pokud dojde ke smazání Kubernetes zdrojů jsou i úložiště smazána.
+Použitá datová úložiště, neboli persistent volumes, jsou poskytnuta automaticky.
+Pokud dojde ke smazání Kubernetes zdrojů, která tyto úložiště používají, jsou daná úložiště smazána.
 Toto může vést ke ztrátě dat.
 
-Řešením je úprava retailPolicy pro vybrané úložiště - persistent volumes.
-Toho je možné dosáhnout následujícími kroky:
+Důležitá data jsou uložena na persistent volume claims:
+- `nkd/nkd-adapter-pvc`
+- `nkd/nkd-public-pvc`
 
+Řešením je úprava `retailPolicy` pro vybrané úložiště.
+Toho je možné dosáhnout následujícími kroky:
 ```shell
-# Začneme získáním ID disků, pro které chceme upravit konfiguraci.
-# Důležitá data jsou uložena na persistent volume claims:
+# Začneme zobrazením dostupných pvc.
+kubectl get pv -o custom-columns=CLAIM:.spec.claimRef.name,NAME:.metadata.name
+
+# Dále je třeba vybrat řádky, které obsahují jako hodnotu CLAIM
 # - nkd/nkd-adapter-pvc
 # - nkd/nkd-public-pvc
-# Ostatní data lze z těchto dat odvodit, či dopočítat.
-# Cílem bude změna "RECLAIM POLICY".
-kubectl get pv
-# Změnu je možné provést následujícím příkazem, po nahrazení {NAME} za příslušné jméno.
+
+# Z každého řádku následně odečteme hodnotu sloupce NAME.
+# Tuto hodnotu dosadíme za {NAME} do následujícího příkazu:
 # PowerShell vyžaduji jiné escapování pro JSON, příklad níže v komentáři.
-kubectl patch pv <NAME> -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
-#  kubectl patch pv <NAME> -p '{\"spec\":{\"persistentVolumeReclaimPolicy\":\"Retain\"}}'
+kubectl patch pv {NAME} -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
+#  kubectl patch pv {NAME} -p '{\"spec\":{\"persistentVolumeReclaimPolicy\":\"Retain\"}}'
+
 # Následně ověříme změnu ve sloupci "RECLAIM POLICY" z "Delete" na "Retain".
+kubectl get pv
 ```
 
 ### LinkedPipes:ETL
 
 Po nasazení je třeba provést úpravy v LinkedPipes:ETL.
+Začneme [zpřístupněním instance](#linkedpipes-etl-access).
 
 Podle nasazení je třeba upravit následující v LinkedPipes:ETL:
 - Šablona `Frontend prefix pro kvalitu` obsahuje prefix k souborům s kvalitou.
@@ -294,7 +317,7 @@ Nastavení je možné upravit na [Home](https://portal.azure.com/#home):
 
 ## Údržba a provoz
 
-### Přístup k LinkedPipes:ETL
+### [Přístup k LinkedPipes:ETL](#linkedpipes-etl-access)
 
 Pro připojení k LinkedPipes ETL je tedy využít následující příkaz:
 ```shell
@@ -310,7 +333,7 @@ kubectl exec -it pod/{pod-name} -c {container} -- /bin/bash
 
 Jméno podu je možné získat v výstupu příkazu:
 ```shell
-kubectl get pods
+kubectl get pods --selector=app.kubernetes.io/name=linkedpipes-etl
 ```
 
 Jméno kontejneru pak odpovídá definic deploymentu.
@@ -347,4 +370,20 @@ Pokud by bylo třeba více prostředků, než může jeden node nabídnout, je t
 
 ```bash
 az aks nodepool scale --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool2 --node-count 2
+```
+
+## [Archivace dat](#archivace-dat)
+
+## [Zrušení prostředí](#zrušení-prostředí)
+
+Před pokračováním v této sekci se ujistěte, že jste provedli [Archivaci dat](archivace-dat).
+
+Zdroje v AKS je možné smazat následujícím příkazem.
+```shell
+kubectl delete namespace nkd
+```
+
+Samotné AKS je pak možné smazat následovně:
+```shell
+az aks delete --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --yes --no-wait
 ```

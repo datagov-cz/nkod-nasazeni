@@ -33,7 +33,6 @@ spec:
             - name: RESOLVER
               value: kube-dns.kube-system.svc.cluster.local
           ports:
-            - containerPort: 80
             - containerPort: 443
           volumeMounts:
             - name: ofn-tls-volume
