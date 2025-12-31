@@ -73,13 +73,15 @@ az acr config authentication-as-arm show --registry $env:CONTAINER_REGISTRY
 # https://learn.microsoft.com/en-us/azure/aks/configure-dual-stack - pro ipv4 a ipv6 dual stack
 # Přehled pro A - Entry-level economical, je na:
 # https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/general-purpose/av2-series
-# Standard_A2_v2 - 2 CPU, 4GB (3.5GB usable)
-# WARNING: Toto je třeba upravit: "node-count" "node-vm-size" a "location".
+
+# Standard_A2_v2 - 2 CPU, 4GB
 az aks create --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --node-count 2 --node-vm-size Standard_A2_v2 --location $env:LOCATION --ip-families ipv4,ipv6
 
-# Přidání node s větší pamětí.
-# Standard_A8_v2 - 8 CPU, 16GB, 4GB (14GB usable)
-az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool2 --node-count 3 --node-vm-size Standard_A8_v2
+# Standard_A8_v2 - 8 CPU, 16GB
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool2 --node-count 2 --node-vm-size Standard_A8_v2
+
+# Standard_A4m_v2 - 4 CPU, 32GB
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool3 --node-count 1 --node-vm-size Standard_A8_v2
 
 # Výpis nodes a získání node pool name.
 az aks nodepool list --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER -o table

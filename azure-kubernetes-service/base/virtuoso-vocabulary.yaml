@@ -38,9 +38,9 @@ spec:
                   name: nkd-virtuoso-vocabulary-secret
                   key: virtuoso_dva_password
             - name: VIRT_PARAMETERS_NUMBEROFBUFFERS
-              value: "340000"
+              value: "170000"
             - name: VIRT_PARAMETERS_MAXDIRTYBUFFERS
-              value: "500000"
+              value: "130000"
           ports:
             - containerPort: 1111
             - containerPort: 8890
@@ -54,7 +54,7 @@ spec:
             allowPrivilegeEscalation: false
           resources:
             requests:
-              memory: "4Gi"
+              memory: "2Gi"
             limits:
               memory: "4Gi"
         - name: ssh-server

@@ -74,7 +74,7 @@ spec:
           image: ghcr.io/datagov-cz/etl-executor:develop
           imagePullPolicy: Always
           # We need to keep limits synch with -Xmx command.
-          command: ["java", "-DconfigFileLocation=/opt/lp-etl/configuration/configuration.properties", "-Xmx12g", "-jar" ,"./executor/executor.jar"]
+          command: ["java", "-DconfigFileLocation=/opt/lp-etl/configuration/configuration.properties", "-Xmx8g", "-jar" ,"./executor/executor.jar"]
           resources:
             requests:
               memory: "8Gi"
