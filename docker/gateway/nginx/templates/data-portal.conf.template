@@ -270,7 +270,7 @@ server {
 
   # nkd-public-data
 
-  location /soubor {
+  location /soubor/ {
     include hsts-cors.conf;
 
     proxy_pass http://nkd-public-data/;
@@ -280,7 +280,7 @@ server {
     proxy_intercept_errors              on;
   }
 
-  location /sitemaps {
+  location /sitemaps/ {
     include hsts-cors.conf;
 
     proxy_pass http://nkd-public-data/;
