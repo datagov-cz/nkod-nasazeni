@@ -1,7 +1,8 @@
 # Virtuoso databáze
 
-Tento obraz je založená na [Virtuoso Open Source 7](https://hub.docker.com/r/openlink/virtuoso-opensource-7/), změny proti základnímu obrazu jsou následují.
-- Pri spuštění je instalován [Faceted Browsing Service](https://vos.openlinksw.com/owiki/wiki/VOS/VirtuosoFacetsWebService) plugin.
+Tento obraz je založený na [Virtuoso Open Source 7](https://hub.docker.com/r/openlink/virtuoso-opensource-7/), změny proti základnímu obrazu jsou následují.
+- Při spuštění je instalován [Faceted Browsing Service](https://vos.openlinksw.com/owiki/wiki/VOS/VirtuosoFacetsWebService) plugin.
+- Zvýšen limit `MaxConstructTriples = 100000` - potřebný pro dotazy ohledně datové kvality
 
 ## Konfigurace
 
