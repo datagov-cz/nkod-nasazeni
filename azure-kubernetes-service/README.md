@@ -183,7 +183,7 @@ Ta se nachází v souboru `lp-etl-configuration.ttl`.
 Po její úpravě je třeba z ní vytvořit Kubernetes resource následujícím příkazem:
 
 ```bash
-kubectl create configmap nkd-linkedpipes-elt --from-file=lp-etl-configuration.ttl=./lp-etl-configuration.ttl
+kubectl create configmap nkd-linkedpipes-etl --from-file=lp-etl-configuration.ttl=./lp-etl-configuration.ttl
 ```
 
 Následně se můžeme vrátit do kořene repositáře.

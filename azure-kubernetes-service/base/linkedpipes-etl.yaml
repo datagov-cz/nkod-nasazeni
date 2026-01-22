@@ -27,7 +27,7 @@ spec:
             claimName: nkd-adapter-pvc
         - name: linkedpipes-etl-configuration
           configMap:
-            name: nkd-linkedpipes-elt
+            name: nkd-linkedpipes-etl
             items:
               - key: lp-etl-configuration.ttl
                 path: lp-etl-configuration.ttl
