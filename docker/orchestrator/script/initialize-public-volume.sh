@@ -12,3 +12,8 @@ mkdir -p /data/public/soubor 2>/dev/null
 if [ ! -f /data/public/soubor/nkod.trig ]; then
     touch /data/public/soubor/nkod.trig 2>/dev/null
 fi
+
+# Make sure we have the public nkod.trig file.
+if [ ! -f /data/public/soubor/nkod-minulý-měsíc.trig ]; then
+    touch /data/public/soubor/nkod-minulý-měsíc.trig 2>/dev/null
+fi
