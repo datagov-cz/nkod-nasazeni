@@ -1,10 +1,14 @@
-# Orchestrátor pro spouštění pipeline
-Tato komponenta zajišťuje synchronizace a spouštění pipeline v metadatovém procesoru LinkedPipes:ETL.
+# Orchestrátor
+Tato komponenta zajišťuje:
+- synchronizace LinkedPipes:ETL
+- spouštění pipeline v LinkedPipes:ETL
+- přípravu dat před spuštěním LinkedPipes:ETL
 
 ## Vstupní body
 Komponenta definuje následující akce:
-- `/opt/orchestrator/synchronize-pipelines-and-templates.sh` - Execute entry pipeline.
-- `/opt/orchestrator/execute-harvesting.sh` - Synchronize pipelines from a remote repository.
+- `/opt/orchestrator/execute-pipeline.sh`
+- `/opt/orchestrator/initialize-data-directory.sh`
+- `/opt/orchestrator/synchronize-lp-etl.sh`
 
 ## Konfigurace
 Spouštění adaptérů je zajištěné Cronu jehož konfigurace je v souboru `./crontab`.
@@ -15,12 +19,14 @@ Obsah `.env` souboru:
 FRONTEND_URL=
 STORAGE_URL=
 
-# Pipeline ke spuštění.
-PIPELINE_URL=
-
-# Repositář jako zdroj pipelines a templates.
+# Git repositář jako zdroj pipelines a templates.
 STORAGE_REPOSITORY_BRANCH=
 STORAGE_REPOSITORY=
+```
+
+```
+05 2 * * * nkod /opt/orchestrator/synchronize-pipelines-and-templates.sh
+25 2 * * * nkod /opt/orchestrator/execute-harvesting.sh
 ```
 
 ## Datová úložiště

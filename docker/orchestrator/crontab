@@ -1,2 +1,1 @@
-# 05 2 * * * nkod /opt/orchestrator/synchronize-pipelines-and-templates.sh
-# 25 2 * * * nkod /opt/orchestrator/execute-harvesting.sh
+# By default this component does nothing.

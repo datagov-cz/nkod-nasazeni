@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Rewrite local pipelines and templates from GitHub.
+# Rewrite local pipelines and templates in LinkedPipes:ETL from GitHub.
 #
 
 set -e

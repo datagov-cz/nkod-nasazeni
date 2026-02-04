@@ -19,8 +19,6 @@ RUN chown nkod:nkod *.sh && chmod 0744 *.sh
 
 # Setup cron.
 COPY crontab /etc/cron.d/adapter-cron-file
-RUN chmod 0644 /etc/cron.d/adapter-cron-file
-RUN crontab /etc/cron.d/adapter-cron-file
 
 # Set starting location.
 WORKDIR /
