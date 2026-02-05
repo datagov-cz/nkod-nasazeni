@@ -37,6 +37,7 @@ spec:
                 secretKeyRef:
                   name: nkd-virtuoso-vocabulary-secret
                   key: virtuoso_dva_password
+            # Next two lines if there is 2 GB system memory free
             - name: VIRT_PARAMETERS_NUMBEROFBUFFERS
               value: "170000"
             - name: VIRT_PARAMETERS_MAXDIRTYBUFFERS
@@ -56,7 +57,7 @@ spec:
             requests:
               memory: "2Gi"
             limits:
-              memory: "4Gi"
+              memory: "3Gi"
         - name: ssh-server
           image: ghcr.io/datagov-cz/nkd-ssh-server:develop
           imagePullPolicy: Always

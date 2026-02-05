@@ -21,6 +21,16 @@ Pro spuštění níže uvedených příkazů je třeba mít nainstalováno:
 Pro úspěšné nasazení je dále třeba mít připravené:
 - Certifikáty pro domény
 
+## Příprava GitLab repositářů s obsahem pro portál
+
+Pro automatickou synchronizaci obsahu s GitHub repositářem je třeba vytvořit webhook na následující adresy.
+- `/api/v2/portal-data-gov-cz/reload`
+  Obsah repositáře bude dostupný na datovém portálu.
+- `/api/v2/portal-ofn-data-gov-cz/reload`
+  Obsah bude dostupný na ofn portálu.
+
+Při tvorbě si zapište tajemství, budou třeba v sekci [Příprava konfigurace](#configuration).
+
 ## Příprava prostředí powershell
 
 Všechny níže uvedené příkazy předpokládají nastavení následujících proměnných prostředí:
@@ -79,9 +89,6 @@ az aks create --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --nod
 
 # Standard_A8_v2 - 8 CPU, 16GB
 az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool2 --node-count 2 --node-vm-size Standard_A8_v2
-
-# Standard_A4m_v2 - 4 CPU, 32GB
-az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool3 --node-count 1 --node-vm-size Standard_A8_v2
 
 # Výpis nodes a získání node pool name.
 az aks nodepool list --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER -o table
@@ -148,7 +155,7 @@ docker push "$env:CONTAINER_REGISTRY.azurecr.io/nkd-solr:develop"
 Výhodou použití ACR by mohla být lepší dostupnost a spolehlivost.
 V případě přechodu na ACR, je třeba upravit názvy Docker obrazů v YAML definicích pro AKS.
 
-## Příprava konfigurace
+## [Příprava konfigurace](#configuration)
 
 Než provedeme nasazení do AKS je třeba připravit konfiguraci.
 Šablona potřebné konfigurace je umístěna v adresáři `./azure-kubernetes-service/configuration/`.
@@ -179,11 +186,13 @@ kubectl create secret tls nkd-data-tls --namespace=nkd --cert=./data.portal.chai
 ```
 
 Dále je třeba připravit konfiguraci pro LinkedPipes:ETL.
-Ta se nachází v souboru `lp-etl-configuration.ttl`.
-Po její úpravě je třeba z ní vytvořit Kubernetes resource následujícím příkazem:
+Ta se skládá ze souborů `lp-etl-configuration.ttl` a `./lp-etl-crontab`.
+První soubor je dostupný v LP-ETL pipelines, druhý slouží pro plánování spouštění pipelines.
+Při editaci `./lp-etl-crontab` je třeba pamatovat, že se jedná o čas na serveru, nikoliv nutně lokální čas.
+Jakmile je soubor připraven vytvoříme Kubernetes resource následujícím příkazem:
 
 ```bash
-kubectl create configmap nkd-linkedpipes-etl --from-file=lp-etl-configuration.ttl=./lp-etl-configuration.ttl
+kubectl create configmap nkd-linkedpipes-etl --from-file=lp-etl-configuration.ttl=./lp-etl-configuration.ttl --from-file=lp-etl-crontab=./lp-etl-crontab
 ```
 
 Následně se můžeme vrátit do kořene repositáře.
@@ -285,7 +294,6 @@ Následně je třeba souboru přesunout do adresářů
 - `/data/adapter/registrations/attachments`
 
 Relaci k kontejneru je pak možné ukončit pomocí příkazu `exit`.
-
 
 ## Řešení problémů při nasazení
 

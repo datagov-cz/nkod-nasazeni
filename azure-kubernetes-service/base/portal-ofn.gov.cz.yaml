@@ -27,14 +27,23 @@ spec:
           image: ghcr.io/datagov-cz/nkd-jekyll:develop
           imagePullPolicy: Always
           env:
-            - name: GITHUB_BRANCH
-              value: "master"
-            - name: GITHUB_REPOSITORY
-              value: "datagov-cz/otevrene-formalni-normy"
             - name: PORT
               value: "80"
+            - name: GITHUB_BRANCH
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-portal
+                  key: ofn_portal_branch
+            - name: GITHUB_REPOSITORY
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-portal
+                  key: ofn_portal_repository
             - name: GITHUB_SECRET
-              value: "js902jds87q243_qas"
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-portal
+                  key: ofn_portal_secret
           ports:
             - containerPort: 80
           volumeMounts:

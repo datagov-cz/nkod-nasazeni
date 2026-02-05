@@ -1,3 +1,6 @@
+# Use can use python to base64 encode:
+# import base64
+# base64.b64encode(b"value-to-encode")
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -104,6 +107,27 @@ data:
   virtuoso_dva_password:
   # [ENCODED] Heslo pro SSH přístup.
   virtuoso_ssh_password:
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nkd-portal
+  namespace: nkd
+data:
+  # Portál katalogu dat - /api/v2/portal-data-gov-cz/reload
+  # [ENCODED] branch pro datový portál
+  data_portal_branch:
+  # [ENCODED] repository, výchozí hodnota je `datagov-cz/data.gov.cz/`.
+  data_portal_repository: ZGF0YWdvdi1jei9kYXRhLmdvdi5jei8=
+  # [ENCODED] tajemství webhooku
+  data_portal_secret:
+  # Portál OFN - /api/v2/portal-ofn-data-gov-cz/reload
+  # [ENCODED] branch pro portál ofn
+  ofn_portal_branch:
+  # [ENCODED] repository, výchozí hodnota je `datagov-cz/otevrene-formalni-normy`.
+  ofn_portal_repository: ZGF0YWdvdi1jei9vdGV2cmVuZS1mb3JtYWxuaS1ub3JteQ==
+  # [ENCODED] tajemství webhooku
+  ofn_portal_secret:
 ---
 apiVersion: v1
 kind: ConfigMap

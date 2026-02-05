@@ -31,6 +31,12 @@ spec:
             items:
               - key: lp-etl-configuration.ttl
                 path: lp-etl-configuration.ttl
+        - name: linkedpipes-etl-crontab
+          configMap:
+            name: nkd-linkedpipes-etl
+            items:
+              - key: lp-etl-crontab
+                path: lp-etl-crontab
       securityContext:
           fsGroup: 5987
           fsGroupChangePolicy: "OnRootMismatch"
@@ -228,6 +234,9 @@ spec:
               name: linkedpipes-etl-volume
             - mountPath: "/data/public/"
               name: public-volume
+            - mountPath: "/etc/cron.d/"
+              name: linkedpipes-etl-crontab
+
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

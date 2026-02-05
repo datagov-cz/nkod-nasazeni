@@ -37,6 +37,7 @@ spec:
                 secretKeyRef:
                   name: nkd-virtuoso-ndc-secret
                   key: virtuoso_dva_password
+            # Next two lines if there is 8 GB system memory free
             - name: VIRT_PARAMETERS_NUMBEROFBUFFERS
               value: "680000"
             - name: VIRT_PARAMETERS_MAXDIRTYBUFFERS

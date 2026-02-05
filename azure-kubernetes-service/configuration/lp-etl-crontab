@@ -1,0 +1,5 @@
+# https://crontab.guru/
+# You should synchronize before every pipeline run.
+# 05 2 * * * nkod /opt/orchestrator/synchronize-storage.sh
+# This is how you can run a pipeline.
+# 25 2 * * * nkod /opt/orchestrator/execute-pipeline.sh "https://oha02.dia.gov.cz/etl/resources/pipelines/1700141419091-0002"
