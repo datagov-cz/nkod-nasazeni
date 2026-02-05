@@ -18,7 +18,7 @@ COPY ./script/* ./
 RUN chown nkod:nkod *.sh && chmod 0744 *.sh
 
 # Setup cron.
-COPY crontab /etc/cron.d/adapter-cron-file
+COPY lp-etl-crontab /etc/cron.d/lp-etl-crontab
 
 # Set starting location.
 WORKDIR /
