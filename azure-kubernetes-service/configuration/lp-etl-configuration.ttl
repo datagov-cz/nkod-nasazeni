@@ -2,4 +2,5 @@
 [] <urn:prefix> "https://data.gov.cz/soubor/kvalita/" ;
    <urn:testFilesBranch> "test" ;
    <urn:slackToken> "" ;
-   <urn:slackETLInstanceName> "Test NKOD@AKS" .
+   <urn:slackETLInstanceName> "Test NKOD@AKS" ;
+   <urn:useHistoricRecords> false .
