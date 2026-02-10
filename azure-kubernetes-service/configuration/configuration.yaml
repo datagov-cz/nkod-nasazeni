@@ -2,13 +2,6 @@
 # import base64
 # base64.b64encode(b"value-to-encode")
 apiVersion: v1
-kind: Namespace
-metadata:
-  name: nkd
-  labels:
-    app.kubernetes.io/name: nkd
----
-apiVersion: v1
 kind: Secret
 metadata:
   name: nkd-adapter-secret

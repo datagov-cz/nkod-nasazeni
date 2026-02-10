@@ -6,9 +6,9 @@ metadata:
   labels:
     app.kubernetes.io/name: gateway
   annotations:
-    service.beta.kubernetes.io/azure-load-balancer-resource-group:
-    service.beta.kubernetes.io/azure-load-balancer-ipv4:
-    service.beta.kubernetes.io/azure-load-balancer-ipv6:
+    service.beta.kubernetes.io/azure-load-balancer-resource-group: {0}
+    service.beta.kubernetes.io/azure-load-balancer-ipv4: {1}
+    service.beta.kubernetes.io/azure-load-balancer-ipv6: {2}
 spec:
   type: LoadBalancer
   selector:

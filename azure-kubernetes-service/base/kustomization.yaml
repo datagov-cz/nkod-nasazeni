@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - adapter.yaml
   - catalog.yaml
+  - configuration.yaml
   - couchdb.yaml
   - design-system.yaml
   - forms.yaml

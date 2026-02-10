@@ -32,7 +32,7 @@ Pro automatickou synchronizaci obsahu s GitHub repositářem je třeba vytvořit
 Jako `Content type` je třeba zvolit `application/json`.
 Pro `Which events would you like to trigger this webhook?` zvolte `Just the push event.`.
 
-Při tvorbě si zapište `secret`, budou třeba v sekci [Příprava konfigurace](#configuration).
+Při tvorbě si zapište `secret`, budou třeba v sekci [Konfigurace a nasazení komponent národního katalogu](#k8s-component-deployment).
 
 ## Příprava prostředí powershell
 
@@ -43,6 +43,9 @@ $env:RESOURCE_GROUP=
 $env:AKS_CLUSTER="nkd-kubernetes"
 $env:CONTAINER_REGISTRY="nkdcontainerregistry"
 $env:LOCATION="northeurope"
+# Jedna z hodnot "develop", "test", "production".
+# Volba hodnoty ovlivní výchozí nastavení zdrojů.
+$env:ENVIRONMENT=
 ```
 
 ## Nastavení Azure CLI (az)
@@ -97,7 +100,7 @@ az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS
 az aks nodepool list --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER -o table
 ```
 
-Pokud existuje [ACR](#vytvoření-acr), je možná poskytnout AKS přístup pomocí následujícího příkazu.
+*Volitelný krok:* Pokud existuje [ACR](#vytvoření-acr), je možná poskytnout AKS přístup pomocí následujícího příkazu.
 Tento krok je potřeba pouze, pokud je v plánu použít ACR jako úložiště pro Docker images.
 ```shell
 # Umožni AKS přístup k ACR.
@@ -111,9 +114,9 @@ Dále je třeba být přihlášený do Azure CLI.
 
 ```shell
 # Konfigurace kubectl.
-az aks get-credentials --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER
+az aks get-credentials --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --context "$env:AKS_CLUSTER-$env:ENVIRONMENT"
 # Nastavení výchozího jmenného prostoru.
-kubectl config set-context --current --namespace=nkd
+kubectl config set-context --current --context "$env:AKS_CLUSTER-$env:ENVIRONMENT" --namespace=nkd
 # Následují příkaz by měl projít a vypsat uzly které tvoří AKS.
 kubectl get nodes
 ```
@@ -135,7 +138,7 @@ Nasazení vyžaduje existenci Docker obrazů jednotlivých komponent.
 ### GitHub
 
 Aktuálně jsou obrazy automaticky sestaveny a publikovány na GitHub pomocí GitHub Action.
-Není tedy třeba provádět žádnou speciální akci.
+Není tedy třeba provádět žádnou akci.
 
 ### Volitelný krok: Azure Container Registry
 
@@ -155,37 +158,60 @@ docker push "$env:CONTAINER_REGISTRY.azurecr.io/nkd-solr:develop"
 # ...
 ```
 
-Výhodou použití ACR by mohla být lepší dostupnost a spolehlivost.
+Výhodou použití ACR je lepší dostupnost a spolehlivost.
 V případě přechodu na ACR, je třeba upravit názvy Docker obrazů v YAML definicích pro AKS.
 
-## [Příprava konfigurace](#configuration)
+## Získání veřejné IP adresy
 
-Než provedeme nasazení do AKS je třeba připravit konfiguraci.
-Šablona potřebné konfigurace je umístěna v adresáři `./azure-kubernetes-service/configuration/`.
+Statická IP adresa musí být vytvořena skrze Azure v resource group ve které je Kubernetes.
+Smazáním kubernetes clusteru tato grupa zaniká, čímž také zanikne statická adresa.
+Nejprve tedy musíme získat název resource group a následně v ní vytvořit veřejnou ip adresu.
 
-Začneme zkopírováním celého adresáře s konfigurací a navigací do něj.
 ```shell
-# V případě nasazení pro jiné prostředí je vhodné použít odpovídající jméno místo `.develop`.
-cp -r ./azure-kubernetes-service/configuration/ ./azure-kubernetes-service/.develop/
-cd ./azure-kubernetes-service/.develop/
+# Získání názvu resource group.
+$env:K8S_RESOURCE_GROUP = (az aks show --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --query nodeResourceGroup -o tsv)
+# Vytvoření veřejné IPv4 a IPv6.
+az network public-ip create --resource-group $env:K8S_RESOURCE_GROUP --name gateway-public-ipv4 --sku Standard --allocation-method Static --version IPv4 --zone 1 2 3
+az network public-ip create --resource-group $env:K8S_RESOURCE_GROUP --name gateway-public-ipv6 --sku Standard --allocation-method Static --version IPv6 --zone 1 2 3
+# V posledním kroku přípravy získáme IP adresy, které budeme potřebovat později.
+$env:K8S_IPV4 = (az network public-ip show --resource-group $env:K8S_RESOURCE_GROUP --name gateway-public-ipv4 --query ipAddress --output tsv)
+$env:K8S_IPV6 = (az network public-ip show --resource-group $env:K8S_RESOURCE_GROUP --name gateway-public-ipv6 --query ipAddress --output tsv)
+# Zobrazení IP adres, relevantní jsou řádky pro gateway-public-ipv4 a gateway-public-ipv6.
+az network public-ip list --resource-group $env:K8S_RESOURCE_GROUP -o table
 ```
 
-Následně je nutné upravit YAML soubor `configuration.yaml`.
+Získané hodnoty použijeme v sekci [Nasazení komponent národního katalogu](#k8s-component-deployment).
+
+## [Konfigurace a nasazení komponent národního katalogu](#k8s-component-deployment)
+
+Než provedeme nasazení do AKS je třeba připravit konfiguraci.
+Začneme tedy zkopírováním celého adresáře s konfigurací, navigací do něj a aplikací konfigurace uložené v proměnných prostředí.
+```shell
+cp -r ./azure-kubernetes-service/configuration/ ./azure-kubernetes-service/.$env:ENVIRONMENT/
+cd ./azure-kubernetes-service/.$env:ENVIRONMENT/
+# Úprava souborů pomocí proměnných prostředí.
+(Get-Content ./kustomization.yaml -raw ) –f $env:ENVIRONMENT | Set-Content ./kustomization.yaml
+(Get-Content ./gateway-ingress.yaml -raw ) –f $env:K8S_RESOURCE_GROUP, $env:K8S_IPV4, $env:K8S_IPV6  | Set-Content ./gateway-ingress.yaml
+```
+Následně je nutné ručně upravit YAML soubor `configuration.yaml`.
 Položky označené jako `[ENCODED]` být base64 zakódovaná.
-Jakmile je konfigurace připravena můžeme jí nahrát do AKS.
+
+V tuto chvílí máme připravené vše pro nasazení.
+Pro nasazení využijeme [Kustomize](https://kustomize.io/), jenž je součástí kubectl.
+Nasazení provedeme následujícím příkazem.
 ```bash
-kubectl apply -f ./configuration.yaml
+kubectl apply -k .
 ```
 
 Další krok předpokládá existenci následujících souborů certifikátů pro přístup skrze HTTPS v současném adresáři.
-- `./ofn.portal.chain.pem`
-- `./ofn.portal.key.pem`
-- `./data.portal.chain.pem`
-- `./data.portal.key.pem`
+- `./https/ofn.portal.chain.pem`
+- `./https/ofn.portal.key.pem`
+- `./https/data.portal.chain.pem`
+- `./https/data.portal.key.pem`
 
 ```bash
-kubectl create secret tls nkd-ofn-tls --namespace=nkd --cert=./ofn.portal.chain.pem --key=./ofn.portal.key.pem
-kubectl create secret tls nkd-data-tls --namespace=nkd --cert=./data.portal.chain.pem --key=./data.portal.key.pem
+kubectl create secret tls nkd-ofn-tls --namespace=nkd --cert=./https/ofn.portal.chain.pem --key=./https/ofn.portal.key.pem
+kubectl create secret tls nkd-data-tls --namespace=nkd --cert=./https/data.portal.chain.pem --key=./https/data.portal.key.pem
 ```
 
 Dále je třeba připravit konfiguraci pro LinkedPipes:ETL.
@@ -201,40 +227,6 @@ kubectl create configmap nkd-linkedpipes-etl --from-file=lp-etl-configuration.tt
 Následně se můžeme vrátit do kořene repositáře.
 ```bash
 cd ../../
-```
-
-## Nasazení komponent národního katalogu
-
-Pro nasazení do různých prostředí využijeme [Kustomize](https://kustomize.io/), jenž je součástí kubectl.
-
-Pro nastavené do testovacího a produkčního prostředí použijeme příkaz:
-```shell
-kubectl apply -k ./azure-kubernetes-service/overlays/production
-```
-
-Pro nasazení na vývojové prostředí použijeme příkaz:
-```shell
-kubectl apply -k ./azure-kubernetes-service/overlays/develop
-```
-
-## Řešení ingress a přístup k národnímu katalogu
-
-Síťování je možné řešit různými způsoby.
-Například:
-- [Ingress-Nginx Controller](https://kubernetes.github.io/ingress-nginx/)
-  Bohužel nepodporuje češtinu v URL cestách.
-- [Managed NGINX ingress with the application routing add-on](https://learn.microsoft.com/en-us/azure/aks/app-routing)
-
-Další možností je využití Kubernetes service typu `LoadBalancer`, která může poskytnout externí přístup k vybrané službě.
-Směrování je pak prováděno pomocí komponenty `gateway`.
-To nám dává plnou a přenositelnou kontrolu.
-Toto řešení je zvoleno jako výchozí, pro nasazení do AKS a je nasazeno spolu s ostatními komponentami.
-
-Následující příkaz ukazuje, jak je možné získat externí IP, na kterých služba poslouchá a je možné na ně směrovat DNS.
-```shell
-# Zobrazení informací o službě.
-# Ve sloupci EXTERNAL-IP je uvedena veřejná IPv4 a IPv6 adresa.
-kubectl get service/nkd-gateway
 ```
 
 ## Konfigurace po nasazení
@@ -255,18 +247,12 @@ Důležitá data jsou uložena na persistent volume claims:
 Řešením je úprava `retailPolicy` pro vybrané úložiště.
 Toho je možné dosáhnout následujícími kroky:
 ```shell
-# Začneme zobrazením dostupných pvc.
-kubectl get pv -o custom-columns=CLAIM:.spec.claimRef.name,NAME:.metadata.name
+$env:ADAPTER_PV=(kubectl get pvc nkd-adapter-pvc -o jsonpath='{.spec.volumeName}')
+$env:PUBLIC_PV=(kubectl get pvc nkd-public-pvc -o jsonpath='{.spec.volumeName}')
 
-# Dále je třeba vybrat řádky, které obsahují jako hodnotu CLAIM
-# - nkd/nkd-adapter-pvc
-# - nkd/nkd-public-pvc
-
-# Z každého řádku následně odečteme hodnotu sloupce NAME.
-# Tuto hodnotu dosadíme za {NAME} do následujícího příkazu:
-# PowerShell vyžaduje narozdíl od bashe jiné escapování pro JSON, příklad níže v komentáři.
-kubectl patch pv {NAME} -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
-#  kubectl patch pv {NAME} -p '{\"spec\":{\"persistentVolumeReclaimPolicy\":\"Retain\"}}'
+# PowerShell vyžaduje speciální pro JSON.
+kubectl patch pv $env:ADAPTER_PV -p '{\"spec\":{\"persistentVolumeReclaimPolicy\":\"Retain\"}}'
+kubectl patch pv $env:PUBLIC_PV -p '{\"spec\":{\"persistentVolumeReclaimPolicy\":\"Retain\"}}'
 
 # Následně ověříme změnu ve sloupci "RECLAIM POLICY" z "Delete" na "Retain".
 kubectl get pv
@@ -309,9 +295,9 @@ Nastavení je možné upravit na [Home](https://portal.azure.com/#home):
 - "Networking"
 - Na stránce najdeme "Authorized IP ranges"
 
-## Údržba a provoz
+# Údržba a provoz
 
-### [Přístup k LinkedPipes:ETL](#linkedpipes-etl-access)
+## [Přístup k LinkedPipes:ETL](#linkedpipes-etl-access)
 
 Pro připojení k LinkedPipes ETL je tedy využít následující příkaz:
 ```shell
@@ -333,7 +319,7 @@ kubectl get pods --selector=app.kubernetes.io/name=linkedpipes-etl
 Jméno kontejneru pak odpovídá definic deploymentu.
 Alternativně je možné kontejner neuvést a příkaz pak vypíše dostupné možnosti.
 
-### Manuální spuštění harvestace a synchronizace
+## Manuální spuštění harvestace a synchronizace
 
 Manuální spuštění je možné provést skrze container `nkd-orchestrator`.
 ```shell
@@ -345,19 +331,19 @@ kubectl exec -it pod/{pod-name} -c nkd-orchestrator -- /bin/bash
 ```
 
 V kontejneru jsou následující skripty, které můžeme spustit:
-- `su nkod /opt/orchestrator/execute-harvesting.sh`
+- `su nkod /opt/orchestrator/execute-pipeline.sh {url-pipeline-ke-spuštění}`
   Spustí vstupní pipeline pro harvestaci.
-- `su nkod /opt/orchestrator/synchronize-pipelines-and-templates.sh`
+- `su nkod /opt/orchestrator/synchronize-storage.sh`
   Synchronizuje lokální instanci LinkedPipes:ETL s Git repositářem.
   Tato operace přepíše lokální změny.
 
-### Promazání K8S podů
+## Promazání K8S podů
 
 ```shell
 kubectl delete pod --field-selector="status.phase==Failed"
 ```
 
-### Změna velikosti nodepool
+## Změna velikosti nodepool
 
 Příklad změny počtů strojů v nodepool.
 Pokud by bylo třeba více prostředků, než může jeden node nabídnout, je třeba vytvořit novou skupinu s většími stroji.
@@ -377,7 +363,34 @@ Zdroje v AKS je možné smazat následujícím příkazem.
 kubectl delete namespace nkd
 ```
 
-Samotné AKS je pak možné smazat následovně:
+Samotné AKS je pak možné smazat následovně.
+*POZOR*: Smazáním AKS dojde i ke smazání veřejných IP adres.
 ```shell
-az aks delete --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --yes --no-wait
+az aks delete --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER
 ```
+
+# Vývojářská dokumentace
+
+Tato sekce obsahuje poznámky k vývoji nasazení do AKS.
+
+## Řešení ingress a přístup k národnímu katalogu
+
+Síťování je možné řešit různými způsoby.
+Například:
+- [Ingress-Nginx Controller](https://kubernetes.github.io/ingress-nginx/)
+  Bohužel nepodporuje češtinu v URL cestách.
+- [Managed NGINX ingress with the application routing add-on](https://learn.microsoft.com/en-us/azure/aks/app-routing)
+
+Další možností je využití Kubernetes service typu `LoadBalancer`, která může poskytnout externí přístup k vybrané službě.
+Směrování je pak prováděno pomocí komponenty `gateway`.
+To nám dává plnou a přenositelnou kontrolu.
+Toto řešení je zvoleno jako výchozí, pro nasazení do AKS a je nasazeno spolu s ostatními komponentami.
+
+Následující příkaz ukazuje, jak je možné získat externí IP, na kterých služba poslouchá a je možné na ně směrovat DNS.
+```shell
+# Zobrazení informací o službě.
+# Ve sloupci EXTERNAL-IP je uvedena veřejná IPv4 a IPv6 adresa.
+kubectl get service/nkd-gateway
+```
+
+
