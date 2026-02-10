@@ -29,7 +29,10 @@ Pro automatickou synchronizaci obsahu s GitHub repositářem je třeba vytvořit
 - `/api/v2/portal-ofn-data-gov-cz/reload`
   Obsah bude dostupný na ofn portálu.
 
-Při tvorbě si zapište tajemství, budou třeba v sekci [Příprava konfigurace](#configuration).
+Jako `Content type` je třeba zvolit `application/json`.
+Pro `Which events would you like to trigger this webhook?` zvolte `Just the push event.`.
+
+Při tvorbě si zapište `secret`, budou třeba v sekci [Příprava konfigurace](#configuration).
 
 ## Příprava prostředí powershell
 
