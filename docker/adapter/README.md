@@ -78,17 +78,15 @@ Tento image nevystavuje žádné porty.
 
 ## Vstupní body
 
-- `/opt/entrypoint.sh`
-  Výchozí vstupní bod pro spuštění Cronu.
-- `/opt/entrypoint.d/applications-list.sh`
+- `/opt/adapter/applications-list.sh`
   Stáhne seznam aplikací.
-- `/opt/entrypoint.d/applications-image.sh`
+- `/opt/adapter/applications-image.sh`
   Stáhne obrázky pro aplikace.
-- `/opt/entrypoint.d/suggestions-list.sh`
+- `/opt/adapter/suggestions-list.sh`
   Stáhne seznam navržených datových sad pro zveřejnění.
-- `/opt/entrypoint.d/allowed-publishers-list.sh`
+- `/opt/adapter/allowed-publishers-list.sh`
   Stáhne seznam povolených poskytovatelů.
-- `/opt/entrypoint.d/isds.sh`
+- `/opt/adapter/isds.sh`
   Stáhne zprávy z ISDS.
 
 ## Poznámky pro vývoj
