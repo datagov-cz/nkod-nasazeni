@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Initialize volumes.
-su nkod /opt/orchestrator/initialize-data-directory.sh
+su nkod /opt/orchestrator/initialize-volumes.sh
 
 # Prepare cron file to be used by the cron.
 crontab /etc/cron.d/lp-etl-crontab
