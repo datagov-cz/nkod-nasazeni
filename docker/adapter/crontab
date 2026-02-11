@@ -1,6 +1,6 @@
 # Define jobs to be executed.
-10 */2 * * * nkod /opt/entrypoint.d/applications-list.sh
-11 */2 * * * nkod /opt/entrypoint.d/applications-image.sh
-15 */2 * * * nkod /opt/entrypoint.d/suggestions-list.sh
-20 */2 * * * nkod /opt/entrypoint.d/allowed-publishers-list.sh
-25 */2 * * * nkod /opt/entrypoint.d/isds.sh
+10 */2 * * * nkod /opt/adapter/applications-list.sh
+11 */2 * * * nkod /opt/adapter/applications-image.sh
+15 */2 * * * nkod /opt/adapter/suggestions-list.sh
+20 */2 * * * nkod /opt/adapter/allowed-publishers-list.sh
+25 */2 * * * nkod /opt/adapter/isds.sh

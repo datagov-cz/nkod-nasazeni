@@ -32,14 +32,18 @@ WORKDIR /data/
 RUN mkdir log \
   && chown -R nkod:nkod /data
 
-# Copy entrypoints.
-WORKDIR /opt/entrypoint.d/
-COPY ./entrypoint ./
+# Copy entrypoint.
+COPY ./adapter-entrypoint.sh/ /
+RUN chown nkod:nkod /adapter-entrypoint.sh && chmod 0744 /adapter-entrypoint.sh
+
+# Copy other script
+WORKDIR /opt/adapter/
+COPY ./script/* ./
 RUN chown nkod:nkod *.sh && chmod 0744 *.sh
 
 # Copy main script to be executed.
-COPY ./entrypoint.sh /opt/
-RUN chmod u+x /opt/entrypoint.sh
+COPY ./adapter-entrypoint.sh /
+RUN chmod u+x /adapter-entrypoint.sh
 
 # Setup cron.
 COPY crontab /etc/cron.d/adapter-cron-file
@@ -47,6 +51,6 @@ RUN chmod 0644 /etc/cron.d/adapter-cron-file
 RUN crontab /etc/cron.d/adapter-cron-file
 
 # Set starting location.
-WORKDIR /opt/
+WORKDIR /
 
-CMD ["/opt/entrypoint.sh"]
+CMD ["/adapter-entrypoint.sh"]
