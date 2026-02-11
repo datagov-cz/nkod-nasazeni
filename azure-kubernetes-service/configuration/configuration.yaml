@@ -110,7 +110,7 @@ data:
   # Portál katalogu dat - /api/v2/portal-data-gov-cz/reload
   # [ENCODED] branch pro datový portál
   data_portal_branch:
-  # [ENCODED] repository, výchozí hodnota je `datagov-cz/data.gov.cz/`.
+  # [ENCODED] repository, výchozí hodnota je `datagov-cz/data.gov.cz`.
   data_portal_repository: ZGF0YWdvdi1jei9kYXRhLmdvdi5jei8=
   # [ENCODED] tajemství webhooku
   data_portal_secret:
