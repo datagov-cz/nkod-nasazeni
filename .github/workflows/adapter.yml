@@ -26,6 +26,7 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v3
         with:
+          build-args: DEPLOYMENT_ENVIRONMENT=${{ github.ref_name }}
           context: ./docker/adapter/
           push: true
           tags: ghcr.io/datagov-cz/nkd-adapter:${{ github.ref_name }}
