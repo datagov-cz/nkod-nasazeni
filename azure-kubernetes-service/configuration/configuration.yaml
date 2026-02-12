@@ -111,7 +111,7 @@ data:
   # [ENCODED] branch pro datový portál
   data_portal_branch:
   # [ENCODED] repository, výchozí hodnota je `datagov-cz/data.gov.cz`.
-  data_portal_repository: ZGF0YWdvdi1jei9kYXRhLmdvdi5jei8=
+  data_portal_repository: ZGF0YWdvdi1jei9kYXRhLmdvdi5jeg==
   # [ENCODED] tajemství webhooku
   data_portal_secret:
   # Portál OFN - /api/v2/portal-ofn-data-gov-cz/reload
