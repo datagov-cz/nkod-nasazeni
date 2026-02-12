@@ -3,7 +3,7 @@
 # Make sure mounting point is owned by www-data.
 if [ -d "/data/" ]; then
   # This is the expected state.
-  .
+  :
 else
   # The image is running without the mount point.
   mkdir /data/
@@ -12,11 +12,11 @@ fi
 
 # Download data portal content.
 if [ -d "/data/website/" ]; then
-  su - www-data -s /bin/bash -c "cd /data/website/ && git pull"
+  :
 else
   mkdir /data/website/
   chown www-data:www-data /data/website/
-  su - www-data -s /bin/bash -c "cd /data/website/ &&
+  su www-data -s /bin/bash -c "cd /data/website/ &&
     git clone https://github.com/$GITHUB_REPOSITORY.git . "
 fi
 
@@ -25,7 +25,7 @@ fi
 chown www-data:www-data /var/www/
 
 # Rebuild repository.
-su - www-data -s /bin/bash -c '/opt/update-content.sh'
+su www-data -s /bin/bash -c '/opt/update-content.sh'
 
 # Start PHP server.
 apache2-foreground
