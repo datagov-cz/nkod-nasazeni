@@ -83,7 +83,7 @@ spec:
                   name: nkd-adapter-secret
                   key: isds_url
           volumeMounts:
-            - mountPath: "/data/adapter/"
+            - mountPath: "/data/"
               name: adapter-volume
 ---
 apiVersion: v1
