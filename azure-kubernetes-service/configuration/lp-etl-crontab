@@ -1,5 +1,7 @@
 # https://crontab.guru/
 # You should synchronize before every pipeline run.
 # 05 2 * * * nkod /opt/orchestrator/synchronize-storage.sh
-# This is how you can run a pipeline.
+# This is how you can run the 07 runner pipeline.
 # 25 2 * * * nkod /opt/orchestrator/execute-pipeline.sh "https://oha02.dia.gov.cz/etl/resources/pipelines/1700141419091-0002"
+# This is how you can run the monthly report pipeline.
+# 30 7 1 * * nkod /opt/orchestrator/execute-pipeline.sh "https://oha02.dia.gov.cz/etl/resources/pipelines/1638258517134"
