@@ -206,6 +206,16 @@ spec:
               value: "3"
             - name: LP_ETL_EXECUTION_RETRY_LIMIT
               value: "3"
+            - name: LP_ETL_SLACK_FINISHED_WEBHOOK
+              valueFrom:
+                configMapKeyRef:
+                  name: nkd-configuration
+                  key: slack_finished_pipeline_webhook
+            - name: LP_ETL_SLACK_ERROR_WEBHOOK
+              valueFrom:
+                  configMapKeyRef:
+                    name: nkd-configuration
+                    key: slack_failed_pipeline_webhook
           ports:
             - containerPort: 8081
           volumeMounts:

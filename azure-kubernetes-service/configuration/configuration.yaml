@@ -132,3 +132,7 @@ data:
   ofn_portal_domain_name:
   # data.gov.cz
   data_portal_domain_name:
+  #
+  slack_finished_pipeline_webhook:
+  #
+  slack_failed_pipeline_webhook:
