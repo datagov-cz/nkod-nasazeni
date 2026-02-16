@@ -5,7 +5,7 @@ FROM ghcr.io/datagov-cz/ms-adapter:${DEPLOYMENT_ENVIRONMENT} as ms-adapter
 FROM ghcr.io/datagov-cz/isds-adapter:${DEPLOYMENT_ENVIRONMENT} as isds-adapter
 
 # The final image.
-FROM openjdk:21-bookworm
+FROM eclipse-temurin:21
 
 # Install cron.
 RUN apt-get update && apt-get install cron -y
