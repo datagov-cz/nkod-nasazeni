@@ -279,8 +279,8 @@ kubectl exec -it {pod-name} -- bash
 ```
 
 Následně je třeba souboru přesunout do adresářů
-- `/data/adapter/registrations/messages`
-- `/data/adapter/registrations/attachments`
+- `/data/registrations/messages`
+- `/data/registrations/attachments`
 
 Relaci k kontejneru je pak možné ukončit pomocí příkazu `exit`.
 
