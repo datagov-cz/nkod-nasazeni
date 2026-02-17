@@ -1,4 +1,4 @@
-FROM openlink/virtuoso-opensource-7:7.2.15
+FROM openlink/virtuoso-opensource-7:7.2.16
 
 # Copy and set new database init file.
 COPY --chmod=544 --chown=virtuoso:virtuoso ./virtuoso.ini /opt/
