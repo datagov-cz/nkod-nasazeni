@@ -284,6 +284,9 @@ Následně je třeba souboru přesunout do adresářů
 
 Relaci k kontejneru je pak možné ukončit pomocí příkazu `exit`.
 
+## Inicializace
+Následně je třeba [manuálně stáhnout definice pipeline do LinkedPipes ETL](#manuální-spuštění-harvestace-a-synchronizace) a inicializovat NKD dle [Instalační dokumentace](https://github.com/datagov-cz/nkd/blob/main/instalační%20dokumentace.md#příprava) pomocí [přístupu do LinkedPipes ETL](#přístup-k-linkedpipes-etl).
+
 ## Řešení problémů při nasazení
 
 ### Chybová hláška: Couldn't get current server API
@@ -297,7 +300,7 @@ Nastavení je možné upravit na [Home](https://portal.azure.com/#home):
 
 # Údržba a provoz
 
-## [Přístup k LinkedPipes:ETL](#linkedpipes-etl-access)
+## Přístup k LinkedPipes ETL
 
 Pro připojení k LinkedPipes ETL je tedy využít následující příkaz:
 ```shell
@@ -352,11 +355,11 @@ Pokud by bylo třeba více prostředků, než může jeden node nabídnout, je t
 az aks nodepool scale --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool2 --node-count 2
 ```
 
-## [Archivace dat](#archivace-dat)
+## Archivace dat
 
-## [Zrušení prostředí](#zrušení-prostředí)
+## Zrušení prostředí
 
-Před pokračováním v této sekci se ujistěte, že jste provedli [Archivaci dat](archivace-dat).
+Před pokračováním v této sekci se ujistěte, že jste provedli [Archivaci dat](#archivace-dat).
 
 Zdroje v AKS je možné smazat následujícím příkazem.
 ```shell
