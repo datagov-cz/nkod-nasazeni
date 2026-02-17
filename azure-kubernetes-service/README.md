@@ -331,11 +331,11 @@ kubectl exec -it pod/{pod-name} -c nkd-orchestrator -- /bin/bash
 ```
 
 V kontejneru jsou následující skripty, které můžeme spustit:
-- `su nkod /opt/orchestrator/execute-pipeline.sh {url-pipeline-ke-spuštění}`
-  Spustí vstupní pipeline pro harvestaci.
 - `su nkod /opt/orchestrator/synchronize-storage.sh`
   Synchronizuje lokální instanci LinkedPipes:ETL s Git repositářem.
   Tato operace přepíše lokální změny.
+- `su nkod /opt/orchestrator/execute-pipeline.sh {url-pipeline-ke-spuštění}`
+  Spustí vstupní pipeline pro harvestaci.
 
 ## Promazání K8S podů
 
