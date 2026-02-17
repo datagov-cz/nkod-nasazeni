@@ -340,6 +340,18 @@ V kontejneru jsou následující skripty, které můžeme spustit:
 - `su nkod /opt/orchestrator/execute-pipeline.sh {url-pipeline-ke-spuštění}`
   Spustí vstupní pipeline pro harvestaci.
 
+## Přepínání mezi kontexty
+
+Zobrazení kontextů:
+```shell
+kubectl config get-contexts
+```
+Přepnutí:
+```shell
+kubectl config use-context {název}
+```
+
+
 ## Promazání K8S podů
 
 ```shell
