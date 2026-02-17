@@ -82,8 +82,10 @@ metadata:
   namespace: nkd
 data:
   # [ENCODED] Heslo pro uživatele `dba`.
+  # Limitováno na 20 znaků, dokud nebude v imagi řešení https://github.com/openlink/virtuoso-opensource/issues/1369
   virtuoso_dba_password:
   # [ENCODED] Heslo pro uživatele `dva`.
+  # Limitováno na 20 znaků, dokud nebude v imagi řešení https://github.com/openlink/virtuoso-opensource/issues/1369
   virtuoso_dva_password:
   # [ENCODED] Heslo pro SSH přístup.
   virtuoso_ssh_password:
@@ -95,8 +97,10 @@ metadata:
   namespace: nkd
 data:
   # [ENCODED] Heslo pro uživatele `dba`.
+  # Limitováno na 20 znaků, dokud nebude v imagi řešení https://github.com/openlink/virtuoso-opensource/issues/1369
   virtuoso_dba_password:
   # [ENCODED] Heslo pro uživatele `dva`.
+  # Limitováno na 20 znaků, dokud nebude v imagi řešení https://github.com/openlink/virtuoso-opensource/issues/1369
   virtuoso_dva_password:
   # [ENCODED] Heslo pro SSH přístup.
   virtuoso_ssh_password:
