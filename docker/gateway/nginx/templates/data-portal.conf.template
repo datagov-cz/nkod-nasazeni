@@ -251,7 +251,7 @@ server {
   location /api/v2/forms/ {
     include hsts-cors.conf;
 
-    proxy_pass http://nkd-forms;
+    proxy_pass http://nkd-forms/;
     proxy_pass_request_headers          on;
     proxy_set_header   X-Real-IP        $remote_addr;
     proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
@@ -261,7 +261,7 @@ server {
   location /formulář/ {
     include hsts-cors.conf;
 
-    proxy_pass http://nkd-forms;
+    proxy_pass http://nkd-forms/;
     proxy_pass_request_headers          on;
     proxy_set_header   X-Real-IP        $remote_addr;
     proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
