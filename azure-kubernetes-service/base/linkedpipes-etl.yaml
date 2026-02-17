@@ -211,11 +211,13 @@ spec:
                 configMapKeyRef:
                   name: nkd-configuration
                   key: slack_finished_pipeline_webhook
+                  optional: true
             - name: LP_ETL_SLACK_ERROR_WEBHOOK
               valueFrom:
-                  configMapKeyRef:
-                    name: nkd-configuration
-                    key: slack_failed_pipeline_webhook
+                configMapKeyRef:
+                  name: nkd-configuration
+                  key: slack_failed_pipeline_webhook
+                  optional: true
           ports:
             - containerPort: 8081
           volumeMounts:
