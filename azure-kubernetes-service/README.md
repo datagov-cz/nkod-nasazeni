@@ -190,8 +190,8 @@ Začneme tedy zkopírováním celého adresáře s konfigurací, navigací do n�
 cp -r ./azure-kubernetes-service/configuration/ ./azure-kubernetes-service/.$env:ENVIRONMENT/
 cd ./azure-kubernetes-service/.$env:ENVIRONMENT/
 # Úprava souborů pomocí proměnných prostředí.
-(Get-Content ./kustomization.yaml -raw ) –f $env:ENVIRONMENT | Set-Content ./kustomization.yaml
-(Get-Content ./gateway-ingress.yaml -raw ) –f $env:K8S_RESOURCE_GROUP, $env:K8S_IPV4, $env:K8S_IPV6  | Set-Content ./gateway-ingress.yaml
+(Get-Content ./kustomization.yaml -raw ) -f $env:ENVIRONMENT | Set-Content ./kustomization.yaml
+(Get-Content ./gateway-ingress.yaml -raw ) -f $env:K8S_RESOURCE_GROUP, $env:K8S_IPV4, $env:K8S_IPV6  | Set-Content ./gateway-ingress.yaml
 ```
 Následně je nutné ručně upravit YAML soubor `configuration.yaml`.
 Položky označené jako `[ENCODED]` být base64 zakódovaná.
