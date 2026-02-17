@@ -187,7 +187,7 @@ Získané hodnoty použijeme v sekci [Nasazení komponent národního katalogu](
 Než provedeme nasazení do AKS je třeba připravit konfiguraci.
 Začneme tedy zkopírováním celého adresáře s konfigurací, navigací do něj a aplikací konfigurace uložené v proměnných prostředí.
 ```shell
-cp -r ./azure-kubernetes-service/configuration/ ./azure-kubernetes-service/.$env:ENVIRONMENT/
+cp -r ./azure-kubernetes-service/configuration/* ./azure-kubernetes-service/.$env:ENVIRONMENT/
 cd ./azure-kubernetes-service/.$env:ENVIRONMENT/
 # Úprava souborů pomocí proměnných prostředí.
 (Get-Content ./kustomization.yaml -raw ) -f $env:ENVIRONMENT | Set-Content ./kustomization.yaml
