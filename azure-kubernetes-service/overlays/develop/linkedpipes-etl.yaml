@@ -10,6 +10,7 @@ spec:
     spec:
       containers:
         - name: nkd-linkedpipes-etl-executor
+        command: ["java", "-DconfigFileLocation=/opt/lp-etl/configuration/configuration.properties", "-Xmx2g", "-jar" ,"./executor/executor.jar"]
           resources:
             requests:
               memory: "2Gi"
