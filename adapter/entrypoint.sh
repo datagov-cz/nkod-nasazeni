@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# Save current environemnt variables to be used by cron.
+# Save current environment variables to be used by cron.
 env >> /etc/environment
 
-# Run cron in foregrouns.
+# Run cron in foreground.
 cron -f

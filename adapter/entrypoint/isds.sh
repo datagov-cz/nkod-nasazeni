@@ -1,4 +1,5 @@
 #!/bin/sh
-export PATH=/usr/local/openjdk-21/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+export PATH="$JAVA_HOME/bin:$PATH"
 
 java -DconfigurationFile=/opt/isds-adapter/configuration.properties -jar /opt/isds-adapter/isds-adapter.jar >> /data/log/registrations.log 2>&1
