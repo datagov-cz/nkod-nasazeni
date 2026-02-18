@@ -57,6 +57,7 @@ metadata:
 type: Opaque
 data:
   # [ENCODED] Token pro reload data.
+  # Pouze alfanumerické znaky
   graphql_reload_token:
   # [ENCODED] Heslo pro SSH přístup.
   graphql_ssh_password:
