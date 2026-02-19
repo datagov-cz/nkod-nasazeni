@@ -26,6 +26,11 @@ spec:
         - name: nkd-ldf
           image: ghcr.io/datagov-cz/nkd-ldf:develop
           imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "512Mi"
+            limits:
+              memory: "1Gi"
           env:
             - name: LDF_PORT
               value: "3000"
