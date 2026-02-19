@@ -26,6 +26,11 @@ spec:
         - name: nkd-solr
           image: ghcr.io/datagov-cz/nkd-solr:develop
           imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "1Gi"
+            limits:
+              memory: "2Gi"
           ports:
             - containerPort: 8983
           volumeMounts:
