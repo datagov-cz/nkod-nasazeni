@@ -30,7 +30,7 @@ spec:
             requests:
               memory: "1024Mi"
             limits:
-              memory: "1280Mi"
+              memory: "2048Mi"
           env:
             - name: LDF_PORT
               value: "3000"
