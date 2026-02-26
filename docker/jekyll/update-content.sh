@@ -2,6 +2,7 @@
 
 # Get to the directory and update the content.
 cd /data/website/
+git fetch --all
 git checkout --force origin/$GITHUB_BRANCH
 
 # We set RUBYOPT, to deal with
