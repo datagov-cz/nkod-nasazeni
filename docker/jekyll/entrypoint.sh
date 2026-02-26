@@ -27,5 +27,9 @@ chown www-data:www-data /var/www/
 # Rebuild repository.
 su www-data -s /bin/bash -c '/opt/update-content.sh'
 
+# Print debug message.
+
+echo "Watching remote '$GITHUB_REPOSITORY' branch '$GITHUB_BRANCH'."
+
 # Start PHP server.
 apache2-foreground
