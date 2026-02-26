@@ -28,9 +28,9 @@ spec:
           imagePullPolicy: Always
           resources:
             requests:
-              memory: "1024Mi"
+              memory: "512Mi"
             limits:
-              memory: "2048Mi"
+              memory: "1Gi"
           env:
             - name: LDF_PORT
               value: "3000"
