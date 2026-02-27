@@ -22,7 +22,13 @@ server {
 
   # Custom error handling.
   proxy_intercept_errors on;
-  error_page 404 http://nkd-portal-data-gov-cz/404.html;
+
+  error_page 404 @404_page;
+  location @404_page {
+    internal;
+    rewrite ^ /404.html break;
+    proxy_pass http://nkd-portal-data-gov-cz;
+  }
 
   # https://github.com/datagov-cz/nkd/tree/main/skripty/nkd-frontend/nginx
 
