@@ -17,6 +17,16 @@ server {
   ssl_certificate         /opt/ssl/ofn/tls.crt;
   ssl_certificate_key     /opt/ssl/ofn/tls.key;
 
+  # Custom error handling.
+  proxy_intercept_errors on;
+
+  error_page 404 @404_page;
+  location @404_page {
+    internal;
+    rewrite ^ /404.html break;
+    proxy_pass http://nkd-portal-data-gov-cz;
+  }
+
   # Redirect root access to the data portal.
   location =/ {
     include hsts-cors.conf;
