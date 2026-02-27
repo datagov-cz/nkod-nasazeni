@@ -20,6 +20,10 @@ server {
   # Set custom DNS server resolver.
   resolver     $RESOLVER valid=10s;
 
+  # Custom error handling.
+  proxy_intercept_errors on;
+  error_page 404 http://nkd-portal-data-gov-cz/404.html
+
   # https://github.com/datagov-cz/nkd/tree/main/skripty/nkd-frontend/nginx
 
   # nkd-design-system
