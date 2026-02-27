@@ -38,8 +38,13 @@ spec:
               value: "0/15 * * * *"
             - name: QUALITY_SPARQL_URL
               value: "http://nkd-virtuoso:8890/sparql"
+            - name: DATA_PORTAL_DOMAIN_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: nkd-configuration
+                  key: data_portal_domain_name
             - name: CLIENT_CATALOG_FORM_URL
-              value: "http://172.205.23.154/formulář/"
+              value: "https://$(DATA_PORTAL_DOMAIN_NAME)/formulář/"
             - name: CLIENT_APPLICATION_FORM_URL
               value: "https://forms.office.com/e/mK4wLvrww4"
             - name: CLIENT_SUGGESTION_FORM_URL
