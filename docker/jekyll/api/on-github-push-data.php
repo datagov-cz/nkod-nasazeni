@@ -9,7 +9,7 @@ $log_file = '/data/on-github-push-data.log';
 
 $log_size_bytes = 5 * 1024 * 1024;
 
-$command_to_execute = '/opt/update-content.sh >> ' . $log_file . ' &2>1 &';
+$command_to_execute = '/opt/update-content.sh >>' . $log_file . ' 2>&1';
 
 process_request();
 
