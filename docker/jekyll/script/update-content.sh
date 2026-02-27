@@ -11,4 +11,4 @@ export RUBYOPT="-E utf-8:utf-8"
 jekyll build
 
 # We log the end to be sure we got here.
-echo "Update complete\n"
+echo "$(date '+%Y-%m-%d %H:%M:%S') Update complete"

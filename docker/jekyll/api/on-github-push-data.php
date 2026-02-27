@@ -9,7 +9,7 @@ $log_file = '/data/on-github-push-data.log';
 
 $log_size_bytes = 5 * 1024 * 1024;
 
-$command_to_execute = '/opt/update-content.sh >>' . $log_file . ' 2>&1';
+$command_to_execute = 'nohup /opt/jekyll/update-content.sh >>' . $log_file . ' 2>&1 &';
 
 process_request();
 
@@ -53,13 +53,15 @@ function process_request() {
 
   // Respond
   header("Content-Type: text/plain");
-  if (true) { // ($headers_ok && $data_ok) {
+  if ($headers_ok && $data_ok) {
     log_message("Executing command");
     global $command_to_execute;
-    passthru($command_to_execute);
+    shell_exec($command_to_execute);
+    http_response_code(200);
+    exit();
   } else {
     http_response_code(403);
-    die("Forbidden\n");
+    exit();
   }
 }
 

@@ -25,7 +25,7 @@ fi
 chown www-data:www-data /var/www/
 
 # Rebuild repository.
-su www-data -s /bin/bash -c '/opt/update-content.sh'
+su www-data -s /bin/bash -c '/opt/jekyll/update-content.sh'
 
 # Print debug message.
 
