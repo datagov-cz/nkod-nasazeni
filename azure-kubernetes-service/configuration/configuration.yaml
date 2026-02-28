@@ -141,3 +141,8 @@ data:
   slack_finished_pipeline_webhook:
   #
   slack_failed_pipeline_webhook:
+  # Šablona pro dereferenci URL použitá v komponentě katalogu.
+  # Pokud je hodnota prázdná, URL je použité tak jak je.
+  # Pokud je hodnota poskytnuta, musí obsahovat "{}" za kterou je provedena substituce.
+  # Příklad: https://domain.cz/describe/?uri={}
+  catalog_dereference_template:

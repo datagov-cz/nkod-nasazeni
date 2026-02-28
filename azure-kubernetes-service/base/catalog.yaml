@@ -50,7 +50,11 @@ spec:
             - name: CLIENT_SUGGESTION_FORM_URL
               value: "https://forms.office.com/e/UuwD7UBnRG"
             - name: CLIENT_DEREFERENCE
-              value: ""
+              valueFrom:
+                configMapKeyRef:
+                  name: nkd-configuration
+                  key: catalog_dereference_template
+                  optional: true
             - name: CLIENT_DASHBOARD_PUBLISHER_DAILY
               value: "/kibana/"
             - name: CLIENT_DASHBOARD_PUBLISHER_MONTHLY
