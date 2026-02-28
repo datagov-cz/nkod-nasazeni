@@ -36,9 +36,14 @@ spec:
               value: "3000"
             - name: LDF_WORKERS
               value: "4"
+            - name: DATA_PORTAL_DOMAIN_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: nkd-configuration
+                  key: data_portal_domain_name
             - name: LDF_BASE_URL
               # See https://www.npmjs.com/package/@ldf/server#optional-set-up-a-reverse-proxy
-              value: "http://skodapetr.eu/ldf"
+              value: "https://$(DATA_PORTAL_DOMAIN_NAME)/ldf/"
             - name: LDF_SPARQL
               value: "http://nkd-virtuoso-ndc:8890/sparql"
             - name: PORT
