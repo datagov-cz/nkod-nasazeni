@@ -58,6 +58,26 @@ server {
 
   # nkd-virtuoso-ndc
 
+  location ~ ^/((zdroj|slovník).*) {
+    include hsts-cors.conf;
+
+    if ($http_accept ~ "application/ld\+json") {
+            rewrite (.*) https://$DATA_PORTAL_DOMAIN_NAME/sparql?query=define%20sql%3Adescribe-mode%20"CBD"%20%20DESCRIBE%20<$scheme://$host$request_uri>&output=application%2Fld%2Bjson ;
+    }
+
+    proxy_pass http://nkd-virtuoso-ndc:8890/describe/?url=https://$DATA_PORTAL_DOMAIN_NAME$uri;
+    proxy_set_header   Host             $host;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_pass_request_headers      on;
+    proxy_redirect http://$DATA_PORTAL_DOMAIN_NAME https://$DATA_PORTAL_DOMAIN_NAME ;
+    proxy_intercept_errors on;
+
+    sub_filter_once off;
+    sub_filter 'href="http://$DATA_PORTAL_DOMAIN_NAME' 'href="https://$DATA_PORTAL_DOMAIN_NAME';
+    sub_filter 'src="http://$DATA_PORTAL_DOMAIN_NAME' 'src="https://$DATA_PORTAL_DOMAIN_NAME';
+  }
+
   location /sparql {
     include hsts-cors.conf;
 
