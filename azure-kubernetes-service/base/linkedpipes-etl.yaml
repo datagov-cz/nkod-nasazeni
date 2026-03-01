@@ -83,9 +83,9 @@ spec:
           command: ["java", "-DconfigFileLocation=/opt/lp-etl/configuration/configuration.properties", "-Xmx8g", "-jar" ,"./executor/executor.jar"]
           resources:
             requests:
-              memory: "8Gi"
+              memory: "10Gi"
             limits:
-              memory: "12Gi"
+              memory: "14Gi"
           env:
             - name: LP_ETL_DOMAIN
               value: "http://localhost:8080"
