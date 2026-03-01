@@ -11,11 +11,22 @@ const configuration = {
     port: parseInt(process.env.LDF_PORT ?? 3000),
     workers: parseInt(process.env.LDF_WORKERS ?? 4),
     config: filterKeysWithPrefix(process.env, "LDF_"),
+    // Path to ldf-server configuration.
+    configurationFilePath: null,
   },
   host: {
     port: parseInt(process.env.PORT ?? 5000),
     token: process.env.RELOAD_TOKEN ?? "",
   },
+};
+
+const state = {
+  // When reloading we need to delete files and restart the ldf-server.
+  reloading: false,
+  terminated: false,
+  indexRemoved: false,
+  // Holds ldf-server.
+  ldfProcess: null,
 };
 
 function filterKeysWithPrefix(object, prefix) {
@@ -29,15 +40,10 @@ function filterKeysWithPrefix(object, prefix) {
 }
 
 (async function main() {
-  const configurationFilePath = await prepareConfiguration(configuration.ldf);
-  const ldfContainer = {
-    "process": startLinkedDataFragmentServer(
-      configurationFilePath,
-      configuration.ldf.port,
-      configuration.ldf.workers,
-    ),
-  };
-  startHttpServer(configurationFilePath, ldfContainer);
+  configuration.ldf.configurationFilePath =
+    await prepareConfiguration(configuration.ldf);
+  startLinkedDataFragmentServer();
+  startHttpServer();
 })();
 
 async function prepareConfiguration(ldf) {
@@ -84,15 +90,16 @@ function replaceTemplates(value, replacements) {
   }
 }
 
-function startLinkedDataFragmentServer(
-  configurationFilePath, port, workerCount,
-) {
-  console.log("Starting LDF server");
+function startLinkedDataFragmentServer() {
+  const configurationFilePath = configuration.ldf.configurationFilePath;
+  const port = configuration.ldf.port;
+  const workerCount = configuration.ldf.workers
+
+  console.log("Starting LDF server:",
+    configurationFilePath, port, workerCount);
   const ldfProcess = spawn("node", [
     "./node_modules/@ldf/server/bin/ldf-server",
-    configurationFilePath,
-    port,
-    workerCount,
+    configurationFilePath, port, workerCount,
   ], {
     cwd: __dirname,
   });
@@ -106,14 +113,26 @@ function startLinkedDataFragmentServer(
   });
 
   ldfProcess.on("close", (code) => {
-    console.log(`ldf:child process exited with code '${code}', terminating main.`);
-    process.exit(code);
+    console.log(`ldf: Child process exited with code '${code}'.`);
+    if (!state.reloading) {
+      console.log("Terminating main.")
+      process.exit(code);
+    }
+    if (state.indexRemoved) {
+      // File has been removed before process termination.
+      // Thus we can start a new process.
+      startLinkedDataFragmentServer();
+    } else {
+      state.reloading = true;
+    }
   });
 
-  return ldfProcess;
+  state.ldfProcess = ldfProcess;
+  // If we were reloading now we are done.
+  state.reloading = false;
 };
 
-function startHttpServer(configurationFilePath, ldfContainer) {
+function startHttpServer() {
   const app = express();
 
   // We need to use GET as LP:ETL does not work well with POST.
@@ -124,7 +143,7 @@ function startHttpServer(configurationFilePath, ldfContainer) {
       res.status(unauthorized_code).send();
       return;
     }
-    restartLinkedDataFragmentServer(configurationFilePath, ldfContainer);
+    restartLinkedDataFragmentServer();
     res.send();
   });
 
@@ -135,19 +154,31 @@ function startHttpServer(configurationFilePath, ldfContainer) {
 
 }
 
-function restartLinkedDataFragmentServer(configurationFilePath, ldfContainer) {
+function restartLinkedDataFragmentServer() {
+  console.log("Executing reload.");
+  if (state.reloading) {
+    // We are already reloading!
+    return;
+  }
+  // This tell us that it is ok if the main thread ends.
+  state.reloading = true;
+  state.terminated = false;
+  state.indexRemoved = false;
   // Terminate old process.
-  console.log("Sending SIGTERM to ldf");
-  ldfContainer.process.kill("SIGTERM");
+  console.log("Sending SIGTERM to ldf.");
+  state.ldfProcess.kill("SIGTERM");
   // Remove index file.
   // We originally just use SIGHUP for @ldf/server.
   // But sometimes the @ldf/server use all memory and crashed, this should help.
   const indexFile = "/data/nkod.hdt.index.v1-1";
-  fileSystem.unlink(indexFile);
-  // Start new process.
-  ldfContainer.process = startLinkedDataFragmentServer(
-    configurationFilePath,
-    configuration.ldf.port,
-    configuration.ldf.workers,
-  );
+  fileSystem.unlink(indexFile, () => {
+    console.log("Index file '" + indexFile + "' removed.");
+    if (state.terminated === true) {
+      // The process has been terminated before we deleted the file.
+      // Thus we can start a new thread.
+      startLinkedDataFragmentServer();
+    } else {
+      state.indexRemoved = true;
+    }
+  });
 }
