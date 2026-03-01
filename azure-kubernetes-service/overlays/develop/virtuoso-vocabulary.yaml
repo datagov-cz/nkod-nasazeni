@@ -11,13 +11,13 @@ spec:
       containers:
         - name: nkd-virtuoso
           env:
-            # Next two lines if there is 2 GB system memory free
+            # Use 170000 and 130000 for 2 GB
             - name: VIRT_PARAMETERS_NUMBEROFBUFFERS
-              value: "170000"
+              value: "42500"
             - name: VIRT_PARAMETERS_MAXDIRTYBUFFERS
-              value: "130000"
+              value: "32500"
           resources:
             requests:
-              memory: "2Gi"
+              memory: "256Mi"
             limits:
-              memory: "3Gi"
+              memory: "512Mi"
