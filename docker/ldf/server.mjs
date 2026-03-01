@@ -30,12 +30,14 @@ function filterKeysWithPrefix(object, prefix) {
 
 (async function main() {
   const configurationFilePath = await prepareConfiguration(configuration.ldf);
-  const ldfProcess = startLinkedDataFragmentServer(
-    configurationFilePath,
-    configuration.ldf.port,
-    configuration.ldf.workers,
-  );
-  startHttpServer(configurationFilePath, ldfProcess);
+  const ldfContainer = {
+    "process": startLinkedDataFragmentServer(
+      configurationFilePath,
+      configuration.ldf.port,
+      configuration.ldf.workers,
+    ),
+  };
+  startHttpServer(configurationFilePath, ldfContainer);
 })();
 
 async function prepareConfiguration(ldf) {
@@ -111,7 +113,7 @@ function startLinkedDataFragmentServer(
   return ldfProcess;
 };
 
-function startHttpServer(configurationFilePath, ldfProcess) {
+function startHttpServer(configurationFilePath, ldfContainer) {
   const app = express();
 
   // We need to use GET as LP:ETL does not work well with POST.
@@ -122,7 +124,7 @@ function startHttpServer(configurationFilePath, ldfProcess) {
       res.status(unauthorized_code).send();
       return;
     }
-    restartLinkedDataFragmentServer(configurationFilePath, ldfProcess);
+    restartLinkedDataFragmentServer(configurationFilePath, ldfContainer);
     res.send();
   });
 
@@ -133,17 +135,17 @@ function startHttpServer(configurationFilePath, ldfProcess) {
 
 }
 
-function restartLinkedDataFragmentServer(configurationFilePath, ldfProcess) {
+function restartLinkedDataFragmentServer(configurationFilePath, ldfContainer) {
   // Terminate old process.
   console.log("Sending SIGTERM to ldf");
-  ldfProcess.kill("SIGTERM");
+  ldfContainer.process.kill("SIGTERM");
   // Remove index file.
   // We originally just use SIGHUP for @ldf/server.
   // But sometimes the @ldf/server use all memory and crashed, this should help.
   const indexFile = "/data/nkod.hdt.index.v1-1";
   fileSystem.unlink(indexFile);
   // Start new process.
-  const ldfProcess = startLinkedDataFragmentServer(
+  ldfContainer.process = startLinkedDataFragmentServer(
     configurationFilePath,
     configuration.ldf.port,
     configuration.ldf.workers,
