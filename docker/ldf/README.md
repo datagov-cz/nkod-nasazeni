@@ -11,13 +11,13 @@ LDF_PORT=3000
 # Počet vláken LDF serveru.
 LDF_WORKERS=4
 # Base URL for LDF server, must not end with '/'.
-LDF_BASE_URL=""
+LDF_BASE_URL=
 # URL of SPARQL serveru.
-LDF_SPARQL=""
+LDF_SPARQL=
 # Port kontrolního HTTP rozhraní.
 PORT=5000
 # Přístupový token pro reload.
-RELOAD_TOKEN=""
+RELOAD_TOKEN=
 ```
 
 ## Datová úložiště

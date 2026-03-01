@@ -7,7 +7,7 @@ const __dirname = import.meta.dirname;
 
 const configuration = {
   ldf: {
-    // HTTP port for Linked Data Fragments server
+    // HTTP port for Linked Data Fragments server.
     port: parseInt(process.env.LDF_PORT ?? 3000),
     workers: parseInt(process.env.LDF_WORKERS ?? 4),
     config: filterKeysWithPrefix(process.env, "LDF_"),
@@ -35,17 +35,15 @@ function filterKeysWithPrefix(object, prefix) {
     configuration.ldf.port,
     configuration.ldf.workers,
   );
-  startHttpServer(ldfProcess);
+  startHttpServer(configurationFilePath, ldfProcess);
 })();
 
 async function prepareConfiguration(ldf) {
-  console.log("Preparing configuration.");
   // We can do sync operation here.
   const sourcePath = __dirname + "/configuration.template.json";
   const template = JSON.parse(fileSystem.readFileSync(sourcePath, "utf8"));
   // Update
   const instance = replaceTemplates(template, ldf.config);
-  console.log(instance);
   // Write
   const targetPath = __dirname + "/configuration.json";
   fileSystem.writeFileSync(
@@ -56,18 +54,21 @@ async function prepareConfiguration(ldf) {
   return targetPath;
 }
 
+/**
+ * Replace all occurrences of "{KEY}" in given JavaScript object.
+ */
 function replaceTemplates(value, replacements) {
   if (value == null || undefined) {
     return value;
   } else if (Array.isArray(value)) {
     return value.map(item => replaceTemplates(item, replacements));
-  } else if (typeof value === 'object') {
+  } else if (typeof value === "object") {
     const result = {};
     for (const [key, keyValue] of Object.entries(value)) {
       result[key] = replaceTemplates(keyValue, replacements);
     }
     return result;
-  } else if (typeof value === 'string') {
+  } else if (typeof value === "string") {
     let result = value;
     // Replace all occurrences of {KEY} with corresponding values
     for (const [key, value] of Object.entries(replacements)) {
@@ -110,7 +111,7 @@ function startLinkedDataFragmentServer(
   return ldfProcess;
 };
 
-function startHttpServer(ldfProcess) {
+function startHttpServer(configurationFilePath, ldfProcess) {
   const app = express();
 
   // We need to use GET as LP:ETL does not work well with POST.
@@ -121,13 +122,30 @@ function startHttpServer(ldfProcess) {
       res.status(unauthorized_code).send();
       return;
     }
-    console.log("Sending SIGHUP to ldf");
-    ldfProcess.kill("SIGHUP");
+    restartLinkedDataFragmentServer(configurationFilePath, ldfProcess);
     res.send();
   });
 
   app.listen(configuration.host.port, () => {
-    console.log(`Control HTTP server listening on port ${configuration.host.port}.`)
+    const port = configuration.host.port;
+    console.log(`Control HTTP server listening on port ${port}.`)
   });
 
+}
+
+function restartLinkedDataFragmentServer(configurationFilePath, ldfProcess) {
+  // Terminate old process.
+  console.log("Sending SIGTERM to ldf");
+  ldfProcess.kill("SIGTERM");
+  // Remove index file.
+  // We originally just use SIGHUP for @ldf/server.
+  // But sometimes the @ldf/server use all memory and crashed, this should help.
+  const indexFile = "/data/nkod.hdt.index.v1-1";
+  fileSystem.unlink(indexFile);
+  // Start new process.
+  const ldfProcess = startLinkedDataFragmentServer(
+    configurationFilePath,
+    configuration.ldf.port,
+    configuration.ldf.workers,
+  );
 }
