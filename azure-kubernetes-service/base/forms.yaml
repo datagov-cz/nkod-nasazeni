@@ -26,6 +26,16 @@ spec:
               value: "abc123"
             - name: SOLR_ENDPOINT
               value: "http://nkd-solr:8983/solr/"
+            - name: CLIENT_API_PREFIX
+              value: /api/v2/forms/v1/
+            - name: SERVER_API_PREFIX
+              value: /v1/
+            - name: DEREFERENCE_PROXY
+              valueFrom:
+                configMapKeyRef:
+                  name: nkd-configuration
+                  key: catalog_dereference_template
+                  optional: true
           ports:
             - containerPort: 80
 ---
