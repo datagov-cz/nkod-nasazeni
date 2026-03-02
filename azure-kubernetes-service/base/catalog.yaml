@@ -37,7 +37,7 @@ spec:
             - name: LABEL_CACHE_RELOAD_CRON
               value: "0/15 * * * *"
             - name: QUALITY_SPARQL_URL
-              value: "http://nkd-virtuoso:8890/sparql"
+              value: "http://nkd-virtuoso-ndc:8890/sparql"
             - name: DATA_PORTAL_DOMAIN_NAME
               valueFrom:
                 configMapKeyRef:
