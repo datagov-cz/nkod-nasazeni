@@ -7,6 +7,9 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 RUN apt update && \
   apt install -y --no-install-recommends git ruby-full build-essential wget unzip
 
+# Server configuration
+RUN a2enmod rewrite
+
 # Install Ruby and Jekyll.
 WORKDIR /opt/jekyll
 RUN gem install bundler
