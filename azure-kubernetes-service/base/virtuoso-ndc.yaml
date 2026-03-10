@@ -37,11 +37,11 @@ spec:
                 secretKeyRef:
                   name: nkd-virtuoso-ndc-secret
                   key: virtuoso_dva_password
-            # Next two lines if there is 8 GB system memory free
+            # Use for system with 16 GB system memory free.
             - name: VIRT_PARAMETERS_NUMBEROFBUFFERS
-              value: "680000"
+              value: "1360000"
             - name: VIRT_PARAMETERS_MAXDIRTYBUFFERS
-              value: "500000"
+              value: "1000000"
           ports:
             - containerPort: 1111
             - containerPort: 8890
@@ -55,9 +55,9 @@ spec:
             allowPrivilegeEscalation: false
           resources:
             requests:
-              memory: "8Gi"
+              memory: "18Gi"
             limits:
-              memory: "12Gi"
+              memory: "24Gi"
         - name: ssh-server
           image: ghcr.io/datagov-cz/nkd-ssh-server:develop
           imagePullPolicy: Always
