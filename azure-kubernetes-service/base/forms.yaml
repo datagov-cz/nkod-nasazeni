@@ -23,7 +23,10 @@ spec:
             - name: PORT
               value: "80"
             - name: NKOD_DATABOX
-              value: "abc123"
+              valueFrom:
+                configMapKeyRef:
+                  name: nkd-configuration
+                  key: nkd_databox
             - name: SOLR_ENDPOINT
               value: "http://nkd-solr:8983/solr/"
             - name: CLIENT_API_PREFIX
