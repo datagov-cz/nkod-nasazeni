@@ -13,6 +13,6 @@ spec:
           command: ["java", "-DconfigFileLocation=/opt/lp-etl/configuration/configuration.properties", "-Xmx4g", "-jar" ,"./executor/executor.jar"]
           resources:
             requests:
-              memory: "2Gi"
-            limits:
               memory: "5Gi"
+            limits:
+              memory: "6Gi"
