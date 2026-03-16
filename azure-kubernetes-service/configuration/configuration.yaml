@@ -146,5 +146,10 @@ data:
   # Pokud je hodnota poskytnuta, musí obsahovat "{}" za kterou je provedena substituce.
   # Příklad: https://domain.cz/describe/?uri={}
   catalog_dereference_template:
+  # Šablona pro dereferenci URL použitá v komponentě formulářů.
+  # Pokud je hodnota prázdná, URL je použité tak jak je.
+  # Pokud je hodnota poskytnuta, musí obsahovat "{}" za kterou je provedena substituce.
+  # Příklad: https://domain.cz/sparql-graph-crud/?graph={}
+  forms_dereference_template:
   #
   nkd_databox:

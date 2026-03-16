@@ -37,7 +37,7 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: nkd-configuration
-                  key: catalog_dereference_template
+                  key: forms_dereference_template
                   optional: true
           ports:
             - containerPort: 80
