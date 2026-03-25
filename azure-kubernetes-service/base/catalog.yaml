@@ -56,9 +56,15 @@ spec:
                   key: catalog_dereference_template
                   optional: true
             - name: CLIENT_DASHBOARD_PUBLISHER_DAILY
-              value: "/kibana/"
+              valueFrom:
+                configMapKeyRef:
+                  name: nkd-configuration
+                  key: catalog_publishers_daily_dashboard_template
             - name: CLIENT_DASHBOARD_PUBLISHER_MONTHLY
-              value: "/kibana/"
+              valueFrom:
+                configMapKeyRef:
+                  name: nkd-configuration
+                  key: catalog_publishers_monthly_dashboard_template
             - name: CLIENT_SPARQL_EDITOR_URL
               value: "https://yasgui.triply.cc/"
             - name: CLIENT_SPARQL_DEFAULT_QUERY
