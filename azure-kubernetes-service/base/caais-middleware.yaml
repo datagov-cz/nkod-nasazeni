@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkd-caais-middleware-secret-middleware
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: caais-middleware
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: caais-middleware
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: caais-middleware
+    spec:
+      containers:
+        - name: nkd-caais-middleware-secret-middleware
+          image: ghcr.io/datagov-cz/caais-middleware:main
+          imagePullPolicy: Always
+          env:
+            - name: HTTP_PORT
+              value: "5000"
+            - name: HTTP_COOKIE_NAME
+              value: nkd-caais
+            - name: HTTP_COOKIE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-caais-middleware-secret
+                  key: http_cookie_secret
+            - name: CAAIS_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-caais-middleware-secret
+                  key: caais_client_id
+            - name: CAAIS_CALLBACK_URL
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-caais-middleware-secret
+                  key: caais_callback_url
+            - name: CAAIS_CERTIFICATE
+              value: /opt/certificates/ais.crt
+            - name: CAAIS_CERTIFICATE_KEY
+              value: /opt/certificates/ais.key
+            - name: CAAIS_CERTIFICATE_PASSPHRASE
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-caais-middleware-secret
+                  key: caais_certificate_passphrase
+            - name: CAAIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-caais-middleware-secret
+                  key: caais_host
+            - name: CAAIS_LOGIN_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-caais-middleware-secret
+                  key: caais_login_endpoint
+            - name: TOKEN_SIGN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-caais-middleware-secret
+                  key: caais_token_sign_secret
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: caais-certificate-volume
+              mountPath: /opt/certificates/
+              readOnly: true
+      volumes:
+        - name: caais-certificate-volume
+          secret:
+            secretName: nkd-caais-middleware-certificate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nkd-caais-middleware-secret-middleware
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: caais-middleware
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: caais-middleware
+  ports:
+  - protocol: TCP
+    targetPort: 5000
+    port: 5000

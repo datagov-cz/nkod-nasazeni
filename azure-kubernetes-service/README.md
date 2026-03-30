@@ -91,13 +91,15 @@ az acr config authentication-as-arm show --registry $env:CONTAINER_REGISTRY
 # https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/general-purpose/av2-series
 
 # Standard_A2_v2 - 2 CPU, 4GB
-az aks create --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --node-count 4 --node-vm-size Standard_A2_v2 --location $env:LOCATION --ip-families ipv4,ipv6
+az aks create --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --node-count 4 --node-vm-size Standard_A2_v2 --location $env:LOCATION --ip-families ipv4,ipv6 --generate-ssh-keys
 
 # Standard_A8_v2 - 8 CPU, 16GB
-az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool2 --node-count 1 --node-vm-size Standard_A8_v2
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool2 --node-count 2 --node-vm-size Standard_A8_v2
+
+# Standard_d8as_v5 - 8 vCPU, 32GB RAM
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool3 --node-count 1 --node-vm-size  Standard_d8as_v5
 
 # Výpis nodes a získání node pool name.
-az aks nodepool list --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER -o table
 ```
 
 *Volitelný krok:* Pokud existuje [ACR](#vytvoření-acr), je možná poskytnout AKS přístup pomocí následujícího příkazu.
@@ -163,24 +165,43 @@ V případě přechodu na ACR, je třeba upravit názvy Docker obrazů v YAML de
 
 ## Získání veřejné IP adresy
 
-Statická IP adresa musí být vytvořena skrze Azure v resource group ve které je Kubernetes.
-Smazáním kubernetes clusteru tato grupa zaniká, čímž také zanikne statická adresa.
-Nejprve tedy musíme získat název resource group a následně v ní vytvořit veřejnou ip adresu.
-
+Začneme vytvořeném statických IP adres pro IPv4 a IPv6.
 ```shell
-# Získání názvu resource group.
-$env:K8S_RESOURCE_GROUP = (az aks show --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --query nodeResourceGroup -o tsv)
 # Vytvoření veřejné IPv4 a IPv6.
-az network public-ip create --resource-group $env:K8S_RESOURCE_GROUP --name gateway-public-ipv4 --sku Standard --allocation-method Static --version IPv4 --zone 1 2 3
-az network public-ip create --resource-group $env:K8S_RESOURCE_GROUP --name gateway-public-ipv6 --sku Standard --allocation-method Static --version IPv6 --zone 1 2 3
-# V posledním kroku přípravy získáme IP adresy, které budeme potřebovat později.
-$env:K8S_IPV4 = (az network public-ip show --resource-group $env:K8S_RESOURCE_GROUP --name gateway-public-ipv4 --query ipAddress --output tsv)
-$env:K8S_IPV6 = (az network public-ip show --resource-group $env:K8S_RESOURCE_GROUP --name gateway-public-ipv6 --query ipAddress --output tsv)
+az network public-ip create --resource-group $env:RESOURCE_GROUP --name gateway-public-ipv4 --sku Standard --allocation-method Static --version IPv4 --zone 1 2 3
+az network public-ip create --resource-group $env:RESOURCE_GROUP --name gateway-public-ipv6 --sku Standard --allocation-method Static --version IPv6 --zone 1 2 3
+
+# Uložíme si IP adresy, budeme je potřebovat později.
+$env:K8S_IPV4 = (az network public-ip show --resource-group $env:RESOURCE_GROUP --name gateway-public-ipv4 --query ipAddress --output tsv)
+$env:K8S_IPV6 = (az network public-ip show --resource-group $env:RESOURCE_GROUP --name gateway-public-ipv6 --query ipAddress --output tsv)
+
 # Zobrazení IP adres, relevantní jsou řádky pro gateway-public-ipv4 a gateway-public-ipv6.
-az network public-ip list --resource-group $env:K8S_RESOURCE_GROUP -o table
+# Tyto hodnoty je pak třeba použít pro nastavení DNS.
+az network public-ip list --resource-group $env:RESOURCE_GROUP -o table
 ```
 
-Získané hodnoty použijeme v sekci [Nasazení komponent národního katalogu](#k8s-component-deployment).
+Proměnné prostředí `$env:K8S_IPV4` a `$env:K8S_IPV6` použijeme v sekci [Nasazení komponent národního katalogu](#k8s-component-deployment).
+
+Kubernetes nemá ve výchozím nastavení ke zdrojům v této resource group přístup.
+Sám se totiž nachází v resource group s prefixem `MC_`
+Řešení níže je založené na [Use a static public IP address and DNS label with the Azure Kubernetes Service (AKS) load balancer](https://learn.microsoft.com/en-us/azure/aks/static-ip).
+
+```shell
+# Následující příkaz musí vypsat "SystemAssigned".
+# Pokud je výstup jiný, je třeba jít na odkaz výše a zvolit jiné řešení.
+az aks show --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --query identity.type --output tsv
+
+# Vytvořené IP jsou v jiné Resource Group, než v jaké je Kubernetes ($env:K8S_RESOURCE_GROUP ).
+# Je tedy třeba poskytnout přístup.
+$env:CLUSTER_CLIENT_ID = (az aks show --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --query identity.principalId -o tsv)
+$env:RESOURCE_GROUP_ID = (az group show --name $env:RESOURCE_GROUP --query id -o tsv)
+
+$env:K8S_RESOURCE_GROUP = (az aks show --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --query nodeResourceGroup -o tsv)
+$env:K8S_RESOURCE_GROUP_ID = (az group show --name $env:K8S_RESOURCE_GROUP --query id -o tsv)
+
+# Tento příkaz umožní přístup k IP adresám pro k8s.
+az role assignment create --assignee $env:CLUSTER_CLIENT_ID --role "Network Contributor" --scope $env:RESOURCE_GROUP_ID
+```
 
 ## [Konfigurace a nasazení komponent národního katalogu](#k8s-component-deployment)
 
@@ -191,7 +212,7 @@ cp -r ./azure-kubernetes-service/configuration/* ./azure-kubernetes-service/.$en
 cd ./azure-kubernetes-service/.$env:ENVIRONMENT/
 # Úprava souborů pomocí proměnných prostředí.
 (Get-Content ./kustomization.yaml -raw ) -f $env:ENVIRONMENT | Set-Content ./kustomization.yaml
-(Get-Content ./gateway-ingress.yaml -raw ) -f $env:K8S_RESOURCE_GROUP, $env:K8S_IPV4, $env:K8S_IPV6  | Set-Content ./gateway-ingress.yaml
+(Get-Content ./gateway-ingress.yaml -raw ) -f $env:RESOURCE_GROUP, $env:K8S_IPV4, $env:K8S_IPV6  | Set-Content ./gateway-ingress.yaml
 ```
 Následně je nutné ručně upravit YAML soubor `configuration.yaml`.
 Položky označené jako `[ENCODED]` být base64 zakódovaná.
@@ -212,6 +233,7 @@ Další krok předpokládá existenci následujících souborů certifikátů pr
 ```bash
 kubectl create secret tls nkd-ofn-tls --namespace=nkd --cert=./https/ofn.portal.chain.pem --key=./https/ofn.portal.key.pem
 kubectl create secret tls nkd-data-tls --namespace=nkd --cert=./https/data.portal.chain.pem --key=./https/data.portal.key.pem
+kubectl create secret generic nkd-caais-middleware-certificate --namespace=nkd --from-file=ais.crt=./caais/ais.nkd.crt --from-file=ais.key=./caais/ais.nkd.key
 ```
 
 Dále je třeba připravit konfiguraci pro LinkedPipes:ETL.
@@ -311,7 +333,7 @@ Po jeho spuštění bude frontend dostupný na lokálním portu 8080.
 Dále je možné využít SSH připojení přímo do docker kontejneru.
 V případě více kontejnerů je možné si vybrat následovně:
 ```shell
-kubectl exec -it pod/{pod-name} -c {container} -- /bin/bash
+kubectl exec -it deploy/nkd-linkedpipes-etl-deployment -c {container} -- /bin/bash
 ```
 
 Jméno podu je možné získat v výstupu příkazu:
@@ -330,7 +352,7 @@ Manuální spuštění je možné provést skrze container `nkd-orchestrator`.
 # Jeho název bude začínat na "nkd-linkedpipes-etl-deployment-"
 kubectl get pods
 # Následně se připojíme do kontejneru.
-kubectl exec -it pod/{pod-name} -c nkd-orchestrator -- /bin/bash
+kubectl exec -it deploy/nkd-linkedpipes-etl-deployment -c nkd-orchestrator -- /bin/bash
 ```
 
 V kontejneru jsou následující skripty, které můžeme spustit:
@@ -350,7 +372,6 @@ Přepnutí:
 ```shell
 kubectl config use-context {název}
 ```
-
 
 ## Promazání K8S podů
 

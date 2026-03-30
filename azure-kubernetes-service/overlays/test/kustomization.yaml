@@ -3,5 +3,7 @@ kind: Kustomization
 resources:
   - ../../base
 patches:
+  - path: ./adapter.yaml
+  - path: ./gateway.yaml
   - path: ./virtuoso-ndc.yaml
   - path: ./virtuoso-vocabulary.yaml

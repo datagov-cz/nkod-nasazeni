@@ -90,6 +90,56 @@ spec:
           volumeMounts:
             - mountPath: "/data/"
               name: adapter-volume
+        - name: nkd-registration-manager
+          image: ghcr.io/datagov-cz/nkd-registration-manager:main
+          imagePullPolicy: Always
+          env:
+          - name: FORMS_URL
+            value: http://nkd-forms:80/
+          - name: HTTP_PORT
+            value: "5100"
+          - name: HTTP_HOST
+            value: "0.0.0.0"
+          - name: HTTP_COOKIE_SECRET
+            valueFrom:
+              configMapKeyRef:
+                name: nkd-registration-manager-secret
+                key: http_cookie_secret
+          - name: DATA_PORTAL_DOMAIN_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: nkd-configuration
+                key: data_portal_domain_name
+          - name: HTTP_BASE_URL
+            value: https://$(DATA_PORTAL_DOMAIN_NAME)/správa-registrací
+          - name: ISDS_ATTACHMENTS
+            value: /data/adapter/registrations/attachments
+          - name: ISDS_MESSAGES
+            value: /data/adapter/registrations/messages
+          - name: REPOSITORY_ATTACHMENTS
+            value: /data/adapter/registration-manager/attachments
+          - name: REPOSITORY_MESSAGES
+            value: /data/adapter/registration-manager/messages
+          - name: RPP_SPARQL_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: nkd-configuration
+                key: rpp_sparql_endpoint
+          - name: TOKEN_SIGN_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: nkd-caais-middleware-secret
+                key: caais_token_sign_secret
+          - name: AUTHORIZATION_ACTIVITY_CODE_ROLE_EDITOR
+            valueFrom:
+              configMapKeyRef:
+                name: nkd-registration-manager-secret
+                key: authorization_activity_code_role
+          ports:
+            - containerPort: 5100
+          volumeMounts:
+            - mountPath: "/data/adapter"
+              name: adapter-volume
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -105,4 +155,19 @@ spec:
   resources:
     requests:
       storage: 16Gi
-  # volumeName: nkd-adapter-pv
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nkd-registration-manager
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: registration-manager
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: adapter
+  ports:
+  - protocol: TCP
+    targetPort: 5100
+    port: 5100
