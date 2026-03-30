@@ -95,7 +95,7 @@ function startLinkedDataFragmentServer() {
   const port = configuration.ldf.port;
   const workerCount = configuration.ldf.workers
 
-  console.log("Starting LDF server:",
+  console.log(`${timestamp()} Starting LDF server.`,
     configurationFilePath, port, workerCount);
   const ldfProcess = spawn("node", [
     "./node_modules/@ldf/server/bin/ldf-server",
@@ -105,17 +105,17 @@ function startLinkedDataFragmentServer() {
   });
 
   ldfProcess.stdout.on("data", (data) => {
-    console.log(`ldf:stdout: ${data.toString().trim()}`);
+    console.log(`${timestamp()} ldf:stdout: ${data.toString().trim()}`);
   });
 
   ldfProcess.stderr.on("data", (data) => {
-    console.error(`ldf:stderr: ${data.toString().trim()}`);
+    console.error(`${timestamp()} ldf:stderr: ${data.toString().trim()}`);
   });
 
   ldfProcess.on("close", (code) => {
-    console.log(`ldf: Child process exited with code '${code}'.`);
+    console.log(`${timestamp()} ldf: Child process exited with code '${code}'.`);
     if (!state.reloading) {
-      console.log("Terminating main.")
+      console.log(`${timestamp()} Terminating main process`)
       process.exit(code);
     }
     if (state.indexRemoved) {
@@ -131,6 +131,10 @@ function startLinkedDataFragmentServer() {
   // If we were reloading now we are done.
   state.reloading = false;
 };
+
+function timestamp() {
+  return '[' + new Date().toISOString() + ']';
+}
 
 function startHttpServer() {
   const app = express();
@@ -149,13 +153,13 @@ function startHttpServer() {
 
   app.listen(configuration.host.port, () => {
     const port = configuration.host.port;
-    console.log(`Control HTTP server listening on port ${port}.`)
+    console.log(`${timestamp()} Control HTTP server listening on port ${port}.`);
   });
 
 }
 
 function restartLinkedDataFragmentServer() {
-  console.log("Executing reload.");
+  console.log(`${timestamp()} Executing reload.`);
   if (state.reloading) {
     // We are already reloading!
     return;
@@ -165,14 +169,14 @@ function restartLinkedDataFragmentServer() {
   state.terminated = false;
   state.indexRemoved = false;
   // Terminate old process.
-  console.log("Sending SIGTERM to ldf.");
+  console.log(`${timestamp()} Sending SIGTERM to ldf.`);
   state.ldfProcess.kill("SIGTERM");
   // Remove index file.
   // We originally just use SIGHUP for @ldf/server.
   // But sometimes the @ldf/server use all memory and crashed, this should help.
   const indexFile = "/data/nkod.hdt.index.v1-1";
   fileSystem.unlink(indexFile, () => {
-    console.log("Index file '" + indexFile + "' removed.");
+    console.log(`${timestamp()} Index file "${indexFile}" has been removed.`);
     if (state.terminated === true) {
       // The process has been terminated before we deleted the file.
       // Thus we can start a new thread.
