@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkd-design-system-deployment
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: design-system
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: design-system
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: design-system
+    spec:
+      volumes:
+        - name: design-system-volume
+          persistentVolumeClaim:
+            claimName: nkd-design-system-pvc
+      containers:
+        - name: nkd-design-system
+          image: ghcr.io/datagov-cz/nkd-design-system:develop
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: "/usr/share/nginx/html"
+              name: design-system-volume
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nkd-design-system-pvc
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: public
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: managed-csi
+  resources:
+    requests:
+      storage: 64M
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nkd-design-system
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: design-system
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: design-system
+  ports:
+  - protocol: TCP
+    targetPort: 80
+    port: 80

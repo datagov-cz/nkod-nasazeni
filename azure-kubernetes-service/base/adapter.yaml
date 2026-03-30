@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkd-adapter-deployment
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: adapter
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: adapter
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: adapter
+    spec:
+      volumes:
+        - name: adapter-volume
+          persistentVolumeClaim:
+            claimName: nkd-adapter-pvc
+      securityContext:
+          fsGroup: 5987
+          fsGroupChangePolicy: "OnRootMismatch"
+      containers:
+        - name: nkd-adapter
+          image: ghcr.io/datagov-cz/nkd-adapter:develop
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "512Mi"
+            limits:
+              memory: "1Gi"
+          env:
+            - name: MS_APPLICATION
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-adapter-secret
+                  key: ms_application
+            - name: MS_TENANT
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-adapter-secret
+                  key: ms_tenant
+            - name: MS_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-adapter-secret
+                  key: ms_secret
+            - name: MS_SITE
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-adapter-secret
+                  key: ms_site
+            - name: MS_APPLICATIONS_LIST
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-adapter-secret
+                  key: ms_applications_list
+            - name: MS_APPLICATIONS_PATH
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-adapter-secret
+                  key: ms_applications_path
+            - name: MS_SUGGESTIONS_LIST
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-adapter-secret
+                  key: ms_suggestions_list
+            - name: MS_ALLOWED_PUBLISHERS_LIST
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-adapter-secret
+                  key: ms_allowed_publishers_list
+            - name: ISDS_LOGIN
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-adapter-secret
+                  key: isds_login
+            - name: ISDS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-adapter-secret
+                  key: isds_password
+            - name: ISDS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-adapter-secret
+                  key: isds_url
+          volumeMounts:
+            - mountPath: "/data/"
+              name: adapter-volume
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nkd-adapter-pvc
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: adapter
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: azurefile
+  resources:
+    requests:
+      storage: 16Gi
+  # volumeName: nkd-adapter-pv

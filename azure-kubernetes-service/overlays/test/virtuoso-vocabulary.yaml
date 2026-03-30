@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkd-virtuoso-vocabulary-deployment
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: virtuoso-vocabulary
+spec:
+  template:
+    spec:
+      containers:
+        - name: nkd-virtuoso
+          env:
+            # Next two lines if there is 2 GB system memory free
+            - name: VIRT_PARAMETERS_NUMBEROFBUFFERS
+              value: "170000"
+            - name: VIRT_PARAMETERS_MAXDIRTYBUFFERS
+              value: "130000"
+          resources:
+            requests:
+              memory: "2Gi"
+            limits:
+              memory: "3Gi"

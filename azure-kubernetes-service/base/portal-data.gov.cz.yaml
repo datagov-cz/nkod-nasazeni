@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkd-portal-data-gov-cz-deployment
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: portal-data-gov-cz
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: portal-data-gov-cz
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: portal-data-gov-cz
+    spec:
+      volumes:
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: nkd-portal-data-gov-cz-pvc
+      securityContext:
+          fsGroup: 33
+          fsGroupChangePolicy: "OnRootMismatch"
+      containers:
+        - name: nkd-portal-data-gov-cz
+          image: ghcr.io/datagov-cz/nkd-jekyll:develop
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              value: "80"
+            - name: GITHUB_BRANCH
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-portal
+                  key: data_portal_branch
+            - name: GITHUB_REPOSITORY
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-portal
+                  key: data_portal_repository
+            - name: GITHUB_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: nkd-portal
+                  key: data_portal_secret
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: "/data"
+              name: data-volume
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nkd-portal-data-gov-cz-pvc
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: portal-data-gov-cz
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: managed-csi
+  resources:
+    requests:
+      storage: 8Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nkd-portal-data-gov-cz
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: portal-data-gov-cz
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: portal-data-gov-cz
+  ports:
+  - protocol: TCP
+    targetPort: 80
+    port: 80

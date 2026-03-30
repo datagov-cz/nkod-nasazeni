@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkd-gateway-deployment
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: gateway
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gateway
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gateway
+    spec:
+      containers:
+        - name: nkd-gateway
+          image: ghcr.io/datagov-cz/nkd-gateway:develop
+          imagePullPolicy: Always
+          env:
+            - name: OFN_PORTAL_DOMAIN_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: nkd-configuration
+                  key: ofn_portal_domain_name
+            - name: DATA_PORTAL_DOMAIN_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: nkd-configuration
+                  key: data_portal_domain_name
+            - name: RESOLVER
+              value: kube-dns.kube-system.svc.cluster.local
+          ports:
+            - containerPort: 443
+          volumeMounts:
+            - name: ofn-tls-volume
+              mountPath: /opt/ssl/ofn
+              readOnly: true
+            - name: data-tls-volume
+              mountPath: /opt/ssl/data
+              readOnly: true
+      volumes:
+        - name: ofn-tls-volume
+          secret:
+            secretName: nkd-ofn-tls
+        - name: data-tls-volume
+          secret:
+            secretName: nkd-data-tls
