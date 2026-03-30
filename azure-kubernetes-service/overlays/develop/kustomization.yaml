@@ -3,8 +3,6 @@ kind: Kustomization
 resources:
   - ../../base
 patches:
-  - path: ./adapter.yaml
-  - path: ./gateway.yaml
   - path: ./ldf.yaml
   - path: ./linkedpipes-etl.yaml
   - path: ./solr.yaml

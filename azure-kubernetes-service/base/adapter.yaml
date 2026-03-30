@@ -102,7 +102,7 @@ spec:
             value: "0.0.0.0"
           - name: HTTP_COOKIE_SECRET
             valueFrom:
-              configMapKeyRef:
+              secretKeyRef:
                 name: nkd-registration-manager-secret
                 key: http_cookie_secret
           - name: DATA_PORTAL_DOMAIN_NAME
@@ -113,13 +113,13 @@ spec:
           - name: HTTP_BASE_URL
             value: https://$(DATA_PORTAL_DOMAIN_NAME)/správa-registrací
           - name: ISDS_ATTACHMENTS
-            value: /data/adapter/registrations/attachments
+            value: /data/registrations/attachments
           - name: ISDS_MESSAGES
-            value: /data/adapter/registrations/messages
+            value: /data/registrations/messages
           - name: REPOSITORY_ATTACHMENTS
-            value: /data/adapter/registration-manager/attachments
+            value: /data/registration-manager/attachments
           - name: REPOSITORY_MESSAGES
-            value: /data/adapter/registration-manager/messages
+            value: /data/registration-manager/messages
           - name: RPP_SPARQL_ENDPOINT
             valueFrom:
               configMapKeyRef:
@@ -132,13 +132,13 @@ spec:
                 key: caais_token_sign_secret
           - name: AUTHORIZATION_ACTIVITY_CODE_ROLE_EDITOR
             valueFrom:
-              configMapKeyRef:
+              secretKeyRef:
                 name: nkd-registration-manager-secret
                 key: authorization_activity_code_role
           ports:
             - containerPort: 5100
           volumeMounts:
-            - mountPath: "/data/adapter"
+            - mountPath: "/data"
               name: adapter-volume
 ---
 apiVersion: v1
