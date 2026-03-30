@@ -348,6 +348,50 @@ server {
     return 301 https://$OFN_PORTAL_DOMAIN_NAME/$1 ;
   }
 
+  # registration manager
+
+  location /správa-registrací/ {
+    auth_request /authenticate;
+    proxy_pass http://nkd-registration-manager:5100/;
+    auth_request_set $caais_token $upstream_http_x_caais_token;
+    proxy_set_header x-caais-token $caais_token;
+
+    error_page 401 = @caais_login_redirect;
+  }
+
+  # caais
+
+  location @caais_login_redirect {
+    return 302 /caais/login?redirect-url=$request_uri;
+  }
+
+  location /caais/ {
+    proxy_pass http://nkd-caais-middleware:5000/;
+
+    # Set headers to pass to authorization service.
+    proxy_set_header Host             $host;
+    proxy_set_header X-Real-IP        $remote_addr;
+    proxy_set_header X-Forwarded-Uri  $request_uri;
+  }
+
+  location = /authenticate {
+    internal;
+    proxy_pass http://nkd-caais-middleware:5000/authenticate;
+
+    # Do not pass the body content.
+    proxy_pass_request_body off;
+    proxy_set_header Content-Length "";
+
+    # Set headers to pass to authorization service.
+    proxy_set_header Host             $host;
+    proxy_set_header X-Real-IP        $remote_addr;
+    proxy_set_header X-Forwarded-Uri  $request_uri;
+
+    # Timeout.
+    proxy_next_upstream error timeout http_500;
+    error_page 500 = 503;
+  }
+
   # security and others
 
   location ~ ^.*/etc/passwd.* {
