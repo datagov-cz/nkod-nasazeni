@@ -16,3 +16,7 @@ spec:
               memory: "5Gi"
             limits:
               memory: "6Gi"
+        - name: nkd-linkedpipes-etl-executor-monitor
+          env:
+            - name: LP_ETL_EXECUTION_HISTORY_COUNT_LIMIT
+              value: ""
