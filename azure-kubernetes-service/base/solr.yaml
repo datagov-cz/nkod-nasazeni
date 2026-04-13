@@ -15,6 +15,8 @@ spec:
       labels:
         app.kubernetes.io/name: solr
     spec:
+      nodeSelector:
+        agentpool: nodepool4
       volumes:
         - name: solr-volume
           persistentVolumeClaim:

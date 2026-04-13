@@ -96,10 +96,14 @@ az aks create --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --nod
 # Standard_A8_v2 - 8 CPU, 16GB
 az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool2 --node-count 2 --node-vm-size Standard_A8_v2
 
-# Standard_d8as_v5 - 8 vCPU, 32GB RAM
-az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool3 --node-count 1 --node-vm-size  Standard_d8as_v5
+# Standard_D8as_v5 - 8 vCPU, 32GB RAM
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool3 --node-count 1 --node-vm-size  Standard_D8as_v5
 
-# Výpis nodes a získání node pool name.
+# Standard_D2as_v5 - 2 CPU, 8GB
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool4 --node-count 1 --node-vm-size Standard_D2as_v5
+
+# Výpis nodes dostupných pro kubernetes.
+az aks nodepool list --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER -o table
 ```
 
 *Volitelný krok:* Pokud existuje [ACR](#vytvoření-acr), je možná poskytnout AKS přístup pomocí následujícího příkazu.
