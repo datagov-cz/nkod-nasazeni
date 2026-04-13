@@ -1,3 +1,6 @@
+# We use one cache for static and one for dynamic content.
+proxy_cache_path /var/cache/nginx/global_cache/ levels=1:2 keys_zone=global_cache:64m max_size=8g inactive=60m use_temp_path=off;
+
 server {
 
   listen 443 ssl ;
@@ -36,6 +39,11 @@ server {
 
   location /assets/design-system {
     include hsts-cors.conf;
+
+    proxy_cache global_cache;
+    proxy_cache_valid any 30m;
+    # We can use this for debugging.
+    # add_header X-Cache-Status $upstream_cache_status;
 
     proxy_pass http://nkd-design-system/design-system/;
     proxy_pass_request_headers          on;
@@ -208,6 +216,11 @@ server {
 
   location /api/v2/catalog/ {
     include hsts-cors.conf;
+
+    proxy_cache global_cache;
+    proxy_cache_valid 200 5m;
+    # We can use this for debugging.
+    # add_header X-Cache-Status $upstream_cache_status;
 
     proxy_pass http://nkd-catalog;
     proxy_pass_request_headers          on;
