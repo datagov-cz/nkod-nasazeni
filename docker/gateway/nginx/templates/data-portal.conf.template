@@ -144,7 +144,7 @@ server {
 
   # nkd-virtuoso-vocabulary
 
-  location /slovníky/sparql {
+  location = /slovníky/sparql {
     include hsts-cors.conf;
 
     proxy_pass http://nkd-virtuoso-vocabulary:8890/sparql;
@@ -160,7 +160,7 @@ server {
     send_timeout                        2400;
   }
 
-  location /slovníky/sparql-graph-crud {
+  location = /slovníky/sparql-graph-crud {
     include hsts-cors.conf;
 
     proxy_pass http://nkd-virtuoso-vocabulary:8890/sparql-graph-crud;
