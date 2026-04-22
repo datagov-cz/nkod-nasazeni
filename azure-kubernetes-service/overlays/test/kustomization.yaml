@@ -3,6 +3,18 @@ kind: Kustomization
 resources:
   - ../../base
 patches:
+  - path: ./adapter.yaml
+  - path: ./caais-middleware.yaml
+  - path: ./catalog.yaml
+  - path: ./couchdb.yaml
+  - path: ./design-system.yaml
+  - path: ./forms.yaml
+  - path: ./gateway.yaml
+  - path: ./graphql.yaml
+  - path: ./ldf.yaml
   - path: ./linkedpipes-etl.yaml
+  - path: ./portal-data.gov.cz.yaml
+  - path: ./portal-ofn.gov.cz.yaml
+  - path: ./solr.yaml
   - path: ./virtuoso-ndc.yaml
   - path: ./virtuoso-vocabulary.yaml

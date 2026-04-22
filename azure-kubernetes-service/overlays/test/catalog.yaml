@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkd-catalog-deployment
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: catalog
+spec:
+    spec:
+      containers:
+        - name: nkd-catalog
+          resources:
+            requests:
+              memory: "256Mi"
+            limits:
+              memory: "512Mi"

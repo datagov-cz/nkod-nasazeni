@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkd-gateway-deployment
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: gateway
+spec:
+  template:
+    spec:
+      containers:
+        - name: nkd-gateway
+          resources:
+            requests:
+              memory: "128Mi"
+            limits:
+              memory: "256Mi"
