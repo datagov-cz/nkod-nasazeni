@@ -6,6 +6,7 @@ metadata:
   labels:
     app.kubernetes.io/name: caais-middleware
 spec:
+  template:
     spec:
       containers:
         - name: nkd-caais-middleware
