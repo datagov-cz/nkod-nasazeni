@@ -79,13 +79,6 @@ spec:
         - name: nkd-linkedpipes-etl-executor
           image: ghcr.io/datagov-cz/etl-executor:develop
           imagePullPolicy: Always
-          # We need to keep limits synch with -Xmx command.
-          command: ["java", "-DconfigFileLocation=/opt/lp-etl/configuration/configuration.properties", "-Xmx8g", "-jar" ,"./executor/executor.jar"]
-          resources:
-            requests:
-              memory: "10Gi"
-            limits:
-              memory: "14Gi"
           env:
             - name: LP_ETL_DOMAIN
               value: "http://localhost:8080"
@@ -248,7 +241,8 @@ spec:
               name: public-volume
             - mountPath: "/etc/cron.d/"
               name: linkedpipes-etl-crontab
-
+  strategy:
+    type: Recreate
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

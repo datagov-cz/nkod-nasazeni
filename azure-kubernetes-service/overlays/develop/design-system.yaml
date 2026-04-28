@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nkd-solr-deployment
+  name: nkd-design-system-deployment
   namespace: nkd
   labels:
-    app.kubernetes.io/name: solr
+    app.kubernetes.io/name: design-system
 spec:
   template:
     spec:
       containers:
-        - name: nkd-solr
+        - name: nkd-design-system
           resources:
             requests:
-              memory: "1Gi"
+              memory: "16Mi"
             limits:
-              memory: "1Gi"
+              memory: "32Mi"

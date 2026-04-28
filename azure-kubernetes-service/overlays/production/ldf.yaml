@@ -12,9 +12,9 @@ spec:
         - name: nkd-ldf
           resources:
             requests:
-              memory: "256Mi"
-            limits:
               memory: "512Mi"
+            limits:
+              memory: "1Gi"
         - name: ssh-server
           resources:
             requests:

@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nkd-ldf-deployment
+  name: nkd-graphql-deployment
   namespace: nkd
   labels:
-    app.kubernetes.io/name: ldf
+    app.kubernetes.io/name: graphql
 spec:
   template:
     spec:
       containers:
-        - name: nkd-ldf
+        - name: nkd-graphql
           resources:
             requests:
-              memory: "256Mi"
+              memory: "1Gi"
             limits:
-              memory: "512Mi"
+              memory: "1536Mi"
         - name: ssh-server
           resources:
             requests:

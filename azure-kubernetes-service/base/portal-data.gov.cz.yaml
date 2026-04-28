@@ -49,6 +49,8 @@ spec:
           volumeMounts:
             - mountPath: "/data"
               name: data-volume
+  strategy:
+    type: Recreate
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

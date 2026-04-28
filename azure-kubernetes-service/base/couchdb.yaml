@@ -47,6 +47,8 @@ spec:
             runAsGroup: 5984
             runAsNonRoot: true
             allowPrivilegeEscalation: false
+  strategy:
+    type: Recreate
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

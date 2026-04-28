@@ -66,6 +66,8 @@ spec:
           volumeMounts:
             - mountPath: "/database"
               name: graphql-volume
+  strategy:
+    type: Recreate
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

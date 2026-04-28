@@ -26,11 +26,6 @@ spec:
         - name: nkd-adapter
           image: ghcr.io/datagov-cz/nkd-adapter:develop
           imagePullPolicy: Always
-          resources:
-            requests:
-              memory: "512Mi"
-            limits:
-              memory: "1Gi"
           env:
             - name: MS_APPLICATION
               valueFrom:

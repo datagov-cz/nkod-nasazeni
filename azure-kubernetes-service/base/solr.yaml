@@ -26,11 +26,6 @@ spec:
         - name: nkd-solr
           image: ghcr.io/datagov-cz/nkd-solr:develop
           imagePullPolicy: Always
-          resources:
-            requests:
-              memory: "1Gi"
-            limits:
-              memory: "2Gi"
           ports:
             - containerPort: 8983
           volumeMounts:
@@ -41,6 +36,17 @@ spec:
             runAsGroup: 8983
             runAsNonRoot: true
             allowPrivilegeEscalation: false
+          livenessProbe:
+            httpGet:
+              path: /solr/admin/info/system?wt=json
+              port: 8983
+            initialDelaySeconds: 45
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+  strategy:
+    type: Recreate
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

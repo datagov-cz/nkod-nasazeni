@@ -37,11 +37,6 @@ spec:
                 secretKeyRef:
                   name: nkd-virtuoso-vocabulary-secret
                   key: virtuoso_dva_password
-            # Next two lines if there is 2 GB system memory free
-            - name: VIRT_PARAMETERS_NUMBEROFBUFFERS
-              value: "170000"
-            - name: VIRT_PARAMETERS_MAXDIRTYBUFFERS
-              value: "130000"
           ports:
             - containerPort: 1111
             - containerPort: 8890
@@ -53,11 +48,17 @@ spec:
             runAsGroup: 1001
             runAsNonRoot: true
             allowPrivilegeEscalation: false
-          resources:
-            requests:
-              memory: "2Gi"
-            limits:
-              memory: "3Gi"
+          livenessProbe:
+            httpGet:
+              path: /sparql
+              port: 8890
+            # Virtuoso can be slow to start.
+            initialDelaySeconds: 120
+            periodSeconds: 20
+            timeoutSeconds: 10
+            # We allow for some failures.
+            failureThreshold: 5
+            successThreshold: 1
         - name: ssh-server
           image: ghcr.io/datagov-cz/nkd-ssh-server:develop
           imagePullPolicy: Always
@@ -74,6 +75,8 @@ spec:
           volumeMounts:
             - mountPath: "/database"
               name: virtuoso-vocabulary-volume
+  strategy:
+    type: Recreate
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

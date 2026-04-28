@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nkd-solr-deployment
+  name: nkd-couchdb-deployment
   namespace: nkd
   labels:
-    app.kubernetes.io/name: solr
+    app.kubernetes.io/name: couchdb
 spec:
   template:
     spec:
       containers:
-        - name: nkd-solr
+        - name: nkd-couchdb
           resources:
             requests:
-              memory: "1Gi"
+              memory: "128Mi"
             limits:
-              memory: "1Gi"
+              memory: "256Mi"

@@ -90,17 +90,15 @@ az acr config authentication-as-arm show --registry $env:CONTAINER_REGISTRY
 # Přehled pro A - Entry-level economical, je na:
 # https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/general-purpose/av2-series
 
-# Standard_A2_v2 - 2 CPU, 4GB
-az aks create --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --node-count 4 --node-vm-size Standard_A2_v2 --location $env:LOCATION --ip-families ipv4,ipv6 --generate-ssh-keys
+# Standard_D2as_v5 - 2 CPU, 4GB
+az aks create --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --node-count 4 --node-vm-size Standard_D2as_v5 --location $env:LOCATION --ip-families ipv4,ipv6 --generate-ssh-keys --nodepool-name system
 
-# Standard_A8_v2 - 8 CPU, 16GB
-az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool2 --node-count 2 --node-vm-size Standard_A8_v2
+# Standard_D4as_v5 - 4 vCPU, 16GB RAM
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name user1 --node-count 1 --node-vm-size Standard_D4as_v5
 
-# Standard_D8as_v5 - 8 vCPU, 32GB RAM
-az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool3 --node-count 1 --node-vm-size  Standard_D8as_v5
-
-# Standard_D2as_v5 - 2 CPU, 8GB
-az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool4 --node-count 1 --node-vm-size Standard_D2as_v5
+# Standard_D8as_v5 - 8 vCPU, 32GB RAM - only for virtuoso.
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name virtuoso --node-count 1 --node-vm-size Standard_D8as_v5
+kubectl taint nodes virtuoso dedicated=virtuoso:NoSchedule
 
 # Výpis nodes dostupných pro kubernetes.
 az aks nodepool list --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER -o table

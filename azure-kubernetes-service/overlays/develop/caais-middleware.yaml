@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nkd-solr-deployment
+  name: nkd-caais-middleware-deployment
   namespace: nkd
   labels:
-    app.kubernetes.io/name: solr
+    app.kubernetes.io/name: caais-middleware
 spec:
   template:
     spec:
       containers:
-        - name: nkd-solr
+        - name: nkd-caais-middleware
           resources:
             requests:
-              memory: "1Gi"
+              memory: "128Mi"
             limits:
-              memory: "1Gi"
+              memory: "256Mi"

@@ -1,23 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nkd-ldf-deployment
+  name: nkd-catalog-deployment
   namespace: nkd
   labels:
-    app.kubernetes.io/name: ldf
+    app.kubernetes.io/name: catalog
 spec:
   template:
     spec:
       containers:
-        - name: nkd-ldf
+        - name: nkd-catalog
           resources:
             requests:
               memory: "256Mi"
             limits:
               memory: "512Mi"
-        - name: ssh-server
-          resources:
-            requests:
-              memory: "64Mi"
-            limits:
-              memory: "256Mi"

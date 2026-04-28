@@ -28,6 +28,8 @@ spec:
           volumeMounts:
             - mountPath: "/usr/share/nginx/html"
               name: design-system-volume
+  strategy:
+    type: Recreate
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
