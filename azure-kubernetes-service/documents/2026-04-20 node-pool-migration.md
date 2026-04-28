@@ -14,8 +14,9 @@ az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS
 # Standard_D4as_v5 - 4 vCPU, 16GB RAM
 az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name user1 --node-count 1 --node-vm-size Standard_D4as_v5
 
-# Standard_D8as_v5 - 8 vCPU, 32GB RAM
+# Standard_D8as_v5 - 8 vCPU, 32GB RAM - only for virtuoso.
 az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name virtuoso --node-count 1 --node-vm-size Standard_D8as_v5
+kubectl taint nodes virtuoso dedicated=virtuoso:NoSchedule
 
 # Remove previous pools.
 kubectl drain --ignore-daemonsets --delete-emptydir-data $(kubectl get nodes -l agentpool=nodepool1 -o name)
