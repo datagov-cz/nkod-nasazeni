@@ -8,6 +8,14 @@ metadata:
 spec:
   template:
     spec:
+      # We mode this to virtuoso as well to save resources.
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: virtuoso
+          effect: NoSchedule
+      nodeSelector:
+        agentpool: virtuoso
       containers:
         - name: nkd-solr
           resources:

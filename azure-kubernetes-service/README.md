@@ -81,7 +81,15 @@ az acr create --resource-group $env:RESOURCE_GROUP --name $env:CONTAINER_REGISTR
 az acr config authentication-as-arm show --registry $env:CONTAINER_REGISTRY
 ```
 
+Po vytvoření Kubernetes clusteru je třeba mu poskytnout přístup pomocí následujícího příkazu.
+```shell
+# Umožni AKS přístup k ACR.
+az aks update --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --attach-acr $env:CONTAINER_REGISTRY
+```
+
 ### Vytvoření Kubernetes clusteru
+
+#### Produkční prostředí
 
 ```shell
 # Vytvoření Azure Kubernetes Service (AKS), více informací na:
@@ -98,17 +106,35 @@ az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS
 
 # Standard_D8as_v5 - 8 vCPU, 32GB RAM - only for virtuoso.
 az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name virtuoso --node-count 1 --node-vm-size Standard_D8as_v5
-kubectl taint nodes virtuoso dedicated=virtuoso:NoSchedule
-
-# Výpis nodes dostupných pro kubernetes.
-az aks nodepool list --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER -o table
+kubectl taint nodes -l agentpool=virtuoso dedicated=virtuoso:NoSchedule
 ```
 
-*Volitelný krok:* Pokud existuje [ACR](#vytvoření-acr), je možná poskytnout AKS přístup pomocí následujícího příkazu.
-Tento krok je potřeba pouze, pokud je v plánu použít ACR jako úložiště pro Docker images.
+#### Testovací prostředí
+
 ```shell
-# Umožni AKS přístup k ACR.
-az aks update --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --attach-acr $env:CONTAINER_REGISTRY
+# Standard_D2as_v5 - 2 CPU, 4GB
+az aks create --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --node-count 1 --node-vm-size Standard_D2as_v5 --location $env:LOCATION --ip-families ipv4,ipv6 --generate-ssh-keys --nodepool-name system
+
+# Standard_D2as_v5 - 2 CPU, 4GB
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name user1 --node-count 2 --node-vm-size Standard_D2as_v5
+
+# Standard_D2as_v5 - 2 CPU, 4GB
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name virtuoso --node-count 2 --node-vm-size Standard_D2as_v5
+kubectl taint nodes -l agentpool=virtuoso dedicated=virtuoso:NoSchedule
+```
+
+#### Vývojové prostředí
+
+```shell
+# Standard_D2as_v5 - 2 CPU, 4GB
+az aks create --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --node-count 1 --node-vm-size Standard_D2as_v5 --location $env:LOCATION --ip-families ipv4,ipv6 --generate-ssh-keys --nodepool-name system
+
+# Standard_D2as_v5 - 2 CPU, 4GB
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name user1 --node-count 1 --node-vm-size Standard_D2as_v5
+
+# Standard_D2as_v5 - 2 CPU, 4GB
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name virtuoso --node-count 1 --node-vm-size Standard_D2as_v5
+kubectl taint nodes -l agentpool=virtuoso dedicated=virtuoso:NoSchedule
 ```
 
 ## Nastavení kubeclt
@@ -387,7 +413,7 @@ Příklad změny počtů strojů v nodepool.
 Pokud by bylo třeba více prostředků, než může jeden node nabídnout, je třeba vytvořit novou skupinu s většími stroji.
 
 ```bash
-az aks nodepool scale --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepool2 --node-count 2
+az aks nodepool scale --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name nodepoolname --node-count 2
 ```
 
 ## Archivace dat
