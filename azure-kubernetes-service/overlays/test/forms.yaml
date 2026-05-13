@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkd-forms-deployment
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: forms
+spec:
+  template:
+    spec:
+      containers:
+        - name: nkd-forms
+          image: ghcr.io/datagov-cz/nkd-forms:main
+          resources:
+            requests:
+              memory: "64Mi"
+            limits:
+              memory: "128Mi"

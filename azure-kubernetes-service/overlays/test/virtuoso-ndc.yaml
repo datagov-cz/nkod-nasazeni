@@ -8,16 +8,26 @@ metadata:
 spec:
   template:
     spec:
+      nodeSelector:
+        agentpool: virtuoso
       containers:
         - name: nkd-virtuoso
+          image: ghcr.io/datagov-cz/nkd-virtuoso:main
           env:
-            # Next two lines if there is 2 GB system memory free
+            # Next two lines if there is 4 GB system memory free
             - name: VIRT_PARAMETERS_NUMBEROFBUFFERS
-              value: "170000"
+              value: "340000"
             - name: VIRT_PARAMETERS_MAXDIRTYBUFFERS
-              value: "130000"
+              value: "250000"
           resources:
             requests:
-              memory: "2Gi"
+              memory: "4Gi"
             limits:
-              memory: "3Gi"
+              memory: "5Gi"
+        - name: ssh-server
+          image: ghcr.io/datagov-cz/nkd-ssh-server:main
+          resources:
+            requests:
+              memory: "128Mi"
+            limits:
+              memory: "512Mi"

@@ -18,6 +18,12 @@ spec:
               value: "32500"
           resources:
             requests:
-              memory: "512Mi"
+              memory: "1Gi"
             limits:
-              memory: "768Mi"
+              memory: "2Gi"
+        - name: ssh-server
+          resources:
+            requests:
+              memory: "16Mi"
+            limits:
+              memory: "32Mi"

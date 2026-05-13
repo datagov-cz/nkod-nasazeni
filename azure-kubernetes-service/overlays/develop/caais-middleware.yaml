@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkd-caais-middleware-deployment
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: caais-middleware
+spec:
+  template:
+    spec:
+      containers:
+        - name: nkd-caais-middleware
+          resources:
+            requests:
+              memory: "128Mi"
+            limits:
+              memory: "256Mi"

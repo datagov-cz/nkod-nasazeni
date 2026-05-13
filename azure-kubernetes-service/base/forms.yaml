@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: nkd-forms
-          image: ghcr.io/datagov-cz/nkd-forms:develop
+          image: ghcr.io/datagov-cz/nkd-forms:main
           imagePullPolicy: Always
           env:
             - name: PORT

@@ -15,6 +15,13 @@ spec:
       labels:
         app.kubernetes.io/name: virtuoso-ndc
     spec:
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: virtuoso
+          effect: NoSchedule
+      nodeSelector:
+        agentpool: virtuoso
       volumes:
         - name: virtuoso-ndc-volume
           persistentVolumeClaim:
@@ -24,7 +31,7 @@ spec:
           fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: nkd-virtuoso
-          image: ghcr.io/datagov-cz/nkd-virtuoso:develop
+          image: ghcr.io/datagov-cz/nkd-virtuoso:main
           imagePullPolicy: Always
           env:
             - name: DBA_PASSWORD
@@ -37,11 +44,6 @@ spec:
                 secretKeyRef:
                   name: nkd-virtuoso-ndc-secret
                   key: virtuoso_dva_password
-            # Use for system with 16 GB system memory free.
-            - name: VIRT_PARAMETERS_NUMBEROFBUFFERS
-              value: "1360000"
-            - name: VIRT_PARAMETERS_MAXDIRTYBUFFERS
-              value: "1000000"
           ports:
             - containerPort: 1111
             - containerPort: 8890
@@ -53,13 +55,19 @@ spec:
             runAsGroup: 1001
             runAsNonRoot: true
             allowPrivilegeEscalation: false
-          resources:
-            requests:
-              memory: "18Gi"
-            limits:
-              memory: "24Gi"
+          livenessProbe:
+            httpGet:
+              path: /sparql
+              port: 8890
+            # Virtuoso can be slow to start.
+            initialDelaySeconds: 120
+            periodSeconds: 20
+            timeoutSeconds: 10
+            # We allow for some failures.
+            failureThreshold: 5
+            successThreshold: 1
         - name: ssh-server
-          image: ghcr.io/datagov-cz/nkd-ssh-server:develop
+          image: ghcr.io/datagov-cz/nkd-ssh-server:main
           imagePullPolicy: Always
           env:
             - name: USER
@@ -74,6 +82,8 @@ spec:
           volumeMounts:
             - mountPath: "/database"
               name: virtuoso-ndc-volume
+  strategy:
+    type: Recreate
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

@@ -42,7 +42,7 @@ spec:
           fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: nkd-linkedpipes-etl-storage
-          image: ghcr.io/datagov-cz/etl-storage:develop
+          image: ghcr.io/datagov-cz/etl-storage:main
           imagePullPolicy: Always
           env:
             - name: LP_ETL_DOMAIN
@@ -59,7 +59,7 @@ spec:
             runAsGroup: 5987
             runAsNonRoot: true
         - name: nkd-linkedpipes-etl-frontend
-          image: ghcr.io/datagov-cz/etl-frontend:develop
+          image: ghcr.io/datagov-cz/etl-frontend:main
           imagePullPolicy: Always
           env:
             - name: LP_ETL_DOMAIN
@@ -77,15 +77,8 @@ spec:
             runAsGroup: 5987
             runAsNonRoot: true
         - name: nkd-linkedpipes-etl-executor
-          image: ghcr.io/datagov-cz/etl-executor:develop
+          image: ghcr.io/datagov-cz/etl-executor:main
           imagePullPolicy: Always
-          # We need to keep limits synch with -Xmx command.
-          command: ["java", "-DconfigFileLocation=/opt/lp-etl/configuration/configuration.properties", "-Xmx8g", "-jar" ,"./executor/executor.jar"]
-          resources:
-            requests:
-              memory: "10Gi"
-            limits:
-              memory: "14Gi"
           env:
             - name: LP_ETL_DOMAIN
               value: "http://localhost:8080"
@@ -195,7 +188,7 @@ spec:
             runAsGroup: 5987
             runAsNonRoot: true
         - name: nkd-linkedpipes-etl-executor-monitor
-          image: ghcr.io/datagov-cz/etl-executor-monitor:develop
+          image: ghcr.io/datagov-cz/etl-executor-monitor:main
           imagePullPolicy: Always
           env:
             - name: LP_ETL_DOMAIN
@@ -228,7 +221,7 @@ spec:
             runAsGroup: 5987
             runAsNonRoot: true
         - name: nkd-orchestrator
-          image: ghcr.io/datagov-cz/nkd-orchestrator:develop
+          image: ghcr.io/datagov-cz/nkd-orchestrator:main
           imagePullPolicy: Always
           env:
             - name: FRONTEND_URL
@@ -248,7 +241,8 @@ spec:
               name: public-volume
             - mountPath: "/etc/cron.d/"
               name: linkedpipes-etl-crontab
-
+  strategy:
+    type: Recreate
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

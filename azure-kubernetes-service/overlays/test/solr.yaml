@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkd-solr-deployment
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: solr
+spec:
+  template:
+    spec:
+      # We mode this to virtuoso as well to save resources.
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: virtuoso
+          effect: NoSchedule
+      nodeSelector:
+        agentpool: virtuoso
+      containers:
+        - name: nkd-solr
+          image: ghcr.io/datagov-cz/nkd-solr:main
+          resources:
+            requests:
+              memory: "1Gi"
+            limits:
+              memory: "1Gi"

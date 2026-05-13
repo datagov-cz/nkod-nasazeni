@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: nkd-gateway
-          image: ghcr.io/datagov-cz/nkd-gateway:develop
+          image: ghcr.io/datagov-cz/nkd-gateway:main
           imagePullPolicy: Always
           env:
             - name: OFN_PORTAL_DOMAIN_NAME

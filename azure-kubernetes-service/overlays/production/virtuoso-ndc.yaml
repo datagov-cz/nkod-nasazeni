@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkd-virtuoso-ndc-deployment
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: virtuoso-ndc
+spec:
+  template:
+    spec:
+      containers:
+        - name: nkd-virtuoso
+          env:
+            # Use for system with 16 GB system memory free.
+            - name: VIRT_PARAMETERS_NUMBEROFBUFFERS
+              value: "1360000"
+            - name: VIRT_PARAMETERS_MAXDIRTYBUFFERS
+              value: "1000000"
+          resources:
+            requests:
+              memory: "18Gi"
+            limits:
+              memory: "24Gi"
+        - name: ssh-server
+          resources:
+            requests:
+              memory: "256Mi"
+            limits:
+              memory: "512Mi"

@@ -43,6 +43,8 @@ kind: Secret
 metadata:
   name: nkd-virtuoso-ndc-secret
   namespace: nkd
+  labels:
+    app.kubernetes.io/name: virtuoso-ndc
 data:
 ---
 apiVersion: v1
@@ -50,6 +52,9 @@ kind: Secret
 metadata:
   name: nkd-virtuoso-vocabulary-secret
   namespace: nkd
+  labels:
+    app.kubernetes.io/name: virtuoso-vocabulary
+type: Opaque
 data:
 ---
 apiVersion: v1
@@ -57,7 +62,28 @@ kind: Secret
 metadata:
   name: nkd-portal
   namespace: nkd
+  labels:
+    app.kubernetes.io/name: portal-data-gov-cz
+type: Opaque
 data:
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nkd-caais-middleware-secret
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: caais-middleware
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nkd-registration-manager-secret
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: registration-manager
+type: Opaque
 ---
 apiVersion: v1
 kind: ConfigMap

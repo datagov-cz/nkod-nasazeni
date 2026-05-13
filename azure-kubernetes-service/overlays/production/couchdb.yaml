@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkd-couchdb-deployment
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: couchdb
+spec:
+  template:
+    spec:
+      containers:
+        - name: nkd-couchdb
+          resources:
+            requests:
+              memory: "512Mi"
+            limits:
+              memory: "1Gi"

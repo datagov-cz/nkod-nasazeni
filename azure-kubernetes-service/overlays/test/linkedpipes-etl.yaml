@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkd-linkedpipes-etl-deployment
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: linkedpipes-etl
+spec:
+  template:
+    spec:
+      containers:
+        - name: nkd-linkedpipes-etl-executor
+          image: ghcr.io/linkedpipes/etl-executor:main
+          command: ["java", "-DconfigFileLocation=/opt/lp-etl/configuration/configuration.properties", "-Xmx4g", "-jar" ,"./executor/executor.jar"]
+          resources:
+            requests:
+              memory: "4Gi"
+            limits:
+              memory: "6Gi"
+        - name: nkd-linkedpipes-etl-executor-monitor
+          image: ghcr.io/linkedpipes/etl-executor-monitor:main
+          resources:
+            requests:
+              memory: "512Mi"
+            limits:
+              memory: "1Gi"
+        - name: nkd-linkedpipes-etl-frontend
+          image: ghcr.io/linkedpipes/etl-frontend:main
+          resources:
+            requests:
+              memory: "128Mi"
+            limits:
+              memory: "256Mi"
+        - name: nkd-linkedpipes-etl-storage
+          image: ghcr.io/linkedpipes/etl-storage:main
+          resources:
+            requests:
+              memory: "512Mi"
+            limits:
+              memory: "1Gi"
+        - name: nkd-orchestrator
+          image: ghcr.io/datagov-cz/nkd-orchestrator:main
+          resources:
+            requests:
+              memory: "32Mi"
+            limits:
+              memory: "64Mi"
+          env:
+            - name: STORAGE_REPOSITORY_BRANCH
+              value: main

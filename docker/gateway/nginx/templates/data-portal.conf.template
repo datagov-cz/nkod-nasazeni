@@ -1,3 +1,6 @@
+# We use one cache for static and one for dynamic content.
+proxy_cache_path /var/cache/nginx/global_cache/ levels=1:2 keys_zone=global_cache:64m max_size=8g inactive=60m use_temp_path=off;
+
 server {
 
   listen 443 ssl ;
@@ -36,6 +39,11 @@ server {
 
   location /assets/design-system {
     include hsts-cors.conf;
+
+    proxy_cache global_cache;
+    proxy_cache_valid any 30m;
+    # We can use this for debugging.
+    # add_header X-Cache-Status $upstream_cache_status;
 
     proxy_pass http://nkd-design-system/design-system/;
     proxy_pass_request_headers          on;
@@ -136,7 +144,7 @@ server {
 
   # nkd-virtuoso-vocabulary
 
-  location /slovníky/sparql {
+  location = /slovníky/sparql {
     include hsts-cors.conf;
 
     proxy_pass http://nkd-virtuoso-vocabulary:8890/sparql;
@@ -152,7 +160,7 @@ server {
     send_timeout                        2400;
   }
 
-  location /slovníky/sparql-graph-crud {
+  location = /slovníky/sparql-graph-crud {
     include hsts-cors.conf;
 
     proxy_pass http://nkd-virtuoso-vocabulary:8890/sparql-graph-crud;
@@ -208,6 +216,11 @@ server {
 
   location /api/v2/catalog/ {
     include hsts-cors.conf;
+
+    proxy_cache global_cache;
+    proxy_cache_valid 200 5m;
+    # We can use this for debugging.
+    # add_header X-Cache-Status $upstream_cache_status;
 
     proxy_pass http://nkd-catalog;
     proxy_pass_request_headers          on;
@@ -346,6 +359,50 @@ server {
 
   location ~ ^/otevřené-formální-normy/(.*)$ {
     return 301 https://$OFN_PORTAL_DOMAIN_NAME/$1 ;
+  }
+
+  # registration manager
+
+  location /správa-registrací/ {
+    auth_request /authenticate;
+    proxy_pass http://nkd-registration-manager:5100/;
+    auth_request_set $caais_token $upstream_http_x_caais_token;
+    proxy_set_header x-caais-token $caais_token;
+
+    error_page 401 = @caais_login_redirect;
+  }
+
+  # caais
+
+  location @caais_login_redirect {
+    return 302 /caais/login?redirect-url=$request_uri;
+  }
+
+  location /caais/ {
+    proxy_pass http://nkd-caais-middleware:5000/;
+
+    # Set headers to pass to authorization service.
+    proxy_set_header Host             $host;
+    proxy_set_header X-Real-IP        $remote_addr;
+    proxy_set_header X-Forwarded-Uri  $request_uri;
+  }
+
+  location = /authenticate {
+    internal;
+    proxy_pass http://nkd-caais-middleware:5000/authenticate;
+
+    # Do not pass the body content.
+    proxy_pass_request_body off;
+    proxy_set_header Content-Length "";
+
+    # Set headers to pass to authorization service.
+    proxy_set_header Host             $host;
+    proxy_set_header X-Real-IP        $remote_addr;
+    proxy_set_header X-Forwarded-Uri  $request_uri;
+
+    # Timeout.
+    proxy_next_upstream error timeout http_500;
+    error_page 500 = 503;
   }
 
   # security and others

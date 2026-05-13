@@ -24,13 +24,8 @@ spec:
           fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: nkd-ldf
-          image: ghcr.io/datagov-cz/nkd-ldf:develop
+          image: ghcr.io/datagov-cz/nkd-ldf:main
           imagePullPolicy: Always
-          resources:
-            requests:
-              memory: "512Mi"
-            limits:
-              memory: "1Gi"
           env:
             - name: LDF_PORT
               value: "3000"
@@ -65,7 +60,7 @@ spec:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
         - name: ssh-server
-          image: ghcr.io/datagov-cz/nkd-ssh-server:develop
+          image: ghcr.io/datagov-cz/nkd-ssh-server:main
           imagePullPolicy: Always
           env:
             - name: USER
@@ -80,6 +75,8 @@ spec:
           volumeMounts:
             - mountPath: "/data"
               name: ldf-volume
+  strategy:
+    type: Recreate
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

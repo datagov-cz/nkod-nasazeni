@@ -8,10 +8,24 @@ metadata:
 spec:
   template:
     spec:
+      # We mode this to virtuoso as well to save resources.
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: virtuoso
+          effect: NoSchedule
+      nodeSelector:
+        agentpool: virtuoso
       containers:
         - name: nkd-ldf
           resources:
             requests:
-              memory: "256Mi"
+              memory: "512Mi"
             limits:
               memory: "512Mi"
+        - name: ssh-server
+          resources:
+            requests:
+              memory: "32Mi"
+            limits:
+              memory: "64Mi"

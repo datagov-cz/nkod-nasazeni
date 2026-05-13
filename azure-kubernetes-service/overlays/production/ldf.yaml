@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkd-ldf-deployment
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: ldf
+spec:
+  template:
+    spec:
+      containers:
+        - name: nkd-ldf
+          resources:
+            requests:
+              memory: "512Mi"
+            limits:
+              memory: "1Gi"
+        - name: ssh-server
+          resources:
+            requests:
+              memory: "64Mi"
+            limits:
+              memory: "256Mi"

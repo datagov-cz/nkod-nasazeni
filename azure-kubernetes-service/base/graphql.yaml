@@ -24,7 +24,7 @@ spec:
           fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: nkd-graphql
-          image: ghcr.io/datagov-cz/nkd-graphql:develop
+          image: ghcr.io/datagov-cz/nkd-graphql:main
           imagePullPolicy: Always
           env:
             - name: NKOD_GRAPHQL_PORT
@@ -51,7 +51,7 @@ spec:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
         - name: ssh-server
-          image: ghcr.io/datagov-cz/nkd-ssh-server:develop
+          image: ghcr.io/datagov-cz/nkd-ssh-server:main
           imagePullPolicy: Always
           env:
             - name: USER
@@ -66,6 +66,8 @@ spec:
           volumeMounts:
             - mountPath: "/database"
               name: graphql-volume
+  strategy:
+    type: Recreate
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

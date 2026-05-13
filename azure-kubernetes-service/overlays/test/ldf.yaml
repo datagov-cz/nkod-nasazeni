@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nkd-ldf-deployment
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: ldf
+spec:
+  template:
+    spec:
+      # We mode this to virtuoso as well to save resources.
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: virtuoso
+          effect: NoSchedule
+      nodeSelector:
+        agentpool: virtuoso
+      containers:
+        - name: nkd-ldf
+          image: ghcr.io/datagov-cz/nkd-ldf:main
+          resources:
+            requests:
+              memory: "256Mi"
+            limits:
+              memory: "512Mi"
+        - name: ssh-server
+          image: ghcr.io/datagov-cz/nkd-ssh-server:main
+          resources:
+            requests:
+              memory: "64Mi"
+            limits:
+              memory: "256Mi"

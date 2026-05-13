@@ -21,5 +21,9 @@ mkdir -p /data/registrations/messages 2>/dev/null
 # suggestions-list.sh
 mkdir -p /data/suggestions/ 2>/dev/null
 
+# registration manager
+mkdir -p /data/registration-manager/attachments 2>/dev/null
+mkdir -p /data/registration-manager/messages 2>/dev/null
+
 #
 mkdir -p /data/log/ 2>/dev/null
