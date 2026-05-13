@@ -24,7 +24,7 @@ spec:
           fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: nkd-solr
-          image: ghcr.io/datagov-cz/nkd-solr:develop
+          image: ghcr.io/datagov-cz/nkd-solr:main
           imagePullPolicy: Always
           ports:
             - containerPort: 8983

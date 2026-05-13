@@ -24,7 +24,7 @@ spec:
           fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: nkd-adapter
-          image: ghcr.io/datagov-cz/nkd-adapter:develop
+          image: ghcr.io/datagov-cz/nkd-adapter:main
           imagePullPolicy: Always
           env:
             - name: MS_APPLICATION

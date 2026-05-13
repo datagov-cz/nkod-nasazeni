@@ -15,36 +15,10 @@ spec:
       labels:
         app.kubernetes.io/name: design-system
     spec:
-      volumes:
-        - name: design-system-volume
-          persistentVolumeClaim:
-            claimName: nkd-design-system-pvc
       containers:
         - name: nkd-design-system
-          image: ghcr.io/datagov-cz/nkd-design-system:develop
+          image: ghcr.io/datagov-cz/gov-design-system:2025-07-01
           imagePullPolicy: Always
-          ports:
-            - containerPort: 80
-          volumeMounts:
-            - mountPath: "/usr/share/nginx/html"
-              name: design-system-volume
-  strategy:
-    type: Recreate
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: nkd-design-system-pvc
-  namespace: nkd
-  labels:
-    app.kubernetes.io/name: public
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: managed-csi
-  resources:
-    requests:
-      storage: 64M
 ---
 apiVersion: v1
 kind: Service

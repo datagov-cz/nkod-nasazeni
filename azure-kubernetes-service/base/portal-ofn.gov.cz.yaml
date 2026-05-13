@@ -24,7 +24,7 @@ spec:
           fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: nkd-portal-ofn-gov-cz
-          image: ghcr.io/datagov-cz/nkd-jekyll:develop
+          image: ghcr.io/datagov-cz/nkd-jekyll:main
           imagePullPolicy: Always
           env:
             - name: PORT
