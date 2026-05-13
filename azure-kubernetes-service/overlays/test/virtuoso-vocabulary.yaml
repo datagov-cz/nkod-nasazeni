@@ -12,6 +12,7 @@ spec:
         agentpool: virtuoso
       containers:
         - name: nkd-virtuoso
+          image: ghcr.io/datagov-cz/nkd-virtuoso:main
           env:
             # Next two lines if there is 2 GB system memory free
             - name: VIRT_PARAMETERS_NUMBEROFBUFFERS
@@ -24,6 +25,7 @@ spec:
             limits:
               memory: "3Gi"
         - name: ssh-server
+          image: ghcr.io/datagov-cz/nkd-ssh-server:main
           resources:
             requests:
               memory: "128Mi"

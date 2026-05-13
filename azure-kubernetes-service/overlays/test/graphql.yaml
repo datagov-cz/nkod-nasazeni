@@ -10,12 +10,14 @@ spec:
     spec:
       containers:
         - name: nkd-graphql
+          image: ghcr.io/datagov-cz/nkd-graphql:main
           resources:
             requests:
               memory: "128Mi"
             limits:
               memory: "256Mi"
         - name: ssh-server
+          image: ghcr.io/datagov-cz/nkd-ssh-server:main
           resources:
             requests:
               memory: "64Mi"

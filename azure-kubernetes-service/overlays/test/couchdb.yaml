@@ -10,6 +10,7 @@ spec:
     spec:
       containers:
         - name: nkd-couchdb
+          image: ghcr.io/datagov-cz/nkd-couchdb:main
           resources:
             requests:
               memory: "256Mi"
