@@ -41,3 +41,10 @@ spec:
               memory: "128Mi"
             limits:
               memory: "512Mi"
+        - name: nkd-orchestrator
+          image: ghcr.io/datagov-cz/nkd-orchestrator:develop
+          resources:
+            requests:
+              memory: "32Mi"
+            limits:
+              memory: "64Mi"

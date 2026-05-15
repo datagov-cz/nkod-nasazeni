@@ -10,6 +10,7 @@ spec:
     spec:
       containers:
         - name: nkd-virtuoso
+          image: ghcr.io/datagov-cz/nkd-virtuoso:develop
           env:
             # Use 170000 and 130000 for 2 GB
             - name: VIRT_PARAMETERS_NUMBEROFBUFFERS
@@ -22,6 +23,7 @@ spec:
             limits:
               memory: "2Gi"
         - name: ssh-server
+          image: ghcr.io/datagov-cz/nkd-ssh-server:develop
           resources:
             requests:
               memory: "16Mi"
