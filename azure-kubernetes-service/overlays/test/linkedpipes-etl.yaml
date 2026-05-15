@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
         - name: nkd-linkedpipes-etl-executor
-          image: ghcr.io/linkedpipes/etl-executor:main
+          image: ghcr.io/datagov-cz/etl-executor@sha256:be239063ce398e9e93c819f7f8fea8db009fef2f54225e68f0dae2fa468081ae
           command: ["java", "-DconfigFileLocation=/opt/lp-etl/configuration/configuration.properties", "-Xmx4g", "-jar" ,"./executor/executor.jar"]
           resources:
             requests:
@@ -18,28 +18,28 @@ spec:
             limits:
               memory: "6Gi"
         - name: nkd-linkedpipes-etl-executor-monitor
-          image: ghcr.io/linkedpipes/etl-executor-monitor:main
+          image: ghcr.io/datagov-cz/etl-executor-monitor@sha256:59828caf05810ddd13f80900ffe9542dbef45577d86fa251c34baad9129922eb
           resources:
             requests:
               memory: "512Mi"
             limits:
               memory: "1Gi"
         - name: nkd-linkedpipes-etl-frontend
-          image: ghcr.io/linkedpipes/etl-frontend:main
+          image: ghcr.io/datagov-cz/etl-frontend@sha256:afdecb4b470dd66ccabe38f1fe0c622dc4e2116176b1cd31d7eec93956ec9178
           resources:
             requests:
               memory: "128Mi"
             limits:
               memory: "256Mi"
         - name: nkd-linkedpipes-etl-storage
-          image: ghcr.io/linkedpipes/etl-storage:main
+          image: ghcr.io/datagov-cz/etl-storage@sha256:71e00b525e2638a7a25fb3ddb7437dbde8c8dcec6ea846c00b7158c9faaae2d6
           resources:
             requests:
               memory: "512Mi"
             limits:
               memory: "1Gi"
         - name: nkd-orchestrator
-          image: ghcr.io/datagov-cz/nkd-orchestrator:main
+          image:  ghcr.io/datagov-cz/nkd-orchestrator@sha256:ee12754982e9274fccccd77dd655b1b41e4e415e951137131f4e22f95eb266d5
           resources:
             requests:
               memory: "32Mi"

@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
         - name: nkd-catalog
-          image: ghcr.io/datagov-cz/nkd-catalog:main
+          image: ghcr.io/datagov-cz/nkd-catalog@sha256:47ffbea7723f50f4d4b852432a591e25a5e2e969c97981c2f69e29b25640a7ef
           resources:
             requests:
               memory: "256Mi"

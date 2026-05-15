@@ -18,14 +18,14 @@ spec:
         agentpool: virtuoso
       containers:
         - name: nkd-ldf
-          image: ghcr.io/datagov-cz/nkd-ldf:main
+          image: ghcr.io/datagov-cz/nkd-ldf@sha256:37f7b6b578ca9054566c10117f90b0f8348e3322f5da87df41f61dde11a8e8c6
           resources:
             requests:
               memory: "256Mi"
             limits:
               memory: "512Mi"
         - name: ssh-server
-          image: ghcr.io/datagov-cz/nkd-ssh-server:main
+          image: ghcr.io/datagov-cz/nkd-ssh-server@sha256:5602e9a334c633c3ead9d2a66504e1ad68230a1bc5d32f8058b06f0b5fc7b51d
           resources:
             requests:
               memory: "64Mi"
