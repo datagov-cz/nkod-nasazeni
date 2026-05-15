@@ -10,6 +10,7 @@ spec:
     spec:
       containers:
         - name: nkd-gateway
+          image: ghcr.io/datagov-cz/nkd-gateway@sha256:908a38e67ce852d401e72e799b698c24c4632e0e14500ba362b631be105bc568
           resources:
             requests:
               memory: "512Mi"

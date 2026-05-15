@@ -10,6 +10,7 @@ spec:
     spec:
       containers:
         - name: nkd-virtuoso
+          image: ghcr.io/datagov-cz/nkd-virtuoso@sha256:25034fde784f590ff523f2fa6d60e7022aa3d12c1233b7e508e496d942b8eb6a
           env:
             # Next two lines if there is 2 GB system memory free
             - name: VIRT_PARAMETERS_NUMBEROFBUFFERS
@@ -22,6 +23,7 @@ spec:
             limits:
               memory: "3Gi"
         - name: ssh-server
+          image: ghcr.io/datagov-cz/nkd-ssh-server@sha256:5602e9a334c633c3ead9d2a66504e1ad68230a1bc5d32f8058b06f0b5fc7b51d
           resources:
             requests:
               memory: "128Mi"
