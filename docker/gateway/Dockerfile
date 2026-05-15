@@ -1,4 +1,4 @@
-FROM nginx:1.29.4
+FROM nginx:1.31.0
 
 # We need to remove the default server.
 RUN rm /etc/nginx/conf.d/default.conf
