@@ -1,1 +1,0 @@
-# Nasazení pomocí Docker
