@@ -17,7 +17,7 @@ spec:
             limits:
               memory: "512Mi"
         - name: nkd-registration-manager
-          image: ghcr.io/datagov-cz/nkd-registration-manager@sha256:9a18675ab2a575ad3969c2dd9624ef78e709dbe01c2aa88fb7826f12bee73c42
+          image: ghcr.io/datagov-cz/nkd-registration-manager@sha256:c69773d2b072f221b30fbcb28239a0b58a4737389b27fe724e6dd9e524946892
           resources:
             requests:
               memory: "256Mi"
