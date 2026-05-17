@@ -3,3 +3,6 @@
 
 # Data
 data/
+
+# Project files
+*.code-workspace
