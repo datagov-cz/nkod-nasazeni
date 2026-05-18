@@ -31,7 +31,7 @@ spec:
           fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: nkd-virtuoso
-          image: ghcr.io/datagov-cz/nkd-virtuoso:main
+          image: ghcr.io/datagov-cz/nkd-virtuoso
           imagePullPolicy: Always
           env:
             - name: DBA_PASSWORD
@@ -67,7 +67,7 @@ spec:
             failureThreshold: 5
             successThreshold: 1
         - name: ssh-server
-          image: ghcr.io/datagov-cz/nkd-ssh-server:main
+          image: ghcr.io/datagov-cz/nkd-ssh-server
           imagePullPolicy: Always
           env:
             - name: USER

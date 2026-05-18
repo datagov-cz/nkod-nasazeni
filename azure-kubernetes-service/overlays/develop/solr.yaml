@@ -18,7 +18,6 @@ spec:
         agentpool: virtuoso
       containers:
         - name: nkd-solr
-          image: ghcr.io/datagov-cz/nkd-solr:develop
           resources:
             requests:
               memory: "1Gi"

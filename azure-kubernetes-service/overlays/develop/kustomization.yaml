@@ -18,3 +18,34 @@ patches:
   - path: ./solr.yaml
   - path: ./virtuoso-ndc.yaml
   - path: ./virtuoso-vocabulary.yaml
+images:
+  - name: ghcr.io/datagov-cz/nkd-adapter
+    newTag: develop
+  - name: ghcr.io/datagov-cz/nkd-registration-manager
+    newTag: develop
+  - name: ghcr.io/datagov-cz/caais-middleware
+    newTag: main
+  - name: ghcr.io/datagov-cz/nkd-catalog
+    newTag: develop
+  - name: ghcr.io/datagov-cz/nkd-couchdb
+    newTag: develop
+  - name: ghcr.io/datagov-cz/gov-design-system
+    newTag: 2025-07-01
+  - name: ghcr.io/datagov-cz/nkd-forms
+    newTag: develop
+  - name: ghcr.io/datagov-cz/nkd-gateway
+    newTag: develop
+  - name: ghcr.io/datagov-cz/nkd-graphql
+    newTag: develop
+  - name: ghcr.io/datagov-cz/nkd-ssh-server
+    newTag: develop
+  - name: ghcr.io/datagov-cz/nkd-ldf
+    newTag: develop
+  - name: ghcr.io/datagov-cz/nkd-jekyll
+    newTag: develop
+  - name: ghcr.io/datagov-cz/nkd-solr
+    newTag: develop
+  - name: ghcr.io/datagov-cz/nkd-virtuoso
+    newTag: develop
+  # Develop is using ghcr.io/linkedpipes/etl-executor develop images.
+  # As a result, they are not listed here.

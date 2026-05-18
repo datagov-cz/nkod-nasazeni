@@ -24,7 +24,7 @@ spec:
           fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: nkd-adapter
-          image: ghcr.io/datagov-cz/nkd-adapter:main
+          image: ghcr.io/datagov-cz/nkd-adapter
           imagePullPolicy: Always
           env:
             - name: MS_APPLICATION
@@ -86,7 +86,7 @@ spec:
             - mountPath: "/data/"
               name: adapter-volume
         - name: nkd-registration-manager
-          image: ghcr.io/datagov-cz/nkd-registration-manager:main
+          image: ghcr.io/datagov-cz/nkd-registration-manager
           imagePullPolicy: Always
           env:
           - name: FORMS_URL

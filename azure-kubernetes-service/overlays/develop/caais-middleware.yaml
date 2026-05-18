@@ -10,7 +10,6 @@ spec:
     spec:
       containers:
         - name: nkd-caais-middleware
-          image: ghcr.io/datagov-cz/caais-middleware@sha256:4687df9b0e13b1458bfc4198dc99b72f16b434126e46df4f5919b9b02363d97e
           resources:
             requests:
               memory: "128Mi"

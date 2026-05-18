@@ -18,3 +18,42 @@ patches:
   - path: ./solr.yaml
   - path: ./virtuoso-ndc.yaml
   - path: ./virtuoso-vocabulary.yaml
+images:
+  - name: ghcr.io/datagov-cz/nkd-adapter
+    digest: sha256:99f8883cc5b04577d5d4ba9278856dda501c89fad0df1661fbff09defef6aa23
+  - name: ghcr.io/datagov-cz/nkd-registration-manager
+    digest: sha256:c69773d2b072f221b30fbcb28239a0b58a4737389b27fe724e6dd9e524946892
+  - name: ghcr.io/datagov-cz/caais-middleware
+    newTag: main
+  - name: ghcr.io/datagov-cz/nkd-catalog
+    digest: sha256:ee9a3b9965a318534bcfd0859582d222f1115d5b62d662e7c80f98c42d35732e
+  - name: ghcr.io/datagov-cz/nkd-couchdb
+    digest: sha256:b6b77bb34bd03f5ea7e6af19f60d56051e2f70442945134db50a6fe76ae41a2d
+  - name: ghcr.io/datagov-cz/gov-design-system
+    newTag: 2025-07-01
+  - name: ghcr.io/datagov-cz/nkd-forms
+    digest: sha256:0211aec18a27e0b905c67ee85255f13219312179d1fce4556428fb88e9c0a5cd
+  - name: ghcr.io/datagov-cz/nkd-gateway
+    digest: sha256:eab3fc001664f0397a3faef3336b6c0a00362746a9d5365a1857e7a94df2c04f
+  - name: ghcr.io/datagov-cz/nkd-graphql
+    digest: sha256:cee31980b5ef554eeeaf061f2ca3c31a2598209aaa121070dae50bb310e58fe8
+  - name: ghcr.io/datagov-cz/nkd-ssh-server
+    digest: sha256:5602e9a334c633c3ead9d2a66504e1ad68230a1bc5d32f8058b06f0b5fc7b51d
+  - name: ghcr.io/datagov-cz/nkd-ldf
+    digest: sha256:37f7b6b578ca9054566c10117f90b0f8348e3322f5da87df41f61dde11a8e8c6
+  - name: ghcr.io/datagov-cz/etl-storage
+    digest: sha256:71e00b525e2638a7a25fb3ddb7437dbde8c8dcec6ea846c00b7158c9faaae2d6
+  - name: ghcr.io/datagov-cz/etl-frontend
+    digest: sha256:afdecb4b470dd66ccabe38f1fe0c622dc4e2116176b1cd31d7eec93956ec9178
+  - name: ghcr.io/datagov-cz/etl-executor
+    digest: sha256:be239063ce398e9e93c819f7f8fea8db009fef2f54225e68f0dae2fa468081ae
+  - name: ghcr.io/datagov-cz/etl-executor-monitor
+    digest: sha256:59828caf05810ddd13f80900ffe9542dbef45577d86fa251c34baad9129922eb
+  - name: ghcr.io/datagov-cz/nkd-orchestrator
+    digest: sha256:ee12754982e9274fccccd77dd655b1b41e4e415e951137131f4e22f95eb266d5
+  - name: ghcr.io/datagov-cz/nkd-jekyll
+    digest: sha256:b9b0105f5b6f8cfb7fe1d4af22ec25a81d410b06d6bf19afa6f3c4d1bd57da28
+  - name: ghcr.io/datagov-cz/nkd-solr
+    digest: sha256:9d25e61caaf57e258273533bd4ebf56f0fe2982e9a85ee914523bc0f0707b72c
+  - name: ghcr.io/datagov-cz/nkd-virtuoso
+    digest: sha256:25034fde784f590ff523f2fa6d60e7022aa3d12c1233b7e508e496d942b8eb6a

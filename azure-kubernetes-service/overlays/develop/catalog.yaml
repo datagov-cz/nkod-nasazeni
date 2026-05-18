@@ -10,7 +10,6 @@ spec:
     spec:
       containers:
         - name: nkd-catalog
-          image: ghcr.io/datagov-cz/nkd-catalog:develop
           resources:
             requests:
               memory: "256Mi"

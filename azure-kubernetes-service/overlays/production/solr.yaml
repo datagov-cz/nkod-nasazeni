@@ -10,7 +10,6 @@ spec:
     spec:
       containers:
         - name: nkd-solr
-          image: ghcr.io/datagov-cz/nkd-solr@sha256:9d25e61caaf57e258273533bd4ebf56f0fe2982e9a85ee914523bc0f0707b72c
           resources:
             requests:
               memory: "1Gi"

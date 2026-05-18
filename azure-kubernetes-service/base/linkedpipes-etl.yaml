@@ -42,7 +42,7 @@ spec:
           fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: nkd-linkedpipes-etl-storage
-          image: ghcr.io/datagov-cz/etl-storage:main
+          image: ghcr.io/datagov-cz/etl-storage
           imagePullPolicy: Always
           env:
             - name: LP_ETL_DOMAIN
@@ -59,7 +59,7 @@ spec:
             runAsGroup: 5987
             runAsNonRoot: true
         - name: nkd-linkedpipes-etl-frontend
-          image: ghcr.io/datagov-cz/etl-frontend:main
+          image: ghcr.io/datagov-cz/etl-frontend
           imagePullPolicy: Always
           env:
             - name: LP_ETL_DOMAIN
@@ -77,7 +77,7 @@ spec:
             runAsGroup: 5987
             runAsNonRoot: true
         - name: nkd-linkedpipes-etl-executor
-          image: ghcr.io/datagov-cz/etl-executor:main
+          image: ghcr.io/datagov-cz/etl-executor
           imagePullPolicy: Always
           env:
             - name: LP_ETL_DOMAIN
@@ -188,7 +188,7 @@ spec:
             runAsGroup: 5987
             runAsNonRoot: true
         - name: nkd-linkedpipes-etl-executor-monitor
-          image: ghcr.io/datagov-cz/etl-executor-monitor:main
+          image: ghcr.io/datagov-cz/etl-executor-monitor
           imagePullPolicy: Always
           env:
             - name: LP_ETL_DOMAIN
@@ -221,7 +221,7 @@ spec:
             runAsGroup: 5987
             runAsNonRoot: true
         - name: nkd-orchestrator
-          image: ghcr.io/datagov-cz/nkd-orchestrator:main
+          image: ghcr.io/datagov-cz/nkd-orchestrator
           imagePullPolicy: Always
           env:
             - name: FRONTEND_URL

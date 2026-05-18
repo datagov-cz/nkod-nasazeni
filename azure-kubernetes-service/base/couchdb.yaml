@@ -24,7 +24,7 @@ spec:
           fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: nkd-couchdb
-          image: ghcr.io/datagov-cz/nkd-couchdb:main
+          image: ghcr.io/datagov-cz/nkd-couchdb
           imagePullPolicy: Always
           env:
             - name: COUCHDB_USER

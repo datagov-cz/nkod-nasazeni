@@ -24,7 +24,7 @@ spec:
           fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: nkd-ldf
-          image: ghcr.io/datagov-cz/nkd-ldf:main
+          image: ghcr.io/datagov-cz/nkd-ldf
           imagePullPolicy: Always
           env:
             - name: LDF_PORT
@@ -60,7 +60,7 @@ spec:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
         - name: ssh-server
-          image: ghcr.io/datagov-cz/nkd-ssh-server:main
+          image: ghcr.io/datagov-cz/nkd-ssh-server
           imagePullPolicy: Always
           env:
             - name: USER

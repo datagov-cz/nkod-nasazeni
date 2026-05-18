@@ -10,7 +10,6 @@ spec:
     spec:
       containers:
         - name: nkd-design-system
-          image: ghcr.io/datagov-cz/gov-design-system:2025-07-01
           resources:
             requests:
               memory: "16Mi"

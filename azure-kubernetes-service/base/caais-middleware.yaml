@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: nkd-caais-middleware
-          image: ghcr.io/datagov-cz/caais-middleware:main
+          image: ghcr.io/datagov-cz/caais-middleware
           imagePullPolicy: Always
           env:
             - name: HTTP_PORT

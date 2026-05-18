@@ -24,7 +24,7 @@ spec:
           fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: nkd-graphql
-          image: ghcr.io/datagov-cz/nkd-graphql:main
+          image: ghcr.io/datagov-cz/nkd-graphql
           imagePullPolicy: Always
           env:
             - name: NKOD_GRAPHQL_PORT
@@ -51,7 +51,7 @@ spec:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
         - name: ssh-server
-          image: ghcr.io/datagov-cz/nkd-ssh-server:main
+          image: ghcr.io/datagov-cz/nkd-ssh-server
           imagePullPolicy: Always
           env:
             - name: USER

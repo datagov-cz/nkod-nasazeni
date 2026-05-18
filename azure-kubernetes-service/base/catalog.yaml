@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: nkd-catalog
-          image: ghcr.io/datagov-cz/nkd-catalog:main
+          image: ghcr.io/datagov-cz/nkd-catalog
           imagePullPolicy: Always
           env:
             - name: NODE_ENV

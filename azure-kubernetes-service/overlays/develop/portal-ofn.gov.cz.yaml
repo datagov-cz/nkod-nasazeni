@@ -10,7 +10,6 @@ spec:
     spec:
       containers:
         - name: nkd-portal-ofn-gov-cz
-          image: ghcr.io/datagov-cz/nkd-jekyll:develop
           resources:
             requests:
               memory: "128Mi"

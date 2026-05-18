@@ -10,7 +10,6 @@ spec:
     spec:
       containers:
         - name: nkd-forms
-          image: ghcr.io/datagov-cz/nkd-forms:develop
           resources:
             requests:
               memory: "64Mi"

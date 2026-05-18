@@ -10,14 +10,12 @@ spec:
     spec:
       containers:
         - name: nkd-adapter
-          image: ghcr.io/datagov-cz/nkd-adapter:develop
           resources:
             requests:
               memory: "128Mi"
             limits:
               memory: "256Mi"
         - name: nkd-registration-manager
-          image: ghcr.io/datagov-cz/nkd-registration-manager:develop
           resources:
             requests:
               memory: "128Mi"
