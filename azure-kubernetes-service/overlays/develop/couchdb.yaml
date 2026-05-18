@@ -12,6 +12,6 @@ spec:
         - name: nkd-couchdb
           resources:
             requests:
-              memory: "128Mi"
-            limits:
               memory: "256Mi"
+            limits:
+              memory: "512Mi"
