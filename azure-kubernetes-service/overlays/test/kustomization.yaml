@@ -26,7 +26,7 @@ images:
   - name: ghcr.io/datagov-cz/caais-middleware
     newTag: main
   - name: ghcr.io/datagov-cz/nkd-catalog
-    digest: sha256:89692ab278f3ad86a594e173d196d788717b686ff2d7d748d070686d8039d6df
+    digest: sha256:bd29af13aa5db750e21f19c08edbd8441285d74fae5e1c03182b6ac8e208ce12
   - name: ghcr.io/datagov-cz/nkd-couchdb
     digest: sha256:b6b77bb34bd03f5ea7e6af19f60d56051e2f70442945134db50a6fe76ae41a2d
   - name: ghcr.io/datagov-cz/gov-design-system
