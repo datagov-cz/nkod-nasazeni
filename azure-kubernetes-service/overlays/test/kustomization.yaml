@@ -22,7 +22,7 @@ images:
   - name: ghcr.io/datagov-cz/nkd-adapter
     digest: sha256:99f8883cc5b04577d5d4ba9278856dda501c89fad0df1661fbff09defef6aa23
   - name: ghcr.io/datagov-cz/nkd-registration-manager
-    digest: sha256:bd29af13aa5db750e21f19c08edbd8441285d74fae5e1c03182b6ac8e208ce12
+    digest: sha256:6a091805a81a684238b0906e6595b3ff216a96955127e7f09128fff77e2db2bf
   - name: ghcr.io/datagov-cz/caais-middleware
     newTag: main
   - name: ghcr.io/datagov-cz/nkd-catalog
