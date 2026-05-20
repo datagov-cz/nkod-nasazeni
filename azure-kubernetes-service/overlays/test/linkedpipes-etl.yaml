@@ -42,4 +42,4 @@ spec:
               memory: "64Mi"
           env:
             - name: STORAGE_REPOSITORY_BRANCH
-              value: main
+              value: test

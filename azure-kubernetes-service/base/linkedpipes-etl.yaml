@@ -231,7 +231,6 @@ spec:
             - name: PIPELINE_URL
               value: https://oha02.dia.gov.cz/etl/resources/components/1700141340878-0004
             - name: STORAGE_REPOSITORY_BRANCH
-              value: develop
             - name: STORAGE_REPOSITORY
               value: https://github.com/datagov-cz/nkd.git
           volumeMounts:

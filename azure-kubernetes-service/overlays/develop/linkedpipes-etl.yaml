@@ -48,3 +48,6 @@ spec:
               memory: "32Mi"
             limits:
               memory: "64Mi"
+          env:
+            - name: STORAGE_REPOSITORY_BRANCH
+              value: develop
