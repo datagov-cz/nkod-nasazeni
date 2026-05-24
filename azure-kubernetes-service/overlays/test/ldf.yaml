@@ -8,14 +8,6 @@ metadata:
 spec:
   template:
     spec:
-      # We move this to virtuoso node pool to save resources.
-      tolerations:
-        - key: dedicated
-          operator: Equal
-          value: virtuoso
-          effect: NoSchedule
-      nodeSelector:
-        agentpool: virtuoso
       containers:
         - name: nkd-ldf
           resources:
