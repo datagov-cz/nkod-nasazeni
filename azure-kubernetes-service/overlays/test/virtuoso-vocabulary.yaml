@@ -8,19 +8,26 @@ metadata:
 spec:
   template:
     spec:
+      # We move this to virtuoso node pool to save resources.
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: virtuoso
+          effect: NoSchedule
+      nodeSelector:
+        agentpool: virtuoso
       containers:
         - name: nkd-virtuoso
           env:
-            # Next two lines if there is 2 GB system memory free
             - name: VIRT_PARAMETERS_NUMBEROFBUFFERS
-              value: "170000"
+              value: "42500"
             - name: VIRT_PARAMETERS_MAXDIRTYBUFFERS
-              value: "130000"
+              value: "32500"
           resources:
             requests:
-              memory: "2Gi"
+              memory: "1Gi"
             limits:
-              memory: "3Gi"
+              memory: "2Gi"
         - name: ssh-server
           resources:
             requests:

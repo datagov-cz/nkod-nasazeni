@@ -99,12 +99,16 @@ az aks update --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --att
 # https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/general-purpose/av2-series
 
 # Standard_D2as_v5 - 2 CPU, 4GB
-az aks create --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --node-count 4 --node-vm-size Standard_D2as_v5 --location $env:LOCATION --ip-families ipv4,ipv6 --generate-ssh-keys --nodepool-name system
+az aks create --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --node-count 3 --node-vm-size Standard_D2as_v5 --location $env:LOCATION --ip-families ipv4,ipv6 --generate-ssh-keys --nodepool-name system
+
+# Standard_D2as_v5 - 2 CPU, 4GB
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name user1 --node-count 0 --node-vm-size Standard_D2as_v5
 
 # Standard_D4as_v5 - 4 vCPU, 16GB RAM
-az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name user1 --node-count 1 --node-vm-size Standard_D4as_v5
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name lpetl --node-count 1 --node-vm-size Standard_D4as_v5
+kubectl taint nodes -l agentpool=lpetl dedicated=lpetl:NoSchedule
 
-# Standard_D8as_v5 - 8 vCPU, 32GB RAM - only for virtuoso.
+# Standard_D8as_v5 - 8 vCPU, 32GB RAM
 az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name virtuoso --node-count 1 --node-vm-size Standard_D8as_v5
 kubectl taint nodes -l agentpool=virtuoso dedicated=virtuoso:NoSchedule
 ```
@@ -116,7 +120,11 @@ kubectl taint nodes -l agentpool=virtuoso dedicated=virtuoso:NoSchedule
 az aks create --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --node-count 1 --node-vm-size Standard_D2as_v5 --location $env:LOCATION --ip-families ipv4,ipv6 --generate-ssh-keys --nodepool-name system
 
 # Standard_D2as_v5 - 2 CPU, 4GB
-az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name user1 --node-count 2 --node-vm-size Standard_D2as_v5
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name user1 --node-count 0 --node-vm-size Standard_D2as_v5
+
+# Standard_D2as_v5 - 2 CPU, 4GB
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name lpetl --node-count 1 --node-vm-size Standard_D2as_v5
+kubectl taint nodes -l agentpool=lpetl dedicated=lpetl:NoSchedule
 
 # Standard_D2as_v5 - 2 CPU, 4GB
 az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name virtuoso --node-count 2 --node-vm-size Standard_D2as_v5
@@ -130,7 +138,11 @@ kubectl taint nodes -l agentpool=virtuoso dedicated=virtuoso:NoSchedule
 az aks create --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --node-count 1 --node-vm-size Standard_D2as_v5 --location $env:LOCATION --ip-families ipv4,ipv6 --generate-ssh-keys --nodepool-name system
 
 # Standard_D2as_v5 - 2 CPU, 4GB
-az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name user1 --node-count 1 --node-vm-size Standard_D2as_v5
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name user1 --node-count 0 --node-vm-size Standard_D2as_v5
+
+# Standard_D2as_v5 - 2 CPU, 4GB
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name lpetl --node-count 1 --node-vm-size Standard_D2as_v5
+kubectl taint nodes -l agentpool=lpetl dedicated=lpetl:NoSchedule
 
 # Standard_D2as_v5 - 2 CPU, 4GB
 az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name virtuoso --node-count 1 --node-vm-size Standard_D2as_v5
@@ -456,5 +468,3 @@ Následující příkaz ukazuje, jak je možné získat externí IP, na kterých
 # Ve sloupci EXTERNAL-IP je uvedena veřejná IPv4 a IPv6 adresa.
 kubectl get service/nkd-gateway
 ```
-
-

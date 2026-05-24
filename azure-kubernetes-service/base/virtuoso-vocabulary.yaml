@@ -15,13 +15,6 @@ spec:
       labels:
         app.kubernetes.io/name: virtuoso-vocabulary
     spec:
-      tolerations:
-        - key: dedicated
-          operator: Equal
-          value: virtuoso
-          effect: NoSchedule
-      nodeSelector:
-        agentpool: virtuoso
       volumes:
         - name: virtuoso-vocabulary-volume
           persistentVolumeClaim:

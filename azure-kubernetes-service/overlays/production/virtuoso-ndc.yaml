@@ -11,16 +11,15 @@ spec:
       containers:
         - name: nkd-virtuoso
           env:
-            # Use for system with 16 GB system memory free.
             - name: VIRT_PARAMETERS_NUMBEROFBUFFERS
-              value: "1360000"
+              value: "850000"
             - name: VIRT_PARAMETERS_MAXDIRTYBUFFERS
-              value: "1000000"
+              value: "650000"
           resources:
             requests:
-              memory: "18Gi"
+              memory: "10Gi"
             limits:
-              memory: "24Gi"
+              memory: "10Gi"
         - name: ssh-server
           resources:
             requests:

@@ -11,7 +11,6 @@ spec:
       containers:
         - name: nkd-virtuoso
           env:
-            # Next two lines if there is 4 GB system memory free
             - name: VIRT_PARAMETERS_NUMBEROFBUFFERS
               value: "340000"
             - name: VIRT_PARAMETERS_MAXDIRTYBUFFERS
