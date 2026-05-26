@@ -19,7 +19,7 @@ spec:
             requests:
               memory: "10Gi"
             limits:
-              memory: "10Gi"
+              memory: "11Gi"
         - name: ssh-server
           resources:
             requests:
