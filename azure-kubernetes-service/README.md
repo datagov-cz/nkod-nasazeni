@@ -108,8 +108,8 @@ az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS
 az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name lpetl --node-count 1 --node-vm-size Standard_D4as_v5
 kubectl taint nodes -l agentpool=lpetl dedicated=lpetl:NoSchedule
 
-# Standard_D8as_v5 - 8 vCPU, 32GB RAM
-az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name virtuoso --node-count 1 --node-vm-size Standard_D8as_v5
+# Standard_D4as_v5 - 4 vCPU, 16GB RAM
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name virtuoso --node-count 1 --node-vm-size Standard_D4as_v5
 kubectl taint nodes -l agentpool=virtuoso dedicated=virtuoso:NoSchedule
 ```
 
