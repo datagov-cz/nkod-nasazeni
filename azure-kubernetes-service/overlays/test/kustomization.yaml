@@ -56,4 +56,4 @@ images:
   - name: ghcr.io/datagov-cz/nkd-solr
     digest: sha256:9d25e61caaf57e258273533bd4ebf56f0fe2982e9a85ee914523bc0f0707b72c
   - name: ghcr.io/datagov-cz/nkd-virtuoso
-    digest: sha256:dcd4ee2b8af0014aa9de1c987c09b2fc97036786b27d1d8ddec5a9386087bb77
+    digest: sha256:6706972b6a9a51a8dd3d186f10ba2acbe18d6f940120057b4ad12722334854de
