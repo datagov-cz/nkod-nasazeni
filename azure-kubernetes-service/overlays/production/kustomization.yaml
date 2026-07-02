@@ -20,7 +20,7 @@ patches:
   - path: ./virtuoso-vocabulary.yaml
 images:
   - name: ghcr.io/datagov-cz/nkd-adapter
-    digest: sha256:99f8883cc5b04577d5d4ba9278856dda501c89fad0df1661fbff09defef6aa23
+    digest: sha256:9775c09f223e4e80116d2d1487619a63bd72fa7e4bc1536c2ae2d018359d9865
   - name: ghcr.io/datagov-cz/nkd-registration-manager
     digest: sha256:6a091805a81a684238b0906e6595b3ff216a96955127e7f09128fff77e2db2bf
   - name: ghcr.io/datagov-cz/caais-middleware
