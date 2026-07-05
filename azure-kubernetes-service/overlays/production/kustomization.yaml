@@ -32,7 +32,7 @@ images:
   - name: ghcr.io/datagov-cz/gov-design-system
     newTag: 2025-07-01
   - name: ghcr.io/datagov-cz/nkd-forms
-    digest: sha256:0211aec18a27e0b905c67ee85255f13219312179d1fce4556428fb88e9c0a5cd
+    digest: sha256:eb38e00d083687f762782df1f2a0a39c7e9c6614c88c0a667def70b5ddd740a6
   - name: ghcr.io/datagov-cz/nkd-gateway
     digest: sha256:eab3fc001664f0397a3faef3336b6c0a00362746a9d5365a1857e7a94df2c04f
   - name: ghcr.io/datagov-cz/nkd-graphql
