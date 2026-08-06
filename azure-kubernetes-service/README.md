@@ -97,12 +97,15 @@ az aks update --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --att
 # https://learn.microsoft.com/en-us/azure/aks/configure-dual-stack - pro ipv4 a ipv6 dual stack
 # Přehled pro A - Entry-level economical, je na:
 # https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/general-purpose/av2-series
+# Přehled pro D - The 'D' family of VM sizes are one of Azure's general purpose VM sizes.
+# https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/general-purpose/d-family
 
 # Standard_D2as_v5 - 2 CPU, 4GB
 az aks create --resource-group $env:RESOURCE_GROUP --name $env:AKS_CLUSTER --node-count 3 --node-vm-size Standard_D2as_v5 --location $env:LOCATION --ip-families ipv4,ipv6 --generate-ssh-keys --nodepool-name system
 
 # Standard_D2as_v5 - 2 CPU, 4GB
-az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name user1 --node-count 0 --node-vm-size Standard_D2as_v5
+az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name user1 --node-count 1 --node-vm-size Standard_D2as_v5
+kubectl taint nodes -l agentpool=user1 dedicated=user1:NoSchedule
 
 # Standard_D4as_v5 - 4 vCPU, 16GB RAM
 az aks nodepool add --resource-group $env:RESOURCE_GROUP --cluster-name $env:AKS_CLUSTER --name lpetl --node-count 1 --node-vm-size Standard_D4as_v5
