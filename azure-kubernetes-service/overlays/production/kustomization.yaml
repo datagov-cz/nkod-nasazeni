@@ -34,7 +34,7 @@ images:
   - name: ghcr.io/datagov-cz/nkd-forms
     digest: sha256:eb38e00d083687f762782df1f2a0a39c7e9c6614c88c0a667def70b5ddd740a6
   - name: ghcr.io/datagov-cz/nkd-gateway
-    digest: sha256:eab3fc001664f0397a3faef3336b6c0a00362746a9d5365a1857e7a94df2c04f
+    digest: sha256:798343f5d267a83edd08faeb121e984ae259f08fa627dfb12145c013f05bb869
   - name: ghcr.io/datagov-cz/nkd-graphql
     digest: sha256:cee31980b5ef554eeeaf061f2ca3c31a2598209aaa121070dae50bb310e58fe8
   - name: ghcr.io/datagov-cz/nkd-ssh-server
