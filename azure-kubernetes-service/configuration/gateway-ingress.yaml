@@ -13,7 +13,7 @@ spec:
   type: LoadBalancer
   selector:
     app.kubernetes.io/name: gateway
-  externalTrafficPolicy: Cluster
+  externalTrafficPolicy: Local
   ipFamilyPolicy: PreferDualStack
   ipFamilies:
   - IPv4
