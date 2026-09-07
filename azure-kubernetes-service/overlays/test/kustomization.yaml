@@ -29,12 +29,13 @@ images:
     digest: sha256:89692ab278f3ad86a594e173d196d788717b686ff2d7d748d070686d8039d6df
   - name: ghcr.io/datagov-cz/nkd-couchdb
     digest: sha256:b6b77bb34bd03f5ea7e6af19f60d56051e2f70442945134db50a6fe76ae41a2d
-  - name: ghcr.io/datagov-cz/gov-design-system
-    newTag: 2025-07-01
+  # Disabled for time of gov-design-system migration.
+  # - name: ghcr.io/datagov-cz/gov-design-system
+  #   newTag: 2025-07-01
   - name: ghcr.io/datagov-cz/nkd-forms
     digest: sha256:eb38e00d083687f762782df1f2a0a39c7e9c6614c88c0a667def70b5ddd740a6
   - name: ghcr.io/datagov-cz/nkd-gateway
-    digest: sha256:798343f5d267a83edd08faeb121e984ae259f08fa627dfb12145c013f05bb869
+    digest: sha256:389efccb85037b021b621bd9e75c3b5a6b2b20967b9751dfc719ae205c01a8c9
   - name: ghcr.io/datagov-cz/nkd-graphql
     digest: sha256:cee31980b5ef554eeeaf061f2ca3c31a2598209aaa121070dae50bb310e58fe8
   - name: ghcr.io/datagov-cz/nkd-ssh-server

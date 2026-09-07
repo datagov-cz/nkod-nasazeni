@@ -17,8 +17,15 @@ spec:
     spec:
       containers:
         - name: nkd-design-system
-          image: ghcr.io/datagov-cz/gov-design-system
+          image: ghcr.io/datagov-cz/gov-design-system:2025-07-01
           imagePullPolicy: Always
+        - name: nkd-design-system-v47
+          image: ghcr.io/datagov-cz/gov-design-system@sha256:a81ddfbf05af93c520a008a195f8854b70fae11f39820f2a3feab9ec6aae2ffa
+          digest:
+          imagePullPolicy: Always
+          env:
+            - name: NGINX_PORT
+              value: "81"
 ---
 apiVersion: v1
 kind: Service
@@ -33,5 +40,10 @@ spec:
     app.kubernetes.io/name: design-system
   ports:
   - protocol: TCP
+    name: v2025-07-01
     targetPort: 80
     port: 80
+  - protocol: TCP
+    name: v47
+    targetPort: 81
+    port: 81

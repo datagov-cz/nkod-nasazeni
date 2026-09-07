@@ -88,6 +88,8 @@ spec:
               value: "https://datagov-cz.github.io/lkod-validator?catalog={}"
             - name: DESIGN_SYSTEM_URL
               value: "/assets/design-system/"
+            - name: PARTIALS_URL
+              value: http://nkd-portal-data-gov-cz/assets/partials/
           ports:
             - containerPort: 80
 ---

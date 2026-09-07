@@ -22,21 +22,21 @@ images:
   - name: ghcr.io/datagov-cz/nkd-adapter
     newTag: latest
   - name: ghcr.io/datagov-cz/nkd-registration-manager
-    newTag: develop
+    newTag: latest
   - name: ghcr.io/datagov-cz/caais-middleware
     newTag: main
   - name: ghcr.io/datagov-cz/nkd-catalog
     newTag: latest
   - name: ghcr.io/datagov-cz/nkd-couchdb
     newTag: develop
-  - name: ghcr.io/datagov-cz/gov-design-system
-    newTag: 2025-07-01
+  # Disabled for time of gov-design-system migration.
+  # - name: ghcr.io/datagov-cz/gov-design-system
+  #   newTag: latest
   - name: ghcr.io/datagov-cz/nkd-forms
     newTag: latest
   - name: ghcr.io/datagov-cz/nkd-gateway
-    digest: sha256:798343f5d267a83edd08faeb121e984ae259f08fa627dfb12145c013f05bb869
-  # - name: ghcr.io/datagov-cz/nkd-gateway
-  #   newTag: latest
+    digest: sha256:389efccb85037b021b621bd9e75c3b5a6b2b20967b9751dfc719ae205c01a8c9
+    # newTag: latest
   - name: ghcr.io/datagov-cz/nkd-graphql
     newTag: develop
   - name: ghcr.io/datagov-cz/nkd-ssh-server

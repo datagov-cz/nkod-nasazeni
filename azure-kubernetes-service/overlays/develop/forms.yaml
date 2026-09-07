@@ -10,6 +10,9 @@ spec:
     spec:
       containers:
         - name: nkd-forms
+          env:
+            - name: SPARQL_ENDPOINT
+              value: "https://data.gov.cz/slovn%C3%ADky/sparql"
           resources:
             requests:
               memory: "64Mi"

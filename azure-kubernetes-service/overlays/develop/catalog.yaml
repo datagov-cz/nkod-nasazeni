@@ -10,6 +10,13 @@ spec:
     spec:
       containers:
         - name: nkd-catalog
+          env:
+            - name: CONCEPT_SPARQL
+              value: "https://data.gov.cz/slovníky/sparql"
+            - name: CONCEPT_VIEWER_URL_TEMPLATE
+              value: "https://slovník-test.dia.gov.cz/popisujeme/concept/nkd?iri={}"
+            - name: GOV_DESIGN_SYSTEM_BASE
+              value: "/assets/design-system/"
           resources:
             requests:
               memory: "256Mi"

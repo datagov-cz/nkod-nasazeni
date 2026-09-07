@@ -8,10 +8,19 @@ metadata:
 spec:
   template:
     spec:
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: gateway
+          effect: NoSchedule
+      # We do not need to deploy to a separate node group as of now.
+      # nodeSelector:
+      #   agentpool: gateway
       containers:
         - name: nkd-gateway
           resources:
             requests:
-              memory: "512Mi"
+              memory: "256Mi"
+              cpu: "800m"
             limits:
-              memory: "1Gi"
+              memory: "512Mi"

@@ -105,6 +105,8 @@ spec:
               configMapKeyRef:
                 name: nkd-configuration
                 key: data_portal_domain_name
+          - name: GOV_DESIGN_SYSTEM_BASE
+            value: https://$(DATA_PORTAL_DOMAIN_NAME)/assets/design-system/
           - name: HTTP_BASE_URL
             value: https://$(DATA_PORTAL_DOMAIN_NAME)/správa-registrací
           - name: ISDS_ATTACHMENTS

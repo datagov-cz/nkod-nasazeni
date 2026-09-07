@@ -34,6 +34,7 @@ spec:
               value: kube-dns.kube-system.svc.cluster.local
           ports:
             - containerPort: 443
+            - containerPort: 8080
           volumeMounts:
             - name: ofn-tls-volume
               mountPath: /opt/ssl/ofn
@@ -41,6 +42,11 @@ spec:
             - name: data-tls-volume
               mountPath: /opt/ssl/data
               readOnly: true
+          resources:
+            requests:
+              memory: "256Mi"
+            limits:
+              memory: "256Mi"
       volumes:
         - name: ofn-tls-volume
           secret:
@@ -48,3 +54,20 @@ spec:
         - name: data-tls-volume
           secret:
             secretName: nkd-data-tls
+---
+# Internal service for monitoring.
+apiVersion: v1
+kind: Service
+metadata:
+  name: nkd-gateway-status
+  namespace: nkd
+  labels:
+    app.kubernetes.io/name: gateway
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: gateway
+  ports:
+  - protocol: TCP
+    targetPort: 8080
+    port: 8080
